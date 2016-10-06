@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/logo">
+        <file>cloud.png</file>
+        <file>cloud_download.png</file>
+        <file alias="cloud2">cloud2.png</file>
+        <file alias="pathSpacer">next.png</file>
+        <file alias="downloadFinish">assets/cloud-download-finish.png</file>
+        <file alias="downloadDelete">assets/delete-button.png</file>
+    </qresource>
+    <qresource prefix="/elements">
+        <file alias="folder">assets/folder.png</file>
+        <file alias="file">file.png</file>
+        <file alias="previous">previous.png</file>
+    </qresource>
+</RCC>
