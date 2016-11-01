@@ -14,6 +14,7 @@ namespace Color {
         static QString greyLight;
         static QString white;
         static QString greyBorder;
+        static QString lightBlueSelection;
         static QByteArray sid;
     };
 }

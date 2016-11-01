@@ -5,6 +5,7 @@
 #include <Qt>
 #include <QMouseEvent>
 #include <QPainter>
+
 #include "globalinfo.h"
 
 BtnLeftMenu::BtnLeftMenu(QPixmap image, QString text, QWidget *parent) :

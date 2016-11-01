@@ -13,6 +13,7 @@ public:
      explicit QLabelCustom( const QString &text = "", QWidget* parent = 0 );
      QLabelCustom(const QString& pathImg, int w, int h, QWidget* parent = 0);
 
+     void changeImageColor(QString color);
 protected:
     virtual void mousePressEvent(QMouseEvent* event);
 
@@ -21,6 +22,9 @@ signals:
 
 private:
      void createBtnImg(QString imgPath, int w, int h);
+
+private:
+     QPixmap    _image;
 };
 
 #endif // QLABELCUSTOM_H

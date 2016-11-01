@@ -1,3 +1,5 @@
+#include <QPainter>
+
 #include "qlabelcustom.h"
 
 QLabelCustom::QLabelCustom(const QString& text, QWidget* parent): QLabel(text, parent)
@@ -11,9 +13,9 @@ QLabelCustom::QLabelCustom(const QString& pathImg, int w, int h, QWidget* parent
 }
 
 void QLabelCustom::createBtnImg(QString imgPath, int w, int h) {
-    QPixmap image(imgPath);
+    _image = QPixmap(imgPath);
 
-    this->setPixmap(image);
+    this->setPixmap(_image);
     this->setFixedSize(w, h);
     this->setScaledContents(true);
     this->setCursor(Qt::PointingHandCursor);
@@ -22,4 +24,12 @@ void QLabelCustom::createBtnImg(QString imgPath, int w, int h) {
 void QLabelCustom::mousePressEvent(QMouseEvent* event)
 {
     emit clicked();
+}
+
+void QLabelCustom::changeImageColor(QString color) {
+    QPainter painters(&_image);
+    painters.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painters.fillRect(_image.rect(), QColor("#" + color));
+    painters.end();
+    this->setPixmap(_image);
 }

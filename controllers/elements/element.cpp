@@ -2,6 +2,8 @@
 #include "ui_element.h"
 #include "globalinfo.h"
 #include <QAction>
+#include <QPainter>
+#include <QStyleOption>
 
 Element::Element(QString title, QPixmap icon, QWidget *parent) :
     QWidget(parent),
@@ -16,9 +18,10 @@ Element::Element(QString title, QPixmap icon, QWidget *parent) :
 
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setCursor(Qt::PointingHandCursor);
-
     connect(this, &Element::customContextMenuRequested, this, &Element::menuRequested);
     configureRightClick();
+
+    this->setContentsMargins(7, 7, 7, 7);
 
     setIcon(icon);
     setTitle(title);
@@ -41,8 +44,11 @@ void Element::actionDelete(bool b) {
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton) {
         _dragStartPosition = event->pos();
+        emit clicked();
+        setStyleSheetElementActive();
+    }
 }
 
 void Element::mouseMoveEvent(QMouseEvent *event)
@@ -83,5 +89,16 @@ void Element::setIcon(QPixmap picture) {
 
 void Element::menuRequested(const QPoint & pos) {
     _menu.popup(mapToGlobal(pos));
+}
+
+void Element::setStyleSheetElementActive() {
+    this->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlueSelection + "; border-radius:2px;");
+}
+
+void Element::paintEvent(QPaintEvent *pe) {
+  QStyleOption o;
+  o.initFrom(this);
+  QPainter p(this);
+  style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 
