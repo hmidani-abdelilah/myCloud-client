@@ -7,9 +7,10 @@ class FileRequest : public ServiceRequest
 {
 public:
     enum File {
+        DeleteFile,
         Write,
         Create,
-        WriteFiles
+        Historic
     };
 
     FileRequest();

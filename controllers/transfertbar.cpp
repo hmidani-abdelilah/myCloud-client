@@ -1,8 +1,11 @@
 #include "transfertbar.h"
+#include "globalinfo.h"
 #include <QPushButton>
 #include <QSpacerItem>
+#include <QStyleOption>
+#include <QPainter>
 
-TransfertBar::TransfertBar(CustomQFile *file) : QHBoxLayout()
+TransfertBar::TransfertBar(CustomQFile *file) : QWidget()
 {
     QSpacerItem* spacerName = new QSpacerItem(10, 0);
     QSpacerItem* spacerSize = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
@@ -13,6 +16,7 @@ TransfertBar::TransfertBar(CustomQFile *file) : QHBoxLayout()
     QSpacerItem* spacerStatus = new QSpacerItem(10, 0);
     QSpacerItem* spacerBtnDelete =  new QSpacerItem(6, 0);
 
+    _layout = new QHBoxLayout();
     _file = file;
     _transferedSize = new QLabelCustom("0");
     _name = new QLabelCustom("");
@@ -22,60 +26,84 @@ TransfertBar::TransfertBar(CustomQFile *file) : QHBoxLayout()
     _speedLabel = new QLabelCustom("0 Mo/s");
     _size = new QLabelCustom("0");
     _labelTime = new QLabelCustom("");
-    setStatus(EN_COURS);
-    _time = new QTime();
+    _statusLabel = new QLabelCustom("");
 
+    setStatus();
+
+    _time = new QTime();
     _sizeTransfered = 0;
 
+    connect(_btnDelete, &QLabelCustom::clicked, this, &TransfertBar::slotClickOnDelete);
+
+    this->setMaximumHeight(40);
     this->setContentsMargins(0, 0, 0, 0);
+
+    this->setCursor(Qt::PointingHandCursor);
+
+    _iconStatus->setAttribute( Qt::WA_TransparentForMouseEvents );
+
+    _labelTime->setAttribute( Qt::WA_TransparentForMouseEvents );
+
+    _statusLabel->setAttribute( Qt::WA_TransparentForMouseEvents );
+
     _progressBar->setRange(0, 100);
-    _progressBar->setValue(0);
+    _progressBar->setValue(file->getProgression());
     _progressBar->setMinimumSize(100, 17);
     _progressBar->setMaximumSize(100, 17);
     _progressBar->setStyleSheet("QProgressBar {border: 1px solid grey; border-radius: 2px; background-color: #FFFFFF; font-size:11"
                                 "px;} QProgressBar::chunk {background-color: #7fabda;}");
     _progressBar->setAlignment(Qt::AlignCenter);
     _progressBar->setTextVisible(true);
+    _progressBar->setAttribute( Qt::WA_TransparentForMouseEvents );
 
     _speedLabel->setMinimumWidth(100);
     _speedLabel->setAlignment(Qt::AlignRight);
-    _size->setStyleSheet("padding-left:10px; padding-right:10px;");
+    _speedLabel->setAttribute( Qt::WA_TransparentForMouseEvents );
 
+    _size->setStyleSheet("padding-left:10px; padding-right:10px;");
     _size->setAlignment(Qt::AlignRight);
     _size->setMinimumWidth(100);
+    _size->setAttribute( Qt::WA_TransparentForMouseEvents );
 
     _transferedSize->setAlignment(Qt::AlignRight);
     _transferedSize->setMinimumWidth(100);
+    _transferedSize->setAttribute( Qt::WA_TransparentForMouseEvents );
 
     _name->setMaximumSize(400, 200);
+    _name->setAttribute( Qt::WA_TransparentForMouseEvents );
 
     setName(_file->getNameFile());
     setSize(_file->getSize());
     setTime();
 
-    this->addWidget(_iconStatus);
-    this->addSpacerItem(spacerName);
-    this->addWidget(_name);
-    this->addSpacerItem(spacerSize);
-    this->addWidget(_size);
-    this->addSpacerItem(spacerProgressBar);
-    this->addWidget(_transferedSize);
-    this->addSpacerItem(spacerSizeTransfered);
-    this->addWidget(_speedLabel);
-    this->addSpacerItem(spacerSpeed);
-    this->addWidget(_progressBar);
-    this->addSpacerItem(spacerStatus);
-    this->addWidget(_labelTime);
-    this->addSpacerItem(spacerTime);
-    this->addWidget(_statusLabel); // faire un fonction qui va sert la couleur et le statue. Fait peu etre un enum pour le status
-    this->addSpacerItem(spacerBtnDelete);
-    this->addWidget(_btnDelete);
+    _layout->addWidget(_iconStatus);
+    _layout->addSpacerItem(spacerName);
+    _layout->addWidget(_name);
+    _layout->addSpacerItem(spacerSize);
+    _layout->addWidget(_size);
+    _layout->addSpacerItem(spacerProgressBar);
+    _layout->addWidget(_transferedSize);
+    _layout->addSpacerItem(spacerSizeTransfered);
+    _layout->addWidget(_speedLabel);
+    _layout->addSpacerItem(spacerSpeed);
+    _layout->addWidget(_progressBar);
+    _layout->addSpacerItem(spacerStatus);
+    _layout->addWidget(_labelTime);
+    _layout->addSpacerItem(spacerTime);
+    _layout->addWidget(_statusLabel); // faire un fonction qui va sert la couleur et le statue. Fait peu etre un enum pour le status
+    _layout->addSpacerItem(spacerBtnDelete);
+    _layout->addWidget(_btnDelete);
+
+    _layout->setAlignment(Qt::AlignTop);
+
+    setLayout(_layout);
 }
 
 void TransfertBar::updateElement() {
-    setPourcentage(_file->getProgression());
-    setSpeed(_file->getUploadSpeed());
-    setTransferedSize(_file->getTransferedSize());
+    setPourcentage();
+    setSpeed();
+    setTransferedSize();
+    setStatus();
     setTime();
 }
 
@@ -85,11 +113,13 @@ void TransfertBar::setName(QString name) {
     _name->setText(elidedText);
 }
 
-void TransfertBar::setPourcentage(int value) {
-    _progressBar->setValue(value);
+void TransfertBar::setPourcentage() {
+    _progressBar->setValue(_file->getProgression());
 }
 
-void TransfertBar::setTransferedSize(quint64 size) { // mettre cette fonction dans une classe helper ou autre ( CustomFIle )
+void TransfertBar::setTransferedSize() { // mettre cette fonction dans une classe helper ou autre ( CustomFIle )
+    quint64 size = _file->getTransferedSize();
+
     _sizeTransfered = size;
     if (size < 1000000)
         _transferedSize->setText(QString::number((float)size / 1000) + " Ko");
@@ -99,7 +129,8 @@ void TransfertBar::setTransferedSize(quint64 size) { // mettre cette fonction da
         _transferedSize->setText(QString::number((float)size / 1000000000) + "Go");
 }
 
-void TransfertBar::setSpeed(float speed) { // set speed with syntax ( ie: 2 mo/s)
+void TransfertBar::setSpeed() { // set speed with syntax ( ie: 2 mo/s)
+    float speed = _file->getUploadSpeed();
     _speed = speed;
     if (speed < 1000) {
         _speedLabel->setText(QString::number(speed) + " Ko/s");
@@ -118,23 +149,81 @@ void TransfertBar::setSize(quint64 size) { // size octet in qint64
 }
 
 void TransfertBar::setTime() {
-    _time->setHMS(0, 0, qRound(((float)(_file->getSize() - _sizeTransfered)) / (_speed * 1000)));
-   _labelTime->setText(_time->toString());
+    int secondToWait = 0;
+    if (!_file->isFinish() && _speed > 0)
+        secondToWait = qRound(((float)(_file->getSize() - _sizeTransfered)) / (_speed * 1000));
+
+    _time->setHMS(0, 0, secondToWait);
+    qDebug(_time->toString().toStdString().c_str());
+    _labelTime->setText(_time->toString());
 }
 
-void TransfertBar::setStatus(Status status) {
-    _status = status;
-    switch (_status) {
-    case EN_COURS:
-        _statusLabel = new QLabelCustom("En cours");
-        break;
-    case PAUSE:
-        _statusLabel = new QLabelCustom("Pause");
-        break;
-    case STOP:
-        _statusLabel = new QLabelCustom("Stop");
+void TransfertBar::setStatus() {
+    _statusLabel->setText(CustomQFile::convertStatusToString(_file->getStatus()));
+
+    switch (_file->getStatus()) {
+    case CustomQFile::Status::FINISH: {
+        _iconStatus->changeImageColor("1BB71E");
         break;
     }
+    case CustomQFile::Status::PAUSE: {
+        _iconStatus->changeImageColor("FFD400");
+        break;
+    }
+    case CustomQFile::Status::EN_COURS: {
+        _iconStatus->changeImageColor("329ED1");
+        break;
+    }
+    case CustomQFile::Status::DELETE: {
+        break;
 
+    }
+    case CustomQFile::Status::ERROR_CLIENT_PATH: {
+        _iconStatus->changeImageColor("F45342");
+        break;
+    }
+    }
 }
 
+void TransfertBar::changeStatusOfFile(CustomQFile::Status status) {
+    _file->setStatus(status);
+    _statusLabel->setText(CustomQFile::convertStatusToString(status));
+}
+
+void TransfertBar::paintEvent(QPaintEvent *) {
+    QStyleOption o;
+    o.initFrom(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
+}
+
+void TransfertBar::hasBeenSelected(bool value) {
+    if (value == true) {
+        this->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlueSelection + ";");
+    }
+    else {
+        this->setStyleSheet("background-color:#FFFFFF;");
+    }
+}
+
+void TransfertBar::slotClickOnDelete() {
+    emit clickOnDelete(this);
+}
+
+QLabelCustom* TransfertBar::getBtnDelete() {
+    return _btnDelete;
+}
+
+quint64 TransfertBar::getId() {
+    return _file->getId();
+}
+
+CustomQFile::Status TransfertBar::getStatus()
+{
+    return _file->getStatus();
+}
+
+void TransfertBar::mousePressEvent(QMouseEvent*)
+{
+    emit clicked(_file->getId());
+}

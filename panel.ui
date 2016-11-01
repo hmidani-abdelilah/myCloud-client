@@ -38,7 +38,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QWidget" name="toolBar2" native="true">
+      <widget class="QWidget" name="headerBar" native="true">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -57,18 +57,18 @@
        <property name="styleSheet">
         <string notr="true"/>
        </property>
-       <layout class="QHBoxLayout" name="informationPath">
+       <layout class="QHBoxLayout" name="headerBarLayout">
         <property name="leftMargin">
-         <number>10</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>6</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
        </layout>
       </widget>
@@ -76,7 +76,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="_layoutPage1">
@@ -94,6 +94,15 @@
          </property>
          <item>
           <widget class="QScrollArea" name="scrollArea">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="midLineWidth">
+            <number>0</number>
+           </property>
            <property name="widgetResizable">
             <bool>true</bool>
            </property>
@@ -102,8 +111,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>639</width>
-              <height>435</height>
+              <width>641</width>
+              <height>437</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="scrollManagerElements">
@@ -140,11 +149,37 @@
           <number>18</number>
          </property>
          <item>
-          <widget class="QWidget" name="gridDownloadWidget" native="true">
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
+          <widget class="QScrollArea" name="scrollAreaTransfert">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
            </property>
-           <layout class="QGridLayout" name="gridDownload"/>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="gridDownloadWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>641</width>
+              <height>437</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridDownload">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>

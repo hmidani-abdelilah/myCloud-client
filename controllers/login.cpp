@@ -65,8 +65,7 @@ void Login::getDataConnexion(QNetworkReply* reply)
         QByteArray asdf = reply->readAll();
         qDebug() << (QString("asdf %1").arg(asdf.length()));
         qDebug() << (QString(asdf));
-        //remplir le singleton avec les donnée de l'utilisateur
-        // emit signal connexion
+
         emit connexionSuccess();
     }
     else

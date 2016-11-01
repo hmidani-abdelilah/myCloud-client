@@ -16,7 +16,8 @@ LIBS+= -lcurl
 
 INCLUDEPATH += $$PWD/headers\
             += $$PWD/headers/elements\
-            += $$PWD/headers/request
+            += $$PWD/headers/request\
+            += $$PWD/headers/message_box
 
 
 TEMPLATE = app
@@ -50,7 +51,12 @@ HEADERS += headers/btnleftmenu.h \
            headers/displaypath.h \
            headers/elementpath.h \
            headers/transfertbar.h \
-           headers/transfertpage.h
+           headers/transfertpage.h \
+           headers/headerbar.h \
+           headers/page.h \
+           headers/viewfilespage.h \
+           headers/message_box/messageboxnaming.h \
+           headers/request/folderrequest.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui
 SOURCES += main.cpp \
@@ -80,5 +86,10 @@ SOURCES += main.cpp \
            controllers/transfertpage.cpp \
            controllers/displaypath.cpp \
            controllers/elementpath.cpp \
-           controllers/transfertbar.cpp
+           controllers/transfertbar.cpp \
+           controllers/headerbar.cpp \
+           controllers/page.cpp \
+           controllers/viewfilespage.cpp \
+           controllers/message_box/messageboxnaming.cpp \
+           controllers/request/folderrequest.cpp
 RESOURCES += assets.qrc

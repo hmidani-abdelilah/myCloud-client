@@ -23,12 +23,16 @@ public:
     void request(Type type, int request, QByteArray cdt = 0);
     void requestFile(Type type, int request, QByteArray cdt, QByteArray boundary);
 
+    void setParams(QMap<QString, QString> *params);
+    void setParam(QString key, QString value);
 protected:
     QString _host;
     QString _prefixRoute;
     QVector<QString> _route;
     QByteArray _sid;
     QByteArray _userAgent;
+    QMap<QString, QString> *_params;
+
     virtual QString getRoute(int route) = 0;
 
 public slots:

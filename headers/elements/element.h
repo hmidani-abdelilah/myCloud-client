@@ -31,10 +31,12 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     QMenu _menu;
 
+    void paintEvent(QPaintEvent *pe);
 private:
     QPoint _dragStartPosition;
     void configureRightClick();
 
+    void setStyleSheetElementActive();
 private slots:
     void menuRequested(const QPoint &pos);
 
@@ -42,6 +44,7 @@ private slots:
 
 signals:
     void hasBeenDoubleClicked(QString);
+    void clicked();
 };
 
 #endif // ELEMENT_H

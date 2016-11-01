@@ -3,6 +3,8 @@
 #include <QNetworkCookieJar>
 #include <QNetworkCookie>
 #include <QNetworkRequest>
+#include <QMap>
+
 #include "globalinfo.h"
 
 ServiceRequest::ServiceRequest() : QNetworkAccessManager()
@@ -11,7 +13,16 @@ ServiceRequest::ServiceRequest() : QNetworkAccessManager()
     _prefixRoute = "/api";
     _userAgent = "MyCloud/1.0 (Mac; Qt)";
 
+    _params = new QMap<QString, QString>();
     connect(this, &ServiceRequest::finished, this, &ServiceRequest::signalRequest);
+}
+
+void ServiceRequest::setParams(QMap<QString, QString> *params) {
+    _params = params;
+}
+
+void ServiceRequest::setParam(QString key, QString value) {
+    _params->insert(key, value);
 }
 
 void ServiceRequest::signalRequest(QNetworkReply * reply) {
