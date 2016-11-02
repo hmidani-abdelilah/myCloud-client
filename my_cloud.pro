@@ -56,7 +56,8 @@ HEADERS += headers/btnleftmenu.h \
            headers/page.h \
            headers/viewfilespage.h \
            headers/message_box/messageboxnaming.h \
-           headers/request/folderrequest.h
+           headers/request/folderrequest.h \
+           headers/request/routeparams.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui
 SOURCES += main.cpp \
@@ -91,5 +92,6 @@ SOURCES += main.cpp \
            controllers/page.cpp \
            controllers/viewfilespage.cpp \
            controllers/message_box/messageboxnaming.cpp \
-           controllers/request/folderrequest.cpp
+           controllers/request/folderrequest.cpp \
+           controllers/request/routeparams.cpp
 RESOURCES += assets.qrc

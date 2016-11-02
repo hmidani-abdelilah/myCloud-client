@@ -19,6 +19,9 @@ QString FileRequest::getRoute(int route) {
     case Historic:
         return "/file/historic";
         break;
+    case Reduce:
+        return "/file/reduce/71.PNG";
+        break;
     default:
         break;
     }
