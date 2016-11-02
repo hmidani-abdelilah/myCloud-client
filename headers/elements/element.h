@@ -16,7 +16,7 @@ class Element : public QWidget
     Q_OBJECT
 
 public:
-    explicit Element(QString title, QPixmap icon, QWidget *parent = 0);
+    explicit Element(QString title, QWidget *parent = 0);
     ~Element();
 
 protected:
@@ -25,13 +25,13 @@ protected:
 
     QString _title;
     void setTitle(QString str);
-    void setIcon(QPixmap picture);
     void mouseDoubleClickEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     QMenu _menu;
 
     void paintEvent(QPaintEvent *pe);
+    void setIcon(QPixmap picture);
 private:
     QPoint _dragStartPosition;
     void configureRightClick();

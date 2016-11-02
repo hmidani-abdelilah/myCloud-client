@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-Element::Element(QString title, QPixmap icon, QWidget *parent) :
+Element::Element(QString title, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Element)
 {
@@ -21,11 +21,9 @@ Element::Element(QString title, QPixmap icon, QWidget *parent) :
     connect(this, &Element::customContextMenuRequested, this, &Element::menuRequested);
     configureRightClick();
 
-    this->setContentsMargins(7, 7, 7, 7);
+    //this->setContentsMargins(7, 7, 7, 7);
 
-    setIcon(icon);
     setTitle(title);
-
 }
 
 Element::~Element()
@@ -74,16 +72,23 @@ void Element::mouseDoubleClickEvent ( QMouseEvent * ) {
 }
 
 void Element::setTitle(QString str) {
-    ui->_title->setWordWrap(true);
+//    ui->_title->setWordWrap(true);
     QFontMetrics metrics(ui->_title->font());
-    QString elidedText = metrics.elidedText(_title, Qt::ElideMiddle, ui->_title->width() * 2 - 30, Qt::TextWordWrap);
+    ui->_title->setFixedSize(112, 40);
+
+    QString elidedText = metrics.elidedText(str, Qt::ElideMiddle, ui->_title->width() * 2, Qt::TextWordWrap);
+
     ui->_title->setText(elidedText);
+    ui->_title->setWordWrap(true);
 }
 
 void Element::setIcon(QPixmap picture) {
     int w = ui->_icon->width();
     int h = ui->_icon->height();
+
     _image = picture.scaled(w,h,Qt::KeepAspectRatio);
+
+    ui->_icon->setMinimumSize(_image.width(), _image.height());
     ui->_icon->setPixmap(_image);
 }
 

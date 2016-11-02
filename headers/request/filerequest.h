@@ -10,7 +10,8 @@ public:
         DeleteFile,
         Write,
         Create,
-        Historic
+        Historic,
+        Reduce
     };
 
     FileRequest();
