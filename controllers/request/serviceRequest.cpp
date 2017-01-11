@@ -4,6 +4,7 @@
 #include <QNetworkCookie>
 #include <QNetworkRequest>
 #include <QMap>
+#include "httperror.h"
 
 #include "globalinfo.h"
 
@@ -14,10 +15,17 @@ ServiceRequest::ServiceRequest() : QNetworkAccessManager()
     _userAgent = "MyCloud/1.0 (Mac; Qt)";
 
     _params = new QMap<QString, QString>();
-    connect(this, &ServiceRequest::finished, this, &ServiceRequest::signalRequest);
+
+    _typeEnumList.insert(GET, "get");
+    _typeEnumList.insert(POST, "post");
+    _typeEnumList.insert(DELETE, "delete");
+    _typeEnumList.insert(PUT, "put");
+
+    connect(this, &ServiceRequest::finished, this, &ServiceRequest::getCookieKey);
+    connect(this, &ServiceRequest::finished, this, &ServiceRequest::emitSignalResponseReady);
 }
 
-void ServiceRequest::setParams(QMap<QString, QString> *params) {
+void ServiceRequest::setParams(QMap<QString, QString> *params) { // surement a degager _params
     _params = params;
 }
 
@@ -25,28 +33,15 @@ void ServiceRequest::setParam(QString key, QString value) {
     _params->insert(key, value);
 }
 
-void ServiceRequest::signalRequest(QNetworkReply * reply) {
+void ServiceRequest::getCookieKey(QNetworkReply * reply) {
     QList<QPair<QByteArray, QByteArray>> list = reply->rawHeaderPairs();
     QList<QPair<QByteArray, QByteArray>>::iterator it;
 
     for (it = list.begin() ; list.end() != it ; it++) {
         if ((*it).first == "set-cookie") {
             Server::GlobalInfo::sid = (*it).second;
+            break;
         }
-    }
-}
-
-void ServiceRequest::slotError(QNetworkReply::NetworkError error) {
-    qDebug(QString(QString("ERROR numero : ") + QString::number(error)).toStdString().c_str());
-    switch (error) {
-    case QNetworkReply::ContentOperationNotPermittedError:
-        qDebug("The operation requested on the remote content is not permitted");
-        break;
-    case QNetworkReply::ContentNotFoundError:
-        qDebug("HTTP error 404");
-        break;
-    default:
-        break;
     }
 }
 
@@ -54,71 +49,67 @@ void ServiceRequest::slotSslErrors(QList<QSslError> error) {
     qDebug("ERROR : SSL");
 }
 
-void ServiceRequest::request(Type type, int request, QByteArray cdt) { // mettre l'enum au lieu du int
-    QString strRequest = "REQUEST : http://" + _host + _prefixRoute + getRoute(request);
-    QNetworkRequest networkRequest = QNetworkRequest(QUrl("http://" + _host + _prefixRoute + getRoute(request)));
+QNetworkReply* ServiceRequest::request(Type type, int request, RouteParams prms) { // mettre l'enum au lieu du int
+    QString strRequest = "http://" + _host + _prefixRoute + getRoute(request, prms.params()) + prms.query();
+    qDebug() << "REQUEST : [" << _typeEnumList[type] << "] " << strRequest.toStdString().c_str();
+
+    QNetworkRequest networkRequest = QNetworkRequest(QUrl(strRequest));
     networkRequest.setRawHeader("User-Agent", _userAgent);
     networkRequest.setRawHeader("Cookie", Server::GlobalInfo::sid);
     networkRequest.setHeader(QNetworkRequest::ContentTypeHeader,  "application/x-www-form-urlencoded");
 
+    QNetworkReply *reply;
+
     switch (type) {
-    case POST: {
-        QNetworkReply *replyPost = this->post(networkRequest, cdt);
-        connect(replyPost, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &ServiceRequest::slotError);
-        connect(replyPost, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
+    case POST:
+        reply = this->post(networkRequest, prms.body());
         break;
-    }
-    case GET: {
-        if (cdt.length() > 0) {
-            QString url = networkRequest.url().toString() + QString("?") + QString(cdt.toStdString().c_str());
-            qDebug(url.toStdString().c_str());
-            networkRequest.setUrl(url);
-        }
-        QNetworkReply *replyGet = this->get(networkRequest);
-        connect(replyGet, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &ServiceRequest::slotError);
-        connect(replyGet, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
+    case GET:
+        reply = this->get(networkRequest);
         break;
-    }
-    case DELETE: {
-        QNetworkReply *replyDelete = this->deleteResource(networkRequest);
-        connect(replyDelete, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &ServiceRequest::slotError);
-        connect(replyDelete, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
+    case DELETE:
+        reply = this->deleteResource(networkRequest);
         break;
-    }
-    case PUT: {
-        QNetworkReply *replyPut = this->put(networkRequest, cdt);
-        connect(replyPut, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &ServiceRequest::slotError);
-        connect(replyPut, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
+    case PUT:
+        reply = this->put(networkRequest, prms.body());
         break;
-    }
     default:
+        qDebug("Type request is incorect");
         break;
     }
+
+    if (reply == NULL) {
+        qDebug("[ERROR] : BAD REQUEST");
+    }
+
+    reply->setProperty("routeId", request);
+    reply->setProperty("verb", _typeEnumList[type]);
+    connect(reply, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
+    return reply;
 }
 
-void ServiceRequest::requestFile(Type type, int request, QByteArray cdt, QByteArray boundary) { // mettre l'enum au lieu du int
-    QString strRequest = "REQUEST FILE : http://" + _host + _prefixRoute + getRoute(request);
-    QNetworkRequest networkRequest = QNetworkRequest(QUrl("http://" + _host + _prefixRoute + getRoute(request)));
+void ServiceRequest::requestFile(Type type, int request, QByteArray body, QByteArray boundary) { // mettre l'enum au lieu du int
+    QString strRequest = "http://" + _host + _prefixRoute + getRoute(request, QMap<QString, QString>());
+    qDebug() << "REQUEST : [" << _typeEnumList[type] << "] " << strRequest.toStdString().c_str();
+
+    QNetworkRequest networkRequest = QNetworkRequest(QUrl(strRequest));
+
     networkRequest.setRawHeader( "User-Agent" , _userAgent );
     networkRequest.setRawHeader("Cookie", Server::GlobalInfo::sid);
     networkRequest.setRawHeader("Content-Type","multipart/form-data; boundary=" + boundary);
-    networkRequest.setHeader(QNetworkRequest::ContentLengthHeader,cdt.size());
+    networkRequest.setHeader(QNetworkRequest::ContentLengthHeader, body.size());
+
+    QNetworkReply *reply;
 
     switch (type) {
-    case POST: {
-        QNetworkReply *replyPost = this->post(networkRequest, cdt);
-        connect(replyPost, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &ServiceRequest::slotError);
-        connect(replyPost, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
-        connect(replyPost, &QNetworkReply::bytesWritten, this, &ServiceRequest::bytesWrittenSlot);
+    case POST:
+        reply = this->post(networkRequest, body);
         break;
-    }
     default:
         break;
     }
-}
 
-void ServiceRequest::bytesWrittenSlot(qint64 bytes) {
-    qDebug("LA SIZE");
-    qDebug(QString::number(bytes).toStdString().c_str());
+    reply->setProperty("routeId", request);
+    reply->setProperty("verb", _typeEnumList[type]);
+    connect(reply, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
 }
-

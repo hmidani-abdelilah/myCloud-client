@@ -9,6 +9,7 @@ class ViewFilesPage : public Page
 public:
     ViewFilesPage(QWidget *parent = 0);
 
+    void reloadPage();
 protected:
     void setHeaderBar();
 

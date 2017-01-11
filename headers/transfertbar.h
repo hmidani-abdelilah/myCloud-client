@@ -6,7 +6,7 @@
 #include <QProgressBar>
 #include <QVBoxLayout>
 
-#include "customqfile.h"
+#include "infoelement.h"
 #include "qlabelcustom.h"
 
 class TransfertBar : public QWidget
@@ -16,7 +16,7 @@ class TransfertBar : public QWidget
 public:
 
 public:
-    TransfertBar(CustomQFile *file);
+    TransfertBar(InfoElement *file);
 
 public:
     QHBoxLayout     *_layout;
@@ -29,7 +29,7 @@ public:
     QProgressBar    *_progressBar;
     QLabelCustom    *_transferedSize;
     QLabelCustom    *_statusLabel;
-    CustomQFile     *_file;
+    InfoElement     *_file;
 
     quint64         _sizeTransfered;
     float           _speed;
@@ -48,9 +48,9 @@ public:
     void hasBeenSelected(bool value);
 
     quint64 getId();
-    CustomQFile::Status getStatus();
+    InfoElement::Status getStatus();
 
-    void changeStatusOfFile(CustomQFile::Status status);
+    void changeStatusOfFile(InfoElement::Status status);
     QLabelCustom *getBtnDelete();
 protected:
     void paintEvent(QPaintEvent *);

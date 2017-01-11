@@ -8,6 +8,8 @@ MessageBoxNaming::MessageBoxNaming(QString text, QString btnNamingText) : QDialo
     _cancelBtn = new QPushButton("Cancel");
     _acceptBtn = new QPushButton(btnNamingText);
 
+    _acceptBtn->setDefault(true);
+
     QHBoxLayout *btnLayout = new QHBoxLayout();
     btnLayout->addWidget(_cancelBtn);
     btnLayout->addWidget(_acceptBtn);

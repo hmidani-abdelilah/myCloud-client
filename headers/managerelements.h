@@ -13,6 +13,7 @@
 #include "filemanager.h"
 #include "messageboxnaming.h"
 #include "folderrequest.h"
+#include "dialoguedropelement.h"
 
 class FileManager;
 
@@ -33,14 +34,13 @@ public slots:
 private slots:
     void ElementHasBeenDoubleClicked(QString title);
 
-    void ElementhasBeenClicked();
+    void ElementhasBeenClicked(DataElement dataElement);
     void responseFolderCreate(QNetworkReply *reply);
+    void elementsHasBeenDragged();
+
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
-
-protected slots:
-    void getDataElements(QNetworkReply *reply);
 
 protected slots:
     void setContents(QNetworkReply *reply);
@@ -56,12 +56,15 @@ protected:
     QStringList _path;
     DisplayPath *_displayPath;
     MessageBoxNaming *_messageBoxCreateFolder;
-
+    QVector<DataElement> _itemsSelected;
+    bool        _ctrlKeyPress;
     void configureRightClick();
 
     QLabelCustom    *_previousAction;
     void paintEvent(QPaintEvent *pe);
 
+    void keyPressEvent(QKeyEvent *ev);
+    void keyReleaseEvent(QKeyEvent *ev);
 signals:
     void folderHasBeenDoubleClicked(QString title);
 };

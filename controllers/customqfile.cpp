@@ -1,15 +1,21 @@
-#include "customqfile.h"
+#include "UploadElement.h"
 
-CustomQFile::CustomQFile(QString pathFile) : QFile(pathFile)
+UploadElement::UploadElement(QString pathFile) : QFile(pathFile)
 {
-    _sizeUpload = 0;
+    _sizeTransfered = 0;
     _constRefreshSpeed = 1000; // 1000 miliseconde
-    _averageUploadSize = 0;
-    _rangeUploadSpeed = 0;
+    _averageTransfertSize = 0;
+    _rangeTransfertSpeed = 0;
     _status = Status::NONE;
+
+    _transfertTypeRef.insert("UPLOAD", TransfertType::UPLOAD);
+    _transfertTypeRef.insert("DOWNLOAD", TransfertType::DOWNLOAD);
+    _transfertTypeRef.insert("UNDEFINED", TransfertType::UNDEFINED);
+
+    _transfertType = TransfertType::UNDEFINED;
 }
 
-CustomQFile::CustomQFile(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert) : QFile(pathFile)
+UploadElement::UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert, QString transfertType) : QFile(pathFile)
 {
     _size = size;
     _id = id;
@@ -17,12 +23,13 @@ CustomQFile::CustomQFile(QString pathFile, QString name, QString pathClient, QSt
     _pathServer = pathServer;
     _pathClient = pathClient;
 
-    _sizeUpload = octetAlreadyTransfert;
-    _averageUploadSize = octetAlreadyTransfert;
+    _sizeTransfered = octetAlreadyTransfert;
+    _averageTransfertSize = octetAlreadyTransfert;
 
     _constRefreshSpeed = 1000; // 1000 miliseconde
-    _rangeUploadSpeed = 0;
+    _rangeTransfertSpeed = 0;
     _status = Status::NONE;
+    _transfertType = _transfertTypeRef[transfertType];
 
     if (isFinish()) { // If all data are on the server
         _status = Status::FINISH;
@@ -32,44 +39,51 @@ CustomQFile::CustomQFile(QString pathFile, QString name, QString pathClient, QSt
             _status = Status::ERROR_CLIENT_PATH;
         }
         else {
-            _status = CustomQFile::convertStringToStatus(status);
+            _status = UploadElement::convertStringToStatus(status);
             this->read(octetAlreadyTransfert);
             this->start();
         }
     }
 }
 
-float CustomQFile::getUploadSpeed()
+float UploadElement::getTransfertSpeed()
 {
-    return _rangeUploadSpeed;
+    return _rangeTransfertSpeed;
 }
 
-int CustomQFile::getProgression()
+int UploadElement::getProgression()
 {
-    if (_sizeUpload > _size) // Probleme a resourdre, setOctetsSentToServer(int nbOctet) <- nbOctet = valeur en dur
-        _sizeUpload = _size;
-    return (float)_sizeUpload / (float)_size * 100;
+    if (_sizeTransfered > _size) // Probleme a resourdre, setOctetsTransfered(int nbOctet) <- nbOctet = valeur en dur
+        _sizeTransfered = _size;
+    return (float)_sizeTransfered / (float)_size * 100;
 }
 
-bool CustomQFile::isFinish() {
-    return _sizeUpload >= _size;
+bool UploadElement::isFinish() {
+    return _sizeTransfered >= _size;
 }
 
-void CustomQFile::setOctetsSentToServer(int nbOctet) {
-    _sizeUpload += nbOctet;
-    _averageUploadSize += nbOctet;
+UploadElement::TransfertType UploadElement::type()
+{
+    return _transfertType;
+}
+
+void UploadElement::setOctetsTransfered(int nbOctet)
+{
+    _sizeTransfered += nbOctet;
+    _averageTransfertSize += nbOctet;
 
     if (this->isFinish())
         setStatus(Status::FINISH);
 
     if (this->elapsed() > _constRefreshSpeed) {
-        _rangeUploadSpeed = (_averageUploadSize / 1000) / (this->elapsed() / 1000);
-        _averageUploadSize = 0;
+        _rangeTransfertSpeed = (_averageTransfertSize / 1000) / (this->elapsed() / 1000);
+        _averageTransfertSize = 0;
         this->restart();
     }
 }
 
-void CustomQFile::setStatus(CustomQFile::Status status) {
+void UploadElement::setStatus(UploadElement::Status status)
+{
     if (status == _status)
         return;
     _status = status;
@@ -77,16 +91,17 @@ void CustomQFile::setStatus(CustomQFile::Status status) {
     emit statusHasChanged(_id);
 }
 
-void CustomQFile::setPathServer(QString pathServer) {
+void UploadElement::setPathServer(QString pathServer)
+{
     _pathServer = pathServer;
 }
 
-void CustomQFile::setPathClient(QString pathClient)
+void UploadElement::setPathClient(QString pathClient)
 {
     _pathClient = pathClient;
 }
 
-QString CustomQFile::convertStatusToString(CustomQFile::Status status) // static
+QString UploadElement::convertStatusToString(UploadElement::Status status) // static
 {
     switch (status) {
     case EN_COURS:
@@ -110,7 +125,7 @@ QString CustomQFile::convertStatusToString(CustomQFile::Status status) // static
     }
 }
 
-CustomQFile::Status CustomQFile::convertStringToStatus(QString status) //static
+UploadElement::Status UploadElement::convertStringToStatus(QString status) //static
 {
     if (status == "En cours")
         return Status::EN_COURS;

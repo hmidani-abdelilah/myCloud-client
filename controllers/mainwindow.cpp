@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->toolBar->addWidget(titleApp);
     ui->toolBar->addWidget(spacer);
-    //ui->toolBar->setStyleSheet("border-bottom: 1px solid #" + Color::GlobalInfo::greyBorder + ";");
     ui->toolBar->setMovable(false);
 }
 

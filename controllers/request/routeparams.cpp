@@ -27,3 +27,7 @@ QMap<QString, QString> RouteParams::params() {
 void RouteParams::addQueryItem(const QString &key, const QString &value) {
     _urlQuery.addQueryItem(key, value);
 }
+
+QString RouteParams::query() {
+    return !_urlQuery.isEmpty() ? ("?" + _urlQuery.toString()) : "";
+}

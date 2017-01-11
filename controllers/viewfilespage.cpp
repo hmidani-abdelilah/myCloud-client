@@ -43,3 +43,7 @@ void ViewFilesPage::setHeaderBar() {
 
     _headerLayout->setLayout(layout);
 }
+
+void ViewFilesPage::reloadPage() {
+    _manageElements->refreshActualPage();
+}

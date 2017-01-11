@@ -1,16 +1,16 @@
 #include "jsonmanager.h"
+#include "jsonerror.h"
 
 JsonManager::JsonManager(QNetworkReply *reply) : QJsonDocument()
 {
     _typeSav = ISDOCUMENT;
-    QString text = ((QString)reply->readAll());
-    _doc = QJsonDocument::fromJson(text.toUtf8());
+    QByteArray text = reply->readAll();
+    _doc = QJsonDocument::fromJson(text);
 }
 
 JsonManager::JsonManager(QString reply)
 {
     _doc = QJsonDocument::fromJson(reply.toUtf8());
-    //this->convertJsonToArray(reply);
 }
 
 QJsonDocument JsonManager::getJsonDocument() {
@@ -19,78 +19,6 @@ QJsonDocument JsonManager::getJsonDocument() {
 
 void JsonManager::initialize() {
     _typeSav = ISDOCUMENT;
-}
-
-QMap<QString, QString> JsonManager::getObjectJson(QJsonDocument doc) {
-    //    if(!doc.isObject())
-    //        return ;
-
-    QJsonObject obj;
-    QMap<QString, QString> array;
-    obj = doc.object();
-
-    QJsonObject::Iterator it;
-
-    for (it = obj.begin() ; it != obj.end() ; it++) {
-        array[it.key()] = (*it).toString();
-    }
-    return array;
-}
-
-QMap<QString, QString> JsonManager::getObjectJson(QString value) {
-    JsonManager::getObjectJson(JsonManager::fromJson(value.toUtf8()));
-}
-
-void JsonManager::convertJsonToArray(QString json){
-
-    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-    QJsonObject obj;
-    qDebug() << "convert json to array" << json.toStdString().c_str();
-    if(!doc.isNull())
-    {
-        if(doc.isObject())
-        {
-            obj = doc.object();
-
-            QJsonObject::Iterator it;
-
-            for (it = obj.begin() ; it != obj.end() ; it++) {
-                qDebug(it.key().toStdString().c_str());
-                _arrayValue[it.key()] = *it;
-            }
-        }
-        else if (doc.isArray()) {
-            qDebug() << "Document is an array" << doc.array().count() ;
-        }
-        else
-            qDebug() << "Document is not an object" ;
-    }
-    else
-        qDebug() << "Invalid JSON...\n";
-}
-
-
-QString JsonManager::getValue(const QString key) const {
-    return _arrayValue[key].toString();
-}
-
-QVector<QJsonArray> JsonManager::getArrayJson(const QString json)  {
-    JsonManager::getArrayJson(JsonManager::fromJson(json.toUtf8()));
-}
-
-QVector<QJsonArray> JsonManager::getArrayJson(const QJsonDocument doc) {
-    QVector<QJsonArray> array;
-
-    if (doc.isArray())
-        qDebug("OUUUIIIIIIIIIIIIIIIIII");
-    else
-        qDebug("NOOOOOOOOOOOOOOON");
-    QJsonArray jsonArray = doc.array();
-    QJsonArray::iterator it;
-    //    for (it = jsonArray.begin() ; it != jsonArray.end() ; it++) {
-    //        array.append((*it));
-    //    }
-    return array;
 }
 
 QVector<QString> JsonManager::getArray(const QString key) const {
@@ -105,151 +33,139 @@ QVector<QString> JsonManager::getArray(const QString key) const {
     return array;
 }
 
-//QVector<QMap<QString, QString>> JsonManager::getArrayByJson(const QString json)
-//{
-//    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-//    QVector<QMap<QString, QString>> vector;
-//    QJsonArray array = doc.array();
-//    QJsonObject obj;
-
-//    QJsonArray::iterator it;
-//    for (it = array.begin() ; it != array.end() ; it++) {
-//        obj = (*it).toObject();
-
-//        QJsonObject::Iterator itObj;
-//        QMap<QString, QString> map;
-//        for (itObj = obj.begin() ; itObj != obj.end() ; itObj++) {
-//            map.insert(itObj.key(), (*itObj).toString());
-//            vector.append(map);
-//        }
-//    }
-//    //     vector.append((*it).toObject());
-
-//    return vector;
-//}
-
-QString JsonManager::operator[](const QString key) const {
-    return _arrayValue[key].toString();
-}
-
-//[{}, {}]
-
-//[{toto : {} }, {titi : {}}]
-
-//[{titi : []}, {toto : []}]
-
-//{titi : []}
-
 JsonManager *JsonManager::toArray(int index) { //vient d'un array
-    QJsonArray array;
+    try {
+        QJsonArray array;
 
-    switch (_typeSav) {
-    case ISDOCUMENT:
-        array = _doc.array();
-        break;
+        switch (_typeSav) {
+        case ISDOCUMENT:
+            array = _doc.array();
+            break;
 
-    case ISARRAY:
-        array = _arraySav;
-        break;
-    default:
-        break;
-    }
-
-    QJsonArray::iterator it;
-    int i = 0;
-
-
-    for (it = array.begin() ; it != array.end() ; it++) {
-        if (index != i) {
-            i++;
-            continue;
+        case ISARRAY:
+            array = _arraySav;
+            break;
+        default:
+            throw JsonError("[toArray] : This format is not an array - index : " + index);
+            break;
         }
-        else if ((*it).isArray()) {
-            _arraySav = (*it).toArray();
-            _typeSav = ISARRAY;
+
+        QJsonArray::iterator it;
+        int i = 0;
+
+
+        for (it = array.begin() ; it != array.end() ; it++) {
+            if (index != i) {
+                i++;
+                continue;
+            }
+            else if ((*it).isArray()) {
+                _arraySav = (*it).toArray();
+                _typeSav = ISARRAY;
+                return this;
+            }
+            else if ((*it).isObject()) {
+                _objectSav = (*it).toObject();
+                _typeSav = ISOBJECT;
+                return this;
+            }
+            else
+                throw JsonError("[toArray] : This array is not an array or an object - index : " + index);
             return this;
         }
-        else if ((*it).isObject()) {
-            _objectSav = (*it).toObject();
-            _typeSav = ISOBJECT;
-            return this;
+        throw JsonError("[toArray] : This format is not an array - index : " + index);
         }
-        qDebug("ERROR JSON ARRAY");
-        return this;
+    catch(JsonError *jsonError) {
+        qDebug() << jsonError->what();
     }
-    qDebug("ERROR JSON ARRAY");
+
     return this;
 }
 
 int JsonManager::length() {
-    switch (_typeSav) {
-    case ISDOCUMENT:
-        if (_doc.isArray())
-            return _doc.array().size();
-        else if (_doc.isObject())
-            return _doc.object().size();
-        break;
-    case ISARRAY:
-        return _arraySav.size();
-        break;
-    case ISOBJECT:
-        return _objectSav.size();
-        break;
-    default:
-        break;
+    try {
+        switch (_typeSav) {
+        case ISDOCUMENT:
+            if (_doc.isArray())
+                return _doc.array().size();
+            else if (_doc.isObject())
+                return _doc.object().size();
+            else
+                throw JsonError("[length] : Can not get length of this document");
+            break;
+        case ISARRAY:
+            return _arraySav.size();
+            break;
+        case ISOBJECT:
+            return _objectSav.size();
+            break;
+        default:
+            throw JsonError("[length] : Can not get length of this json");
+            break;
+        }
+    }
+    catch(JsonError *jsonError) {
+        qDebug() << jsonError->what();
     }
 }
 
 JsonManager *JsonManager::toObject(QString value) {
-    QJsonObject object;
-    switch (_typeSav) {
-    case ISDOCUMENT:
-        object = _doc.object();
-        break;
-    case ISOBJECT:
-        object = _objectSav;
-        break;
-    default:
-        break;
-    }
-
-    QJsonObject::iterator it;
-    int i = 0;
-
-    for (it = object.begin() ; it != object.end() ; it++) {
-        if (it.key() != value) {
-            i++;
-            continue;
+    try {
+        QJsonObject object;
+        switch (_typeSav) {
+        case ISDOCUMENT:
+            object = _doc.object();
+            break;
+        case ISOBJECT:
+            object = _objectSav;
+            break;
+        default:
+            throw JsonError("[toObject] : This format is not an object - value : " + value);
+            break;
         }
-        else if ((*it).isArray()) {
-            _arraySav = (*it).toArray();
-            _typeSav = ISARRAY;
+
+        QJsonObject::iterator it;
+        int i = 0;
+
+        for (it = object.begin() ; it != object.end() ; it++) {
+            if (it.key() != value) {
+                i++;
+                continue;
+            }
+            else if ((*it).isArray()) {
+                _arraySav = (*it).toArray();
+                _typeSav = ISARRAY;
+                return this;
+            }
+            else if ((*it).isObject()) {
+                _objectSav = (*it).toObject();
+                _typeSav = ISOBJECT;
+                return this;
+            }
+            throw JsonError("[toObject] : QJsonObject is not an object or an array - value : " + value);
             return this;
         }
-        else if ((*it).isObject()) {
-            _objectSav = (*it).toObject();
-            _typeSav = ISOBJECT;
-            return this;
-        }
-        qDebug("ERROR JSON TO OBJECT");
         return this;
     }
-    return this;
+    catch(JsonError *jsonError) {
+        qDebug() << jsonError->what();
+    }
 }
 
 QMap<QString, QString> JsonManager::getJson() {
-    QJsonObject object;
-    switch (_typeSav) {
-    case ISDOCUMENT:
-        object = _doc.object();
-        break;
-    case ISOBJECT:
-        object = _objectSav;
-        break;
-    default:
-        break;
-    }
-
+    try {
+        QJsonObject object;
+        switch (_typeSav) {
+        case ISDOCUMENT:
+            object = _doc.object();
+            break;
+        case ISOBJECT:
+            object = _objectSav;
+            break;
+        default:
+            throw JsonError("[getJson] : This format is not a json - value : " + _typeSav);
+            break;
+        }
     QJsonObject::Iterator itObj;
     QMap<QString, QString> map;
 
@@ -263,6 +179,10 @@ QMap<QString, QString> JsonManager::getJson() {
     }
 
     return map;
+    }
+    catch(JsonError *jsonError) {
+        qDebug() << jsonError->what();
+    }
 }
 
 

@@ -1,15 +1,57 @@
 <RCC>
     <qresource prefix="/logo">
         <file>cloud.png</file>
-        <file>cloud_download.png</file>
+        <file alias="cloud_download">cloud_download.png</file>
         <file alias="cloud2">cloud2.png</file>
         <file alias="pathSpacer">next.png</file>
         <file alias="downloadFinish">assets/cloud-download-finish.png</file>
         <file alias="downloadDelete">assets/delete-button.png</file>
+        <file alias="files">assets/files.png</file>
+        <file alias="menu">assets/menu.png</file>
+        <file alias="user">assets/user.png</file>
     </qresource>
     <qresource prefix="/elements">
         <file alias="folder">assets/folder.png</file>
         <file alias="file">file.png</file>
         <file alias="previous">previous.png</file>
+        <file alias="after-effects">assets/after-effects.svg</file>
+        <file alias="ai">assets/ai.svg</file>
+        <file alias="audition">assets/audition.svg</file>
+        <file alias="avi">assets/avi.svg</file>
+        <file alias="bridge">assets/bridge.svg</file>
+        <file alias="css">assets/css.svg</file>
+        <file alias="csv">assets/csv.svg</file>
+        <file alias="dbf">assets/dbf.svg</file>
+        <file alias="doc">assets/doc.svg</file>
+        <file alias="dreamweaver">assets/dreamweaver.svg</file>
+        <file alias="dwg">assets/dwg.svg</file>
+        <file alias="exe">assets/exe.svg</file>
+        <file alias="fireworks">assets/fireworks.svg</file>
+        <file alias="fla">assets/fla.svg</file>
+        <file alias="flash">assets/flash.svg</file>
+        <file alias="html">assets/html.svg</file>
+        <file alias="ai">assets/illustrator.svg</file>
+        <file alias="indesign">assets/indesign.svg</file>
+        <file alias="iso">assets/iso.svg</file>
+        <file alias="js">assets/javascript.svg</file>
+        <file>assets/jpg.svg</file>
+        <file alias="json">assets/json-file.svg</file>
+        <file alias="mp3">assets/mp3.svg</file>
+        <file alias="mp4">assets/mp4.svg</file>
+        <file alias="pdf">assets/pdf.svg</file>
+        <file alias="psd">assets/photoshop.svg</file>
+        <file>assets/png.svg</file>
+        <file alias="ppt">assets/ppt.svg</file>
+        <file alias="prelude">assets/prelude.svg</file>
+        <file alias="premiere">assets/premiere.svg</file>
+        <file alias="psd">assets/psd.svg</file>
+        <file alias="rtf">assets/rtf.svg</file>
+        <file alias="search">assets/search.svg</file>
+        <file alias="svg">assets/svg.svg</file>
+        <file>assets/txt.svg</file>
+        <file alias="xls">assets/xls.svg</file>
+        <file alias="xml">assets/xml.svg</file>
+        <file>assets/zip-1.svg</file>
+        <file alias="zip">assets/zip.svg</file>
     </qresource>
 </RCC>

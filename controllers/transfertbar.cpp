@@ -1,11 +1,13 @@
 #include "transfertbar.h"
 #include "globalinfo.h"
+#include "generator.h"
+
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QStyleOption>
 #include <QPainter>
 
-TransfertBar::TransfertBar(CustomQFile *file) : QWidget()
+TransfertBar::TransfertBar(InfoElement *file) : QWidget()
 {
     QSpacerItem* spacerName = new QSpacerItem(10, 0);
     QSpacerItem* spacerSize = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
@@ -22,7 +24,19 @@ TransfertBar::TransfertBar(CustomQFile *file) : QWidget()
     _name = new QLabelCustom("");
     _progressBar = new QProgressBar();
     _btnDelete = new QLabelCustom(":/logo/downloadDelete", 12, 12);
-    _iconStatus = new QLabelCustom(":/logo/downloadFinish", 16, 16);
+
+    switch (file->type()) {
+    case InfoElement::UPLOAD:
+        _iconStatus = new QLabelCustom(":/logo/downloadFinish", 16, 16);
+        break;
+    case InfoElement::DOWNLOAD:
+        _iconStatus = new QLabelCustom(":/logo/cloud_download", 16, 16);
+        break;
+    default:
+        // TODO : Throw an exeption
+        break;
+    }
+
     _speedLabel = new QLabelCustom("0 Mo/s");
     _size = new QLabelCustom("0");
     _labelTime = new QLabelCustom("");
@@ -121,31 +135,21 @@ void TransfertBar::setTransferedSize() { // mettre cette fonction dans une class
     quint64 size = _file->getTransferedSize();
 
     _sizeTransfered = size;
-    if (size < 1000000)
-        _transferedSize->setText(QString::number((float)size / 1000) + " Ko");
-    else if (size < 1000000000)
-        _transferedSize->setText(QString::number((float)size / 1000000) + "Mo");
-    else
-        _transferedSize->setText(QString::number((float)size / 1000000000) + "Go");
+    _transferedSize->setText(Generator::getFormatSize(size));
 }
 
 void TransfertBar::setSpeed() { // set speed with syntax ( ie: 2 mo/s)
-    float speed = _file->getUploadSpeed();
-    _speed = speed;
-    if (speed < 1000) {
-        _speedLabel->setText(QString::number(speed) + " Ko/s");
+    _speed = _file->getTransfertSpeed();
+
+    if (_speed < 1000) {
+        _speedLabel->setText(QString::number(_speed) + " Ko/s");
     }
     else
-        _speedLabel->setText(QString::number(speed / 1000) + " Mo/s");
+        _speedLabel->setText(QString::number(_speed / 1000) + " Mo/s");
 }
 
-void TransfertBar::setSize(quint64 size) { // size octet in qint64
-    if (size < 1000000)
-        _size->setText(QString::number((float)size / 1000) + " Ko");
-    else if (size < 1000000000)
-        _size->setText(QString::number((float)size / 1000000) + "Mo");
-    else
-        _size->setText(QString::number((float)size / 1000000000) + "Go");
+void TransfertBar::setSize(quint64 size) {
+    _size->setText(Generator::getFormatSize(size));
 }
 
 void TransfertBar::setTime() {
@@ -154,40 +158,39 @@ void TransfertBar::setTime() {
         secondToWait = qRound(((float)(_file->getSize() - _sizeTransfered)) / (_speed * 1000));
 
     _time->setHMS(0, 0, secondToWait);
-    qDebug(_time->toString().toStdString().c_str());
     _labelTime->setText(_time->toString());
 }
 
 void TransfertBar::setStatus() {
-    _statusLabel->setText(CustomQFile::convertStatusToString(_file->getStatus()));
+    _statusLabel->setText(InfoElement::convertStatusToString(_file->getStatus()));
 
     switch (_file->getStatus()) {
-    case CustomQFile::Status::FINISH: {
+    case InfoElement::Status::FINISH: {
         _iconStatus->changeImageColor("1BB71E");
         break;
     }
-    case CustomQFile::Status::PAUSE: {
+    case InfoElement::Status::PAUSE: {
         _iconStatus->changeImageColor("FFD400");
         break;
     }
-    case CustomQFile::Status::EN_COURS: {
+    case InfoElement::Status::EN_COURS: {
         _iconStatus->changeImageColor("329ED1");
         break;
     }
-    case CustomQFile::Status::DELETE: {
+    case InfoElement::Status::DELETE: {
         break;
 
     }
-    case CustomQFile::Status::ERROR_CLIENT_PATH: {
+    case InfoElement::Status::ERROR_CLIENT_PATH: {
         _iconStatus->changeImageColor("F45342");
         break;
     }
     }
 }
 
-void TransfertBar::changeStatusOfFile(CustomQFile::Status status) {
+void TransfertBar::changeStatusOfFile(InfoElement::Status status) {
     _file->setStatus(status);
-    _statusLabel->setText(CustomQFile::convertStatusToString(status));
+    _statusLabel->setText(InfoElement::convertStatusToString(status));
 }
 
 void TransfertBar::paintEvent(QPaintEvent *) {
@@ -218,7 +221,7 @@ quint64 TransfertBar::getId() {
     return _file->getId();
 }
 
-CustomQFile::Status TransfertBar::getStatus()
+InfoElement::Status TransfertBar::getStatus()
 {
     return _file->getStatus();
 }
