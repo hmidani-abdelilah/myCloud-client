@@ -11,7 +11,7 @@ TransfertPage::TransfertPage() : Page()
     _layout = new QVBoxLayout();
     _barSelected = NULL;
 
-    connect(_fileManager, &FileManager::startUploadFile, this, &TransfertPage::addNewUpload);
+    connect(_fileManager, &FileManager::startUploadFile, this, &TransfertPage::addNewTransfertBar);
     connect(_fileManager, &FileManager::fileDeletedInHistoric, this, &TransfertPage::slotDeleteTransfertBar);
 
     this->setContentsMargins(0, 0, 0, 0);
@@ -30,7 +30,7 @@ TransfertPage::TransfertPage() : Page()
     setHeaderBar();
 }
 
-void TransfertPage::addNewUpload(quint64 id) {
+void TransfertPage::addNewTransfertBar(quint64 id) {
 
     TransfertBar *bar = new TransfertBar(_fileManager->getFile(id));
 
@@ -84,22 +84,22 @@ void TransfertPage::updateHeaderBar() {
     }
 
     switch (_barSelected->getStatus()) {
-    case CustomQFile::Status::EN_COURS:
+    case InfoElement::Status::EN_COURS:
         _deleteBtn->setEnabled(true);
         _pauseBtn->setEnabled(true);
         _startBtn->setEnabled(false);
         break;
-    case CustomQFile::Status::PAUSE:
+    case InfoElement::Status::PAUSE:
         _deleteBtn->setEnabled(true);
         _pauseBtn->setEnabled(false);
         _startBtn->setEnabled(true);
         break;
-    case CustomQFile::Status::DELETE:
+    case InfoElement::Status::DELETE:
         _deleteBtn->setEnabled(false);
         _pauseBtn->setEnabled(true);
         _startBtn->setEnabled(true);
         break;
-    case CustomQFile::Status::FINISH:
+    case InfoElement::Status::FINISH:
         _deleteBtn->setEnabled(true);
         _pauseBtn->setEnabled(false);
         _startBtn->setEnabled(false);
@@ -138,12 +138,12 @@ void TransfertPage::slotDeleteTransfert() {
 }
 
 void TransfertPage::slotPauseTransfert() {
-    _barSelected->changeStatusOfFile(CustomQFile::Status::PAUSE);
+    _barSelected->changeStatusOfFile(InfoElement::Status::PAUSE);
     updateHeaderBar();
 }
 
 void TransfertPage::slotStartTransfert() {
-    _barSelected->changeStatusOfFile(CustomQFile::Status::EN_COURS);
+    _barSelected->changeStatusOfFile(InfoElement::Status::EN_COURS);
     updateHeaderBar();
 }
 
@@ -153,5 +153,5 @@ void TransfertPage::slotDeleteAllFile(TransfertBar *bar) { // delete file + hist
         _barSelected = NULL;
         updateHeaderBar();
     }
-    bar->changeStatusOfFile(CustomQFile::Status::DELETE);
+    bar->changeStatusOfFile(InfoElement::Status::DELETE);
 }

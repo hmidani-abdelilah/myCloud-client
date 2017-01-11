@@ -3,8 +3,12 @@
 
 #include "serviceRequest.h"
 
+class UserRequest;
+typedef void (UserRequest::*PtrSignalUser)(QNetworkReply *);
+
 class UserRequest : public ServiceRequest
 {
+    Q_OBJECT
 public:
     enum User {
         Connection,
@@ -14,8 +18,18 @@ public:
 
     UserRequest();
 
+private:
+    PtrSignalUser _ptrSignal;
+    QMap<User, PtrSignalUser> _listRoute;
+
+protected slots:
+    virtual void emitSignalResponseReady(QNetworkReply *reply);
+
 protected:
-    QString getRoute(int route);
+    QString getRoute(int route, QMap<QString, QString> params);
+
+signals:
+    void signalConnected(QNetworkReply *reply);
 };
 
 #endif // USERREQUEST_H

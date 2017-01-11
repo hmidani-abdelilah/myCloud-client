@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QNetworkReply>
 
+#include "userrequest.h"
+
 namespace Ui {
 class Login;
 }
@@ -18,6 +20,7 @@ public:
 
 private:
     Ui::Login *ui;
+    UserRequest *_userRequest;
 
 signals:
     void connexionSuccess();

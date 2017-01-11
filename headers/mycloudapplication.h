@@ -8,6 +8,9 @@ class MyCloudApplication : public QApplication
 public:
     MyCloudApplication(int argc, char *argv[]);
 
+protected:
+    bool notify(QObject *receiver, QEvent *event);
+
 public:
     void commitData(QSessionManager &manager);
 };

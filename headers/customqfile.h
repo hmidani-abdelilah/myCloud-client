@@ -1,10 +1,11 @@
-#ifndef CUSTOMQFILE_H
-#define CUSTOMQFILE_H
+#ifndef UploadElement_H
+#define UploadElement_H
 
 #include <QFile>
 #include <QTime>
+#include <QMap>
 
-class CustomQFile : public QFile, public QTime
+class UploadElement : public QFile, public QTime
 {
     Q_OBJECT
 
@@ -19,49 +20,58 @@ public:
         ERROR
     };
 
+    enum TransfertType {
+        UNDEFINED,
+        UPLOAD,
+        DOWNLOAD
+    };
+
 public :
-    CustomQFile();
-    CustomQFile(QString pathFile);
-    CustomQFile(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert);
+    UploadElement();
+    UploadElement(QString pathFile);
+    UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert, QString transfertType);
 
     inline quint64 getSize() {return _size;}
     inline quint64 getId() {return _id;}
     inline QString getNameFile() {return _name;}
-    inline quint64 getTransferedSize() {return _sizeUpload;}
+    inline quint64 getTransferedSize() {return _sizeTransfered;}
     inline QString getPathServer() {return _pathServer;}
-    inline CustomQFile::Status getStatus() {return _status;}
+    inline UploadElement::Status getStatus() {return _status;}
 
     inline void setNameFile(QString name) {_name = name;}
     inline void setSize(quint64 size) {_size = size;}
     inline void setId(quint64 id) {_id = id;}
 
-    void setOctetsSentToServer(int nbOctet);
-    void setStatus(CustomQFile::Status status);
+    void setOctetsTransfered(int nbOctet);
+    void setStatus(UploadElement::Status status);
     void setPathServer(QString pathServer);
     void setPathClient(QString pathClient);
 
-    float getUploadSpeed();
+    float getTransfertSpeed();
     int   getProgression();
 
-    static QString convertStatusToString(CustomQFile::Status status);
-    static CustomQFile::Status convertStringToStatus(QString status);
+    static QString convertStatusToString(UploadElement::Status status);
+    static UploadElement::Status convertStringToStatus(QString status);
     bool isFinish();
+
+    TransfertType type();
 
 signals:
     void statusHasChanged(quint64);
 
 private:
-    quint64     _id;
-    Status      _status;
-    quint64     _size;
-    QString     _name;
-    quint64     _sizeUpload;
-    QString     _pathServer;
-    QString     _pathClient;
-    float       _rangeUploadSpeed;
-    int         _constRefreshSpeed;
-    int         _averageUploadSize;
-
+    quint64                         _id;
+    Status                          _status;
+    quint64                         _size;
+    QString                         _name;
+    quint64                         _sizeTransfered;
+    QString                         _pathServer;
+    QString                         _pathClient;
+    TransfertType                   _transfertType;
+    QMap<QString, TransfertType>    _transfertTypeRef;
+    float                           _rangeTransfertSpeed;
+    int                             _constRefreshSpeed;
+    int                             _averageTransfertSize;
 };
 
-#endif // CUSTOMQFILE_H
+#endif // UploadElement_H

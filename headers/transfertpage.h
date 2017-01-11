@@ -21,7 +21,7 @@ protected:
     void setHeaderBar();
 
 private slots:
-    void addNewUpload(quint64 id);
+    void addNewTransfertBar(quint64 id);
     void updateData();
     void barHasBeenClicked(quint64 id);
     void slotDeleteTransfertBar(quint64 id);

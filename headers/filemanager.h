@@ -1,16 +1,16 @@
 #ifndef FILEMANAGER_H
 #define FILEMANAGER_H
 
-#include <QObject>
-#include <QTime>
-
 #include "managerelements.h"
 #include "socketmanager.h"
-#include "customqfile.h"
+#include "infoelement.h"
 #include "filerequest.h"
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include <QObject>
+#include <QTime>
 #include <QWidget>
 #include <QFileInfo>
 
@@ -24,22 +24,28 @@ public:
     static FileManager *getInstanceFileM();
     void sendFile(QString pathFile, QString location);
 
-    CustomQFile *getFile(quint64 id);
+    InfoElement *getFile(quint64 id);
     void deleteFile(quint64 id);
+    void downloadFile(QString pathFile, QString pathDevice, quint64 size);
+
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
 
 private slots:
     void bytesWritten(qint64 bytes);
     void responseSendFileDataToServer(QNetworkReply *reply);
-    void responseCreateFile(QNetworkReply *reply);
 
     void statusFileChanged(quint64 id);
     void getlistTransfertOnServer(QNetworkReply *reply);
 
-    void responseDeleteFile(QNetworkReply *reply);
-    void responseDeleteHistoricFile(QNetworkReply *reply);
     void responseReplaceFile(QNetworkReply *reply);
+    void responseHistoric(QNetworkReply *reply);
+
+    void responseHistoricDelete(QNetworkReply *reply);
+    void responseFile(QNetworkReply *reply);
+    void responseDeleteTransferingFile(QNetworkReply *reply);
+    void responseDownloadFileDataFromServer(QNetworkReply *reply);
+
 signals:
     void startUploadFile(quint64);
     void fileSended();
@@ -49,11 +55,11 @@ private:
     explicit FileManager(QObject *parent = 0);
     SocketManager *_socketManager;
     FileRequest *_fileRequest;
-    FileRequest *_createFileRequest;
-    FileRequest *_fileRequestHictoric;
-    FileRequest *_deleteFile;
-    FileRequest *_deleteHistoricFile;
-    FileRequest *_replaceFile;
+//    FileRequest *_createFileRequest;
+//    FileRequest *_fileRequestHictoric;
+//    FileRequest *_deleteFile;
+//    FileRequest *_deleteHistoricFile;
+//    FileRequest *_replaceFile;
 
     QString _pathSendFile;
     QString _locationFileServer;
@@ -69,8 +75,12 @@ private:
     QByteArray _boundary;
     QTime *timer;
     int     _bufferSize;
-    QMap<quint64, CustomQFile*> *_listFile;
-    void setNewFile(QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert = 0);
+    QMap<quint64, InfoElement*> *_fileList;
+    void setNewFile(QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, QString type, quint64 octetAlreadyTransfert = 0);
+    void downloadFileDataFromServer(quint64 id);
+
+    void responseInitializeForUpload(QNetworkReply *reply);
+    void responseInitializeForDownload(QNetworkReply *reply);
 };
 
 #endif // FILEMANAGER_H

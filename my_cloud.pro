@@ -17,7 +17,10 @@ LIBS+= -lcurl
 INCLUDEPATH += $$PWD/headers\
             += $$PWD/headers/elements\
             += $$PWD/headers/request\
-            += $$PWD/headers/message_box
+            += $$PWD/headers/message_box\
+            += $$PWD/headers/exceptions\
+            += $$PWD/headers/info_elements\
+            += $$PWD/headers/helpers\
 
 
 TEMPLATE = app
@@ -27,7 +30,6 @@ INCLUDEPATH += /Users/Aurelien/Qt/5.7/ios/mkspecs/macx-ios-clang/ios .
 # Input
 HEADERS += headers/btnleftmenu.h \
            headers/credentailstable.h \
-           headers/customqfile.h \
            headers/filemanager.h \
            headers/flowlayout.h \
            headers/globalinfo.h \
@@ -57,13 +59,22 @@ HEADERS += headers/btnleftmenu.h \
            headers/viewfilespage.h \
            headers/message_box/messageboxnaming.h \
            headers/request/folderrequest.h \
-           headers/request/routeparams.h
+           headers/request/routeparams.h \
+           headers/exceptions/httperror.h \
+           headers/exceptions/jsonerror.h \
+           headers/mimedatafile.h \
+           headers/info_elements/infoelement.h \
+           headers/info_elements/downloadelement.h \
+           headers/info_elements/uploadelement.h \
+           headers/dialoguedropelement.h \
+           headers/dialogdropheaderelement.h \
+           headers/helpers/generator.h
 
-FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui
+FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui \
+    dialogdropheaderelement.ui
 SOURCES += main.cpp \
            controllers/btnleftmenu.cpp \
            controllers/credentailstable.cpp \
-           controllers/customqfile.cpp \
            controllers/filemanager.cpp \
            controllers/flowlayout.cpp \
            controllers/globalinfo.cpp \
@@ -93,5 +104,15 @@ SOURCES += main.cpp \
            controllers/viewfilespage.cpp \
            controllers/message_box/messageboxnaming.cpp \
            controllers/request/folderrequest.cpp \
-           controllers/request/routeparams.cpp
+           controllers/request/routeparams.cpp \
+           controllers/exceptions/httperror.cpp \
+           controllers/exceptions/jsonerror.cpp \
+           controllers/mimedatafile.cpp \
+           controllers/info_elements/infoelement.cpp \
+           controllers/info_elements/downloadelement.cpp \
+           controllers/info_elements/uploadelement.cpp \
+           controllers/dialoguedropelement.cpp \
+           controllers/dialogdropheaderelement.cpp \
+           controllers/helpers/generator.cpp
+
 RESOURCES += assets.qrc

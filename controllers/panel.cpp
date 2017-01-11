@@ -26,9 +26,9 @@ Panel::Panel(QWidget *parent) :
     ui->headerBar->setStyleSheet("#headerBar { background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}");
 
     ui->leftMenuLayout->addWidget(titleLeftMenu);
-    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/cloud_download.png"), QString("DASHBOARD"), true));
-    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/cloud_download.png"), QString("DOWNLOAD")));
-    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/cloud_download.png"), QString("PROFIL")));
+    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/menu"), QString("DASHBOARD"), true));
+    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/cloud_download"), QString("DOWNLOAD")));
+    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/user"), QString("PROFIL")));
 
     QWidget* spacer = new QWidget();
     spacer->setStyleSheet("background-color:#" + Color::GlobalInfo::grey);
@@ -62,10 +62,6 @@ Panel::~Panel()
     delete ui;
 }
 
-void Panel::getPreviousPath() {
-    //_viewFilesPage->refreshFiles(_viewFilesPage->getCurrentPath());
-}
-
 void Panel::initializeHeaderBar() {
     for (int i = 0 ; i < _listPages->count() ; i++) {
         ui->headerBarLayout->addWidget(dynamic_cast<HeaderBar *>(_listPages->at(i))->getHeaderBarLayout());
@@ -87,6 +83,9 @@ void Panel::btnMenuClicked(QString title) {
         if (title == _listBtnLeftMenu->at(i)->getTitle()) {
             _listBtnLeftMenu->at(i)->setActive(true);
             ui->stackedWidget->setCurrentIndex(i);
+            if (ui->stackedWidget->currentIndex() == 0) {
+                _viewFilesPage->reloadPage();
+            }
             for (int index = 0 ; index < ui->headerBarLayout->count() ; index++) {
                 if (index == i) {
                     ui->headerBarLayout->itemAt(index)->widget()->show();

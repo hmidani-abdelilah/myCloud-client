@@ -13,11 +13,12 @@ public:
 
     void setParam(const QString &key, const QString &value);
     QByteArray body();
-    void addValueToBody(QString key, QString value);
     QMap<QString, QString> params();
 
     void addQueryItem(const QString &key, const QString &value);
     void addValueToBody(const QString &key, const QString &value);
+    QString query();
+
 private:
     QByteArray              _body;
     QMap<QString, QString>  _params;

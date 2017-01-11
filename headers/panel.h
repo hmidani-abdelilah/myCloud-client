@@ -39,7 +39,6 @@ public:
 
 public slots:
     void btnMenuClicked(QString title);
-    void getPreviousPath();
 
 private:
     BtnLeftMenu     *createBtnLeftMenu(QPixmap picture, QString title, bool value = false);
