@@ -5,6 +5,7 @@
 #include "socketmanager.h"
 #include "infoelement.h"
 #include "filerequest.h"
+#include "historicrequest.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -45,6 +46,7 @@ private slots:
     void responseFile(QNetworkReply *reply);
     void responseDeleteTransferingFile(QNetworkReply *reply);
     void responseDownloadFileDataFromServer(QNetworkReply *reply);
+    void responseHistoricByIdUpdate(QNetworkReply *reply);
 
 signals:
     void startUploadFile(quint64);
@@ -55,11 +57,7 @@ private:
     explicit FileManager(QObject *parent = 0);
     SocketManager *_socketManager;
     FileRequest *_fileRequest;
-//    FileRequest *_createFileRequest;
-//    FileRequest *_fileRequestHictoric;
-//    FileRequest *_deleteFile;
-//    FileRequest *_deleteHistoricFile;
-//    FileRequest *_replaceFile;
+    HistoricRequest *_historicRequest;
 
     QString _pathSendFile;
     QString _locationFileServer;

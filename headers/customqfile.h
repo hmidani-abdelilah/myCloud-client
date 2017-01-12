@@ -36,22 +36,22 @@ public :
     inline QString getNameFile() {return _name;}
     inline quint64 getTransferedSize() {return _sizeTransfered;}
     inline QString getPathServer() {return _pathServer;}
-    inline UploadElement::Status getStatus() {return _status;}
+    inline InfoElement::Status getStatus() {return _status;}
 
     inline void setNameFile(QString name) {_name = name;}
     inline void setSize(quint64 size) {_size = size;}
     inline void setId(quint64 id) {_id = id;}
 
     void setOctetsTransfered(int nbOctet);
-    void setStatus(UploadElement::Status status);
+    void setStatus(InfoElement::Status status);
     void setPathServer(QString pathServer);
     void setPathClient(QString pathClient);
 
     float getTransfertSpeed();
     int   getProgression();
 
-    static QString convertStatusToString(UploadElement::Status status);
-    static UploadElement::Status convertStringToStatus(QString status);
+    static QString convertStatusToString(InfoElement::Status status);
+    static InfoElement::Status convertStringToStatus(QString status);
     bool isFinish();
 
     TransfertType type();

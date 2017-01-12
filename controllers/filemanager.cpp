@@ -20,6 +20,7 @@ FileManager *FileManager::_instanceFileManager = 0;
 FileManager::FileManager(QObject *parent) : QObject(parent)
 {
     _fileRequest = new FileRequest();
+    _historicRequest = new HistoricRequest();
 
     _socketManager = SocketManager::getInstanceSocketM();
     _boundary = "-----------------------------7d935033608e2";
@@ -32,8 +33,9 @@ FileManager::FileManager(QObject *parent) : QObject(parent)
     connect(_fileRequest, &FileRequest::signalUpload, this, &FileManager::responseSendFileDataToServer);
     connect(_fileRequest, &FileRequest::signalDownload, this, &FileManager::responseDownloadFileDataFromServer);
     connect(_fileRequest, &FileRequest::signalFile, this, &FileManager::responseFile);
-    connect(_fileRequest, &FileRequest::signalHistoric, this, &FileManager::responseHistoric);
-    _fileRequest->request(FileRequest::GET, FileRequest::Historic);
+    connect(_historicRequest, &HistoricRequest::signalHistoric, this, &FileManager::responseHistoric);
+    connect(_historicRequest, &HistoricRequest::signalHistoricById, this, &FileManager::responseHistoricByIdUpdate);
+    _historicRequest->request(HistoricRequest::GET, HistoricRequest::DefaultHistoric);
 }
 
 FileManager *FileManager::getInstanceFileM()
@@ -90,7 +92,8 @@ void FileManager::setNewFile(QString name, QString pathClient, QString pathServe
     _fileList->insert(id, file);
     emit startUploadFile(id); // use only for add file in transferPage
 
-    statusFileChanged(id);
+    if (file->getStatus() != InfoElement::FINISH)
+        statusFileChanged(id);
 }
 
 void FileManager::getlistTransfertOnServer(QNetworkReply *reply) {
@@ -127,7 +130,7 @@ void FileManager::sendFile(QString pathFile, QString location) {
 
     prms.addValueToBody("size", QString::number(file.size()));
     prms.addValueToBody("name", url.fileName());
-    prms.addValueToBody("status", UploadElement::convertStatusToString(UploadElement::Status::EN_COURS));
+    prms.addValueToBody("status", UploadElement::convertStatusToString(InfoElement::Status::EN_COURS));
     prms.addValueToBody("pathServer", location);
     prms.addValueToBody("pathDevice", url.path().remove(url.path().length() - url.fileName().length() - 1, url.fileName().length() + 1));
 
@@ -143,7 +146,7 @@ void FileManager::downloadFile(QString pathFile, QString pathDevice, quint64 siz
     qDebug("[DOWNLOAD FILE FUNCTION]");
     prms.addQueryItem("size", QString::number(size));
     prms.addQueryItem("name", urlPathFile.fileName());
-    prms.addQueryItem("status", UploadElement::convertStatusToString(UploadElement::Status::EN_COURS));
+    prms.addQueryItem("status", UploadElement::convertStatusToString(InfoElement::Status::EN_COURS));
     prms.addQueryItem("pathServer", urlPathFile.path().remove(urlPathFile.path().length() - urlPathFile.fileName().length() - 1, urlPathFile.fileName().length() + 1));
     prms.addQueryItem("pathDevice", urlPathDevice.path());
     prms.addQueryItem("type", "DOWNLOAD");
@@ -335,13 +338,13 @@ void FileManager::responseSendFileDataToServer(QNetworkReply *reply) {
     dynamic_cast<UploadElement *>(_fileList->value((file["id"]).toULongLong()))->setOctetsTransfered(_bufferSize);
     _fileList->value((file["id"]).toULongLong())->actualizeElementBySizeTranfered(_bufferSize);
     switch (_fileList->value((file["id"]).toULongLong())->getStatus()) {
-    case UploadElement::Status::EN_COURS:
+    case InfoElement::Status::EN_COURS:
         this->sendFileDataToServer((file["id"]).toULongLong());
         break;
-    case UploadElement::Status::FINISH:
+    case InfoElement::Status::FINISH:
         emit fileSended();
         break;
-    case UploadElement::Status::DELETE:
+    case InfoElement::Status::DELETE:
         emit fileSended();
         break;
     default:
@@ -389,10 +392,6 @@ void FileManager::responseHistoric(QNetworkReply *reply) {
             json.initialize();
         }
     }
-
-     else if (reply->property("verb") == "delete") {
-        responseHistoricDelete(reply);
-    }
 }
 
 void FileManager::responseHistoricDelete(QNetworkReply *reply) {
@@ -404,6 +403,15 @@ void FileManager::responseHistoricDelete(QNetworkReply *reply) {
     emit fileDeletedInHistoric((file["id"]).toULongLong());
 }
 
+void FileManager::responseHistoricByIdUpdate(QNetworkReply *reply) {
+    if (reply->error() != QNetworkReply::NoError)
+        throw HttpError(reply);
+
+    if (reply->property("verb") == "delete") {
+       responseHistoricDelete(reply);
+   }
+}
+
 void FileManager::statusFileChanged(quint64 id) {
     InfoElement *file = _fileList->value(id);
 
@@ -411,7 +419,7 @@ void FileManager::statusFileChanged(quint64 id) {
         return;
     qDebug("%d", file->getStatus());
     switch (file->getStatus()) {
-    case UploadElement::Status::EN_COURS: {
+    case InfoElement::Status::EN_COURS: {
         file->start();
         if (file->type() == InfoElement::TransfertType::UPLOAD)
             this->sendFileDataToServer(id);
@@ -419,15 +427,20 @@ void FileManager::statusFileChanged(quint64 id) {
             this->downloadFileDataFromServer(id);
         break;
     }
-    case UploadElement::Status::FINISH:
+    case InfoElement::Status::FINISH: {
+        RouteParams prms;
+        prms.setParam("id", QString::number(id));
+        prms.addValueToBody("status", InfoElement::convertStatusToString(InfoElement::FINISH));
+        _historicRequest->request(HistoricRequest::PUT, HistoricRequest::HistoricById, prms);
+
         // send to server etat finish
         file->elapsed();
         break;
-    case UploadElement::Status::DELETE: {
+    }
+    case InfoElement::Status::DELETE: {
         RouteParams prms;
-        prms.addQueryItem("name", file->getNameFile());
-        prms.addQueryItem("pathServer", file->getPathServer());
-        _fileRequest->request(FileRequest::DELETE, FileRequest::Historic, prms);
+        prms.setParam("id", QString::number(id));
+        _historicRequest->request(HistoricRequest::DELETE, HistoricRequest::HistoricById, prms);
         if (file->getSizeTransfering() < file->getSize()) {
             RouteParams prmsDeleteFile;
             prmsDeleteFile.addQueryItem("pathServer", file->getPathServer());

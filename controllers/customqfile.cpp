@@ -82,7 +82,7 @@ void UploadElement::setOctetsTransfered(int nbOctet)
     }
 }
 
-void UploadElement::setStatus(UploadElement::Status status)
+void UploadElement::setStatus(InfoElement::Status status)
 {
     if (status == _status)
         return;
@@ -101,7 +101,7 @@ void UploadElement::setPathClient(QString pathClient)
     _pathClient = pathClient;
 }
 
-QString UploadElement::convertStatusToString(UploadElement::Status status) // static
+QString UploadElement::convertStatusToString(InfoElement::Status status) // static
 {
     switch (status) {
     case EN_COURS:
@@ -125,7 +125,7 @@ QString UploadElement::convertStatusToString(UploadElement::Status status) // st
     }
 }
 
-UploadElement::Status UploadElement::convertStringToStatus(QString status) //static
+InfoElement::Status UploadElement::convertStringToStatus(QString status) //static
 {
     if (status == "En cours")
         return Status::EN_COURS;
