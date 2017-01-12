@@ -15,7 +15,8 @@ public:
         Download,
         DefaultFile,
         Historic,
-        Reduce
+        Reduce,
+        HistoricById
     };
 
     FileRequest();
@@ -36,6 +37,7 @@ signals:
     void signalHistoric(QNetworkReply *reply);
     void signalReduce(QNetworkReply *reply);
     void signalDownload(QNetworkReply *reply);
+    void signalHistoricById(QNetworkReply *reply);
 };
 
 #endif // FILEREQUEST_H
