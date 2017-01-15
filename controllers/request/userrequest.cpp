@@ -21,4 +21,5 @@ QString UserRequest::getRoute(int route, QMap<QString, QString> params) {
 void UserRequest::emitSignalResponseReady(QNetworkReply *reply) {
     PtrSignalUser signal = _listRoute.value(static_cast<User>(reply->property("routeId").toInt()));
     emit (this->*(signal))(reply);
+    delete reply;
 }

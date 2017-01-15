@@ -117,6 +117,7 @@ void FileManager::getlistTransfertOnServer(QNetworkReply *reply) {
                 ((QString)(map["actualSize"])).toULongLong());
         json.initialize();
     }
+
 }
 
 void FileManager::sendFile(QString pathFile, QString location) {
@@ -173,9 +174,9 @@ void FileManager::responseInitializeForUpload(QNetworkReply *reply) {
             RouteParams prms;
             prms.addQueryItem("pathServer", file["pathServer"]);
             prms.addQueryItem("name", file["name"]);
-            QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prms);
-            reply->setProperty("pathDevice", file["pathDevice"]);
-            reply->setProperty("replaceFile", "active");
+            QNetworkReply *replyRequest = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prms);
+            replyRequest->setProperty("pathDevice", file["pathDevice"]);
+            replyRequest->setProperty("replaceFile", "active");
             break;
         }
         case QMessageBox::Cancel: {
@@ -245,6 +246,7 @@ void FileManager::responseFile(QNetworkReply *reply) {
 void FileManager::responseDeleteTransferingFile(QNetworkReply *reply) {
     if (reply->error() != QNetworkReply::NoError)
         throw HttpError(reply);
+
     qDebug("DELETE TRANSFERT FILE");
 }
 
@@ -269,19 +271,14 @@ void FileManager::sendFileDataToServer(quint64 id) {
             body += "\r\n--" + _boundary + "--\r\n";
 
             _fileRequest->requestFile(FileRequest::POST, FileRequest::Upload, body, _boundary);
+            data.clear();
         }
         else {
             qDebug("Finish read file");
         }
     }
     else {
-        qDebug("Open file - ReadOnly");
-        if (!file->open(QIODevice::ReadOnly))
-        {
-            qDebug() << file->errorString();
-            return ;
-        }
-        this->sendFileDataToServer(id);
+        qDebug() << file->errorString();
     }
 }
 
@@ -435,6 +432,7 @@ void FileManager::statusFileChanged(quint64 id) {
 
         // send to server etat finish
         file->elapsed();
+        file->close();
         break;
     }
     case InfoElement::Status::DELETE: {
@@ -447,6 +445,7 @@ void FileManager::statusFileChanged(quint64 id) {
             prmsDeleteFile.addQueryItem("name", file->getNameFile());
             QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prmsDeleteFile);
             reply->setProperty("deleteTransferingFile", "active");
+
         }
         break;
     }

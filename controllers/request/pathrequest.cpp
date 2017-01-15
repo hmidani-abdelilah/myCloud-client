@@ -18,4 +18,5 @@ QString PathRequest::getRoute(int route, QMap<QString, QString> params) {
 void PathRequest::emitSignalResponseReady(QNetworkReply *reply) {
     PtrSignalPath signal = _listRoute.value(static_cast<Path>(reply->property("routeId").toInt()));
     emit (this->*(signal))(reply);
+    delete reply;
 }

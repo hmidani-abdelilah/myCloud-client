@@ -18,4 +18,5 @@ QString FolderRequest::getRoute(int route, QMap<QString, QString> params) {
 void FolderRequest::emitSignalResponseReady(QNetworkReply *reply) {
     PtrSignalFolder signal = _listRoute.value(static_cast<Folder>(reply->property("routeId").toInt()));
     emit (this->*(signal))(reply);
+    delete reply;
 }

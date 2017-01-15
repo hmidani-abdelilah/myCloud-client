@@ -11,11 +11,8 @@ DownloadElement::DownloadElement(QString pathFile, QString name, QString pathCli
         _status = Status::FINISH;
     }
 
-    QString stringToEncrypt = pathServer + pathClient + name;
-    _key = QString(QCryptographicHash::hash((stringToEncrypt.toUtf8()),QCryptographicHash::Md5).toHex());
-
     this->setFileName(pathClient + "/" + name);
-    if (!this->open(QIODevice::WriteOnly | QIODevice::Append)) { // TODO ne pas ouvrir si finish ??
+    if (!isFinish() && !this->open(QIODevice::WriteOnly | QIODevice::Append)) { // TODO ne pas ouvrir si finish ??
         qDebug("[ERROR] : open download file");
         return;
     }
