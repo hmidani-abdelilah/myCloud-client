@@ -38,4 +38,5 @@ QString FileRequest::getRoute(int route, QMap<QString, QString> params) {
 void FileRequest::emitSignalResponseReady(QNetworkReply *reply) {
     PtrSignalFile signal = _listRoute.value(static_cast<File>(reply->property("routeId").toInt()));
     emit (this->*(signal))(reply);
+    delete reply;
 }

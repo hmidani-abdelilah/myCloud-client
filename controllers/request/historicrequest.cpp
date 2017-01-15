@@ -22,4 +22,5 @@ QString HistoricRequest::getRoute(int route, QMap<QString, QString> params) {
 void HistoricRequest::emitSignalResponseReady(QNetworkReply *reply) {
     PtrSignalHistoric signal = _listRoute.value(static_cast<File>(reply->property("routeId").toInt()));
     emit (this->*(signal))(reply);
+    delete reply;
 }
