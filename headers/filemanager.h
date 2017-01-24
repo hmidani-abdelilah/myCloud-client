@@ -17,13 +17,20 @@
 
 class ManagerElements;
 
+struct FileInfo {
+    QString serverPath;
+    QString name;
+    quint64 size;
+};
+
 class FileManager : public QObject
 {
     Q_OBJECT
 public:
+
     static FileManager *_instanceFileManager;
     static FileManager *getInstanceFileM();
-    void sendFile(QString pathFile, QString location);
+    void sendFile(QUrl urlFile, QString location);
 
     InfoElement *getFile(quint64 id);
     void deleteFile(quint64 id);
@@ -50,8 +57,9 @@ private slots:
 
 signals:
     void startUploadFile(quint64);
-    void fileSended();
     void fileDeletedInHistoric(quint64);
+    void fileSended(FileInfo);
+    void fileReplaced(FileInfo);
 
 private:
     explicit FileManager(QObject *parent = 0);

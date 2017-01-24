@@ -45,5 +45,5 @@ void ViewFilesPage::setHeaderBar() {
 }
 
 void ViewFilesPage::reloadPage() {
-    _manageElements->refreshActualPage();
+    //_manageElements->refreshActualPage();
 }

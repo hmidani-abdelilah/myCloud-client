@@ -11,7 +11,7 @@
 #include <QUrl>
 #include <QFileDialog>
 
-Element::Element(QString title, quint64 size, QString path, QWidget *parent) :
+Element::Element(QString title, quint64 size, QString path, Type type, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Element)
 {
@@ -31,6 +31,7 @@ Element::Element(QString title, quint64 size, QString path, QWidget *parent) :
     setAcceptDrops(true);
     _size = size;
     _path = path;
+    _type = type;
 
     setTitle(title);
 }

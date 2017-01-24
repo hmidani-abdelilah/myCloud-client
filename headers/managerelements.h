@@ -16,14 +16,21 @@
 #include "dialoguedropelement.h"
 
 class FileManager;
+struct FileInfo;
 
 class ManagerElements : public QWidget
 {
     Q_OBJECT
 
+    FolderElement *createFolderElement(QString name, QString pathServer);
+    FileElement *createFileElement(QString name, quint64 size, QString path);
 public:
     explicit ManagerElements(QWidget *parent = 0);
     //void setDisplayPath(DisplayPath *dispPath);
+
+private:
+    void addOneElement(Element *element);
+    void removeOneElement(QString name, QString path, Element::Type type);
 
 public slots:
     void moveInFolder(const QString &folder);
@@ -38,6 +45,8 @@ private slots:
     void responseFolderCreate(QNetworkReply *reply);
     void elementsHasBeenDragged();
 
+    void slotFileSended(FileInfo fileInfo);
+    void slotFileReplaced(FileInfo dataElement);
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
