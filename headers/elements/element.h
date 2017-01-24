@@ -26,10 +26,20 @@ class Element : public QWidget
     Q_OBJECT
 
 public:
-    explicit Element(QString title, quint64 size, QString path, QWidget *parent = 0);
+    enum Type {
+        UNDEFINED,
+        FILE,
+        FOLDER
+    };
+
+    explicit Element(QString title, quint64 size, QString path, Type type = UNDEFINED, QWidget *parent = 0);
     ~Element();
 
 public:
+    inline QString title() {return _title;}
+    inline QString path() {return _path;}
+    inline quint64 size() {return _size;}
+    inline Type type() {return _type;}
     void setSelected(bool value);
 
 protected:
@@ -44,7 +54,7 @@ protected:
     QMenu _menu;
     void paintEvent(QPaintEvent *pe);
     void setIcon(QPixmap picture);
-
+    Type _type;
    // bool event(QEvent *event);
 
 private:
@@ -54,9 +64,9 @@ private:
     int          _size;
     QString      _path;
     bool         _isSelected;
-    //FileManager  *_fileManager;
 
     DataElement getDataElement();
+
 private slots:
     void menuRequested(const QPoint &pos);
 

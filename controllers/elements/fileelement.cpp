@@ -4,11 +4,10 @@
 
 #include <QFileInfo>
 
-FileElement::FileElement(QString title, quint64 size, QString path, QWidget *parent) : Element(title, size, path, parent)
+FileElement::FileElement(QString title, quint64 size, QString path, QWidget *parent) : Element(title, size, path, Element::FILE, parent)
 {
     _fileRequest = new FileRequest();
     connect(_fileRequest, &FileRequest::signalReduce, this, &FileElement::responseReduceImage);
-    //setIcon(QPixmap(":/elements/file"));
     getIcon();
 }
 

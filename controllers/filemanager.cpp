@@ -12,9 +12,6 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-// TODO LE SEND FILE ET L'UPLOAD FILE TAPE SUR DES REQUETE COMPLETEMENT DIFFERENTE cela entraine le delete d'historique d'un coté et pas de l'autre.
-// L'historique pour le sendFile est create dans le create .... WTF
-
 FileManager *FileManager::_instanceFileManager = 0;
 
 FileManager::FileManager(QObject *parent) : QObject(parent)
@@ -120,21 +117,16 @@ void FileManager::getlistTransfertOnServer(QNetworkReply *reply) {
 
 }
 
-void FileManager::sendFile(QString pathFile, QString location) {
-    qDebug(pathFile.toStdString().c_str());
-    QUrl url(pathFile);
-    QFileInfo file(url.path());
+void FileManager::sendFile(QUrl urlFile, QString location) {
+    QFileInfo file(urlFile.path());
     RouteParams prms;
 
-    qDebug("[SEND FILE FUNCTION]");
-    qDebug(pathFile.toStdString().c_str());
-
     prms.addValueToBody("size", QString::number(file.size()));
-    prms.addValueToBody("name", url.fileName());
+    prms.addValueToBody("name", urlFile.fileName());
     prms.addValueToBody("status", UploadElement::convertStatusToString(InfoElement::Status::EN_COURS));
     prms.addValueToBody("pathServer", location);
-    prms.addValueToBody("pathDevice", url.path().remove(url.path().length() - url.fileName().length() - 1, url.fileName().length() + 1));
-
+    prms.addValueToBody("pathDevice", urlFile.path().remove(urlFile.path().length() - urlFile.fileName().length() - 1, urlFile.fileName().length() + 1));
+    prms.addValueToBody("type", "UPLOAD");
     _fileRequest->request(FileRequest::POST, FileRequest::DefaultFile, prms);
 }
 
@@ -322,7 +314,6 @@ void FileManager::responseDownloadFileDataFromServer(QNetworkReply *reply) {
     }
     else {
         file->close();
-        emit fileSended();
     }
 }
 
@@ -334,15 +325,22 @@ void FileManager::responseSendFileDataToServer(QNetworkReply *reply) {
     QMap<QString, QString> file = jsonFile.getJson();
     dynamic_cast<UploadElement *>(_fileList->value((file["id"]).toULongLong()))->setOctetsTransfered(_bufferSize);
     _fileList->value((file["id"]).toULongLong())->actualizeElementBySizeTranfered(_bufferSize);
+
+    InfoElement *elem = this->getFile((file["id"]).toULongLong());
+    FileInfo fileInfo;
+    fileInfo.name = elem->getNameFile();
+    fileInfo.size = elem->getSize();
+    fileInfo.serverPath = elem->getPathServer();
+
     switch (_fileList->value((file["id"]).toULongLong())->getStatus()) {
     case InfoElement::Status::EN_COURS:
         this->sendFileDataToServer((file["id"]).toULongLong());
         break;
     case InfoElement::Status::FINISH:
-        emit fileSended();
+        emit fileSended(fileInfo);
         break;
     case InfoElement::Status::DELETE:
-        emit fileSended();
+        emit fileSended(fileInfo);
         break;
     default:
         break;
@@ -359,6 +357,12 @@ void FileManager::responseReplaceFile(QNetworkReply *reply) {
         throw HttpError(reply);
     JsonManager json(reply);
     QMap<QString, QString> file = json.getJson();
+
+    FileInfo fileInfo;
+    fileInfo.name = file["name"];
+    fileInfo.serverPath = file["pathServer"];
+
+    emit fileReplaced(fileInfo);
     sendFile(reply->property("pathDevice").toString() + "/" + file["name"], file["pathServer"]);
 }
 
@@ -414,7 +418,7 @@ void FileManager::statusFileChanged(quint64 id) {
 
     if (file == NULL)
         return;
-    qDebug("%d", file->getStatus());
+
     switch (file->getStatus()) {
     case InfoElement::Status::EN_COURS: {
         file->start();
@@ -430,7 +434,6 @@ void FileManager::statusFileChanged(quint64 id) {
         prms.addValueToBody("status", InfoElement::convertStatusToString(InfoElement::FINISH));
         _historicRequest->request(HistoricRequest::PUT, HistoricRequest::HistoricById, prms);
 
-        // send to server etat finish
         file->elapsed();
         file->close();
         break;
@@ -439,13 +442,12 @@ void FileManager::statusFileChanged(quint64 id) {
         RouteParams prms;
         prms.setParam("id", QString::number(id));
         _historicRequest->request(HistoricRequest::DELETE, HistoricRequest::HistoricById, prms);
-        if (file->getSizeTransfering() < file->getSize()) {
+        if (file->type() == InfoElement::UPLOAD && file->getSizeTransfering() < file->getSize()) {
             RouteParams prmsDeleteFile;
             prmsDeleteFile.addQueryItem("pathServer", file->getPathServer());
             prmsDeleteFile.addQueryItem("name", file->getNameFile());
             QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prmsDeleteFile);
             reply->setProperty("deleteTransferingFile", "active");
-
         }
         break;
     }
