@@ -70,7 +70,8 @@ HEADERS += headers/btnleftmenu.h \
            headers/dialogdropheaderelement.h \
            headers/helpers/generator.h \
            headers/request/historicrequest.h \
-    headers/info_elements/factoryelement.h
+           headers/info_elements/factoryelement.h \
+           headers/statselement.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui \
     dialogdropheaderelement.ui
@@ -117,6 +118,7 @@ SOURCES += main.cpp \
            controllers/dialogdropheaderelement.cpp \
            controllers/helpers/generator.cpp \
            controllers/request/historicrequest.cpp \
-    controllers/info_elements/factoryelement.cpp
+           controllers/info_elements/factoryelement.cpp \
+           controllers/statselement.cpp
 
 RESOURCES += assets.qrc

@@ -5,6 +5,7 @@
 #include "downloadelement.h"
 #include "httperror.h"
 #include "jsonerror.h"
+#include "statselement.h"
 
 #include <QTextEncoder>
 #include <QJsonArray>
@@ -78,9 +79,9 @@ void FileManager::setNewFile(QString name, QString pathClient, QString pathServe
 
     qDebug(type.toStdString().c_str());
     if (type == "DOWNLOAD")
-        file = new DownloadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, status, size, id);
+        file = new DownloadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, StatsElement::convertStringToStatus(status), size, id);
     else if (type == "UPLOAD")
-        file = new UploadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, status, size, id, octetAlreadyTransfert);
+        file = new UploadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, StatsElement::convertStringToStatus(status), size, id, octetAlreadyTransfert);
     else
         qDebug("[ERROR] : type incorect"); // TODO lancer une exeption
 
@@ -89,7 +90,7 @@ void FileManager::setNewFile(QString name, QString pathClient, QString pathServe
     _fileList->insert(id, file);
     emit startUploadFile(id); // use only for add file in transferPage
 
-    if (file->getStatus() != InfoElement::FINISH)
+    if (file->status() != InfoElement::FINISH)
         statusFileChanged(id);
 }
 
@@ -257,7 +258,7 @@ void FileManager::sendFileDataToServer(quint64 id) {
             data = file->read(_bufferSize);
 
             QByteArray body = "\r\n--" + _boundary + "\r\n";
-            body += "Content-Disposition: form-data; name=\"" + QString::number(file->getId()) +  "\"; filename=\"" + file->getNameFile() + "\"\r\n";
+            body += "Content-Disposition: form-data; name=\"" + QString::number(file->id()) +  "\"; filename=\"" + file->name() + "\"\r\n";
             body += "Content-Type: application/octet-stream\r\n\r\n";
             body += data;
             body += "\r\n--" + _boundary + "--\r\n";
@@ -279,9 +280,9 @@ void FileManager::downloadFileDataFromServer(quint64 id) {
     DownloadElement *file = dynamic_cast<DownloadElement *>(_fileList->value(id));
     RouteParams prms;
 
-    prms.addQueryItem("pathFile", (file->getPathServer().length() > 0 ? file->getPathServer() + "/" : "") + file->getNameFile());
+    prms.addQueryItem("pathFile", (file->pathServer().length() > 0 ? file->pathServer() + "/" : "") + file->name());
 
-    int newBufferSize = file->getSize() - file->size();
+    int newBufferSize = file->sizeServer() - file->size();
     if (newBufferSize < _bufferSize)
         prms.addQueryItem("bufferSize", QString::number(newBufferSize));
     else
@@ -308,8 +309,8 @@ void FileManager::responseDownloadFileDataFromServer(QNetworkReply *reply) {
     QByteArray dataFile = reply->readAll();
     file->write(dataFile);
     _fileList->value((QString::number(id)).toULongLong())->actualizeElementBySizeTranfered(dataFile.length());
-    qDebug("size file %s -> %d", file->getNameFile().toStdString().c_str(), file->size());
-    if (file->size() < file->getSize()) {
+    qDebug("size file %s -> %d", file->name().toStdString().c_str(), file->size());
+    if (file->size() < file->sizeServer()) {
         downloadFileDataFromServer(id);
     }
     else {
@@ -328,11 +329,11 @@ void FileManager::responseSendFileDataToServer(QNetworkReply *reply) {
 
     InfoElement *elem = this->getFile((file["id"]).toULongLong());
     FileInfo fileInfo;
-    fileInfo.name = elem->getNameFile();
-    fileInfo.size = elem->getSize();
-    fileInfo.serverPath = elem->getPathServer();
+    fileInfo.name = elem->name();
+    fileInfo.size = elem->sizeServer();
+    fileInfo.serverPath = elem->pathServer();
 
-    switch (_fileList->value((file["id"]).toULongLong())->getStatus()) {
+    switch (_fileList->value((file["id"]).toULongLong())->status()) {
     case InfoElement::Status::EN_COURS:
         this->sendFileDataToServer((file["id"]).toULongLong());
         break;
@@ -419,7 +420,7 @@ void FileManager::statusFileChanged(quint64 id) {
     if (file == NULL)
         return;
 
-    switch (file->getStatus()) {
+    switch (file->status()) {
     case InfoElement::Status::EN_COURS: {
         file->start();
         if (file->type() == InfoElement::TransfertType::UPLOAD)
@@ -442,10 +443,10 @@ void FileManager::statusFileChanged(quint64 id) {
         RouteParams prms;
         prms.setParam("id", QString::number(id));
         _historicRequest->request(HistoricRequest::DELETE, HistoricRequest::HistoricById, prms);
-        if (file->type() == InfoElement::UPLOAD && file->getSizeTransfering() < file->getSize()) {
+        if (file->type() == InfoElement::UPLOAD && file->getSizeTransfering() < file->sizeServer()) {
             RouteParams prmsDeleteFile;
-            prmsDeleteFile.addQueryItem("pathServer", file->getPathServer());
-            prmsDeleteFile.addQueryItem("name", file->getNameFile());
+            prmsDeleteFile.addQueryItem("pathServer", file->pathServer());
+            prmsDeleteFile.addQueryItem("name", file->name());
             QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prmsDeleteFile);
             reply->setProperty("deleteTransferingFile", "active");
         }

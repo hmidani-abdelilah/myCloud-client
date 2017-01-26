@@ -7,7 +7,7 @@
 class DownloadElement : public InfoElement
 {
 public:
-    DownloadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id);
+    DownloadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id);
 
 public:
     inline quint64 getTransferedSize() {return this->size();}

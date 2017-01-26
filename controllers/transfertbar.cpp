@@ -86,8 +86,8 @@ TransfertBar::TransfertBar(InfoElement *file) : QWidget()
     _name->setMaximumSize(400, 200);
     _name->setAttribute( Qt::WA_TransparentForMouseEvents );
 
-    setName(_file->getNameFile());
-    setSize(_file->getSize());
+    setName(_file->name());
+    setSize(_file->sizeServer());
     setTime();
 
     _layout->addWidget(_iconStatus);
@@ -155,16 +155,16 @@ void TransfertBar::setSize(quint64 size) {
 void TransfertBar::setTime() {
     int secondToWait = 0;
     if (!_file->isFinish() && _speed > 0)
-        secondToWait = qRound(((float)(_file->getSize() - _sizeTransfered)) / (_speed * 1000));
+        secondToWait = qRound(((float)(_file->sizeServer() - _sizeTransfered)) / (_speed * 1000));
 
     _time->setHMS(0, 0, secondToWait);
     _labelTime->setText(_time->toString());
 }
 
 void TransfertBar::setStatus() {
-    _statusLabel->setText(InfoElement::convertStatusToString(_file->getStatus()));
+    _statusLabel->setText(InfoElement::convertStatusToString(_file->status()));
 
-    switch (_file->getStatus()) {
+    switch (_file->status()) {
     case InfoElement::Status::FINISH: {
         _iconStatus->changeImageColor("1BB71E");
         break;
@@ -217,16 +217,16 @@ QLabelCustom* TransfertBar::getBtnDelete() {
     return _btnDelete;
 }
 
-quint64 TransfertBar::getId() {
-    return _file->getId();
+quint64 TransfertBar::id() {
+    return _file->id();
 }
 
-InfoElement::Status TransfertBar::getStatus()
+InfoElement::Status TransfertBar::status()
 {
-    return _file->getStatus();
+    return _file->status();
 }
 
 void TransfertBar::mousePressEvent(QMouseEvent*)
 {
-    emit clicked(_file->getId());
+    emit clicked(_file->id());
 }

@@ -47,8 +47,8 @@ public:
     void setStatus();
     void hasBeenSelected(bool value);
 
-    quint64 getId();
-    InfoElement::Status getStatus();
+    quint64 id();
+    InfoElement::Status status();
 
     void changeStatusOfFile(InfoElement::Status status);
     QLabelCustom *getBtnDelete();
