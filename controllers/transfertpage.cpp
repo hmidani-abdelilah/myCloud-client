@@ -51,9 +51,9 @@ void TransfertPage::updateData() { // OPTIMISATION : Active this function only w
 
 void TransfertPage::barHasBeenClicked (quint64 id) {
     for (int i = 0 ; i < _listBar->length() ; i++) {
-        if (_listBar->at(i) && _listBar->at(i)->getId() == id)
+        if (_listBar->at(i) && _listBar->at(i)->id() == id)
             _barSelected = _listBar->at(i);
-        _listBar->at(i)->hasBeenSelected(_listBar->at(i)->getId() == id);
+        _listBar->at(i)->hasBeenSelected(_listBar->at(i)->id() == id);
     }
     updateHeaderBar();
 }
@@ -61,14 +61,14 @@ void TransfertPage::barHasBeenClicked (quint64 id) {
 void TransfertPage::slotDeleteTransfertBar(quint64 id)
 {
     for (int i = 0 ; i < _layout->count() ; i++) {
-        if (reinterpret_cast<TransfertBar*>(_layout->itemAt(i)->widget())->getId() == id) {
+        if (reinterpret_cast<TransfertBar*>(_layout->itemAt(i)->widget())->id() == id) {
             delete _layout->takeAt(i)->widget();
             break;
         }
     }
 
     for (int i = 0 ; i < _listBar->count() ; i++) {
-        if (_listBar->at(i)->getId() == id) {
+        if (_listBar->at(i)->id() == id) {
             _listBar->removeAt(i);
             _fileManager->deleteFile(id);
         }
@@ -83,7 +83,7 @@ void TransfertPage::updateHeaderBar() {
         return;
     }
 
-    switch (_barSelected->getStatus()) {
+    switch (_barSelected->status()) {
     case InfoElement::Status::EN_COURS:
         _deleteBtn->setEnabled(true);
         _pauseBtn->setEnabled(true);

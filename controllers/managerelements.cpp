@@ -16,6 +16,7 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
     _fileManager = FileManager::getInstanceFileM();
     _ctrlKeyPress = false;
     _messageBoxCreateFolder = new MessageBoxNaming ("Name of the folder", "Create");
+    _factoryElement = new FactoryElement(this);
 
     setFocusPolicy(Qt::StrongFocus);
     setAcceptDrops(true);
@@ -35,7 +36,7 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
 }
 
 void ManagerElements::slotFileSended(FileInfo fileInfo) {
-    FileElement *file = createFileElement(fileInfo.name, fileInfo.size, fileInfo.serverPath);
+    FileElement *file = _factoryElement->generateFileElement(fileInfo.name, fileInfo.size, fileInfo.serverPath);
     addOneElement(file);
 }
 
@@ -98,7 +99,7 @@ void ManagerElements::responseFolderCreate(QNetworkReply *reply) {
         throw HttpError(reply);
     JsonManager *jsonFiles = new JsonManager(reply);
     QMap<QString, QString> map = jsonFiles->getJson();
-    addOneElement(createFolderElement(map["name"], map["pathServer"]));
+    addOneElement(_factoryElement->generateFolderElement(map["name"], map["pathServer"]));
 }
 
 void ManagerElements::setContents(QNetworkReply *reply) {
@@ -111,7 +112,7 @@ void ManagerElements::setContents(QNetworkReply *reply) {
     for (int i = 0 ; i < nbFile ; i++) {
         QMap<QString, QString> fileStat = jsonFiles->toObject("files")->toArray(i)->getJson();
 
-        FileElement *file = createFileElement(fileStat["name"], fileStat["size"].toULongLong(), fileStat["path"]);
+        FileElement *file = _factoryElement->generateFileElement(fileStat["name"], fileStat["size"].toULongLong(), fileStat["path"]);
         _flowLayout->addWidget(file);
         jsonFiles->initialize();
     }
@@ -122,28 +123,9 @@ void ManagerElements::setContents(QNetworkReply *reply) {
     QVector<QString> folders = jsonFiles->toObject("folders")->getArray();
 
     for (int i = 0 ; i < folders.length() ; i++) {
-        FolderElement *folder = createFolderElement(folders.at(i), path);
+        FolderElement *folder = _factoryElement->generateFolderElement(folders.at(i), path);
         _flowLayout->addWidget(folder);
     }
-}
-
-FileElement *ManagerElements::createFileElement(QString name, quint64 size, QString path) {
-    FileElement *file = new FileElement(name, size, path);
-    connect(file, &FileElement::selected, this, &ManagerElements::ElementhasBeenClicked);
-    connect(file, &FileElement::isDragged, this, &ManagerElements::elementsHasBeenDragged);
-
-    return file;
-}
-
-FolderElement *ManagerElements::createFolderElement(QString name, QString pathServer) {
-    FolderElement *folder = new FolderElement(name, pathServer);
-
-    connect(folder, &FolderElement::selected, this, &ManagerElements::ElementhasBeenClicked);
-    connect(folder, &FolderElement::hasBeenDoubleClicked, this, &ManagerElements::folderHasBeenDoubleClicked);
-    connect(folder, &FolderElement::hasBeenDoubleClicked, this, &ManagerElements::moveInFolder);
-    connect(folder, &FolderElement::isDragged, this, &ManagerElements::elementsHasBeenDragged);
-
-    return folder;
 }
 
 void ManagerElements::addOneElement(Element *element) {
@@ -165,7 +147,7 @@ void ManagerElements::removeOneElement(QString name, QString path, Element::Type
     }
 }
 
-void ManagerElements::ElementHasBeenDoubleClicked(QString title) {
+void ManagerElements::elementHasBeenDoubleClicked(QString title) {
     emit folderHasBeenDoubleClicked(title);
 }
 
@@ -173,7 +155,7 @@ void ManagerElements::menuRequested(const QPoint & pos) {
     _menu.popup(mapToGlobal(pos));
 }
 
-void ManagerElements::ElementhasBeenClicked(DataElement dataElement) {
+void ManagerElements::elementHasBeenClicked(DataElement dataElement) {
 
     if (_ctrlKeyPress == true) {
         _itemsSelected.append(dataElement);

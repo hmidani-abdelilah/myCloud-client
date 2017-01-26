@@ -1,25 +1,17 @@
 #ifndef INFOELEMENT_H
 #define INFOELEMENT_H
 
+#include "statselement.h"
+
 #include <QFile>
 #include <QTime>
 #include <QMap>
 
-class InfoElement : public QFile, public QTime
+class InfoElement : public QFile, public QTime, public StatsElement
 {
     Q_OBJECT
 
 public:
-    enum Status {
-        NONE,
-        EN_COURS,
-        PAUSE,
-        DELETE,
-        FINISH,
-        ERROR_CLIENT_PATH,
-        ERROR
-    };
-
     enum TransfertType {
         UNDEFINED,
         UPLOAD,
@@ -27,21 +19,13 @@ public:
     };
 
 public:
-    InfoElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id);
+    InfoElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id);
 
-    inline quint64 getSize() {return _size;}
-    inline quint64 getId() {return _id;}
-    inline QString getNameFile() {return _name;}
-    inline QString getPathServer() {return _pathServer;}
-    inline InfoElement::Status getStatus() {return _status;}
+    inline quint64 id()  {return _id;}
     inline InfoElement::TransfertType type() {return _transfertType;}
 
     inline void setNameFile(QString name) {_name = name;}
-    inline void setSize(quint64 size) {_size = size;}
     inline void setId(quint64 id) {_id = id;}
-
-    static QString convertStatusToString(InfoElement::Status status);
-    static InfoElement::Status convertStringToStatus(QString status);
 
     void setStatus(InfoElement::Status status);
     float getTransfertSpeed();
@@ -57,12 +41,7 @@ signals:
 
 protected:
     quint64                         _id;
-    Status                          _status;
-    quint64                         _size;
-    QString                         _name;
     quint64                         _sizeTransfered;
-    QString                         _pathServer;
-    QString                         _pathClient;
     TransfertType                   _transfertType;
     float                           _rangeTransfertSpeed;
     int                             _constRefreshSpeed;

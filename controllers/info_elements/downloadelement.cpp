@@ -1,7 +1,7 @@
-#include "headers/info_elements/downloadelement.h"
+#include "downloadelement.h"
 #include <QFileInfo>
 
-DownloadElement::DownloadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id) :
+DownloadElement::DownloadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id) :
     InfoElement(pathFile, name, pathClient, pathServer, status, size, id)
 {
     _transfertType = TransfertType::DOWNLOAD;
@@ -20,11 +20,11 @@ DownloadElement::DownloadElement(QString pathFile, QString name, QString pathCli
 
 int DownloadElement::getProgression()
 {
-    return (float)this->size() / (float)_size * 100;
+    return (float)this->size() / (float)_sizeServer * 100;
 }
 
 bool DownloadElement::isFinish() {
-    return this->size() >= _size;
+    return this->size() >= _sizeServer;
 }
 
 quint64 DownloadElement::getSizeTransfering() {

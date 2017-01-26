@@ -4,8 +4,6 @@
 #include <QWidget>
 
 #include "flowlayout.h"
-#include "fileelement.h"
-#include "folderelement.h"
 #include "globalinfo.h"
 #include "userrequest.h"
 #include "pathrequest.h"
@@ -14,16 +12,17 @@
 #include "messageboxnaming.h"
 #include "folderrequest.h"
 #include "dialoguedropelement.h"
+#include "factoryelement.h"
 
 class FileManager;
+class FactoryElement;
+
 struct FileInfo;
 
 class ManagerElements : public QWidget
 {
     Q_OBJECT
 
-    FolderElement *createFolderElement(QString name, QString pathServer);
-    FileElement *createFileElement(QString name, quint64 size, QString path);
 public:
     explicit ManagerElements(QWidget *parent = 0);
     //void setDisplayPath(DisplayPath *dispPath);
@@ -31,19 +30,19 @@ public:
 private:
     void addOneElement(Element *element);
     void removeOneElement(QString name, QString path, Element::Type type);
+    FactoryElement *_factoryElement;
 
 public slots:
     void moveInFolder(const QString &folder);
     void moveBackToFolder();
     void moveTo(const QStringList list);
     void refreshActualPage();
+    void elementHasBeenDoubleClicked(QString title);
+    void elementHasBeenClicked(DataElement dataElement);
+    void elementsHasBeenDragged();
 
 private slots:
-    void ElementHasBeenDoubleClicked(QString title);
-
-    void ElementhasBeenClicked(DataElement dataElement);
     void responseFolderCreate(QNetworkReply *reply);
-    void elementsHasBeenDragged();
 
     void slotFileSended(FileInfo fileInfo);
     void slotFileReplaced(FileInfo dataElement);
