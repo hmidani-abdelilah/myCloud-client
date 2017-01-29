@@ -4,7 +4,15 @@
 
 #include <QFileInfo>
 
-FileElement::FileElement(QString title, quint64 size, QString path, QWidget *parent) : Element(title, size, path, Element::FILE, parent)
+FileElement::FileElement(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent)
+    : Element(name, size, transferedSize, pathServer, pathClient, TypeElement::FILE, status, parent)
+{
+    _fileRequest = new FileRequest();
+    connect(_fileRequest, &FileRequest::signalReduce, this, &FileElement::responseReduceImage);
+    getIcon();
+}
+
+FileElement::FileElement(Stats stats, QWidget *parent) : Element(stats, parent)
 {
     _fileRequest = new FileRequest();
     connect(_fileRequest, &FileRequest::signalReduce, this, &FileElement::responseReduceImage);
@@ -12,7 +20,7 @@ FileElement::FileElement(QString title, quint64 size, QString path, QWidget *par
 }
 
 void FileElement::getIcon() {
-    QFileInfo fileInfo(_title);
+    QFileInfo fileInfo(_name);
     QString suffix = fileInfo.suffix().toLower();
     RouteParams prms;
 
@@ -23,7 +31,7 @@ void FileElement::getIcon() {
         setIcon(icon.pixmap(100, 100));
     }
     else {
-        prms.setParam("name", _title);
+        prms.setParam("name", _name);
         _fileRequest->request(FileRequest::Type::GET, FileRequest::File::Reduce, prms);
     }
 }

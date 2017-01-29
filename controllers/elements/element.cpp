@@ -11,13 +11,36 @@
 #include <QUrl>
 #include <QFileDialog>
 
-Element::Element(QString title, quint64 size, QString path, Type type, QWidget *parent) :
+Element::Element(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status, QWidget *parent) :
     QWidget(parent),
+    StatsElement(name, size, transferedSize, pathServer, pathClient, typeElement, status),
     ui(new Ui::Element)
 {
     ui->setupUi(this);
     ui->verticalLayout->setSpacing(2);
-    _title = title;
+    ui->_title->setWordWrap(true);
+    ui->_title->setAlignment(Qt::AlignCenter);
+
+    _isSelected = false;
+
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    this->setCursor(Qt::PointingHandCursor);
+    connect(this, &Element::customContextMenuRequested, this, &Element::menuRequested);
+    configureRightClick();
+    setAcceptDrops(true);
+
+    setTitle(name);
+}
+
+Element::Element(StatsElement::Stats stats, QWidget *parent) :
+    QWidget(parent),
+    StatsElement(),
+    ui(new Ui::Element)
+{
+    ui->setupUi(this);
+    ui->verticalLayout->setSpacing(2);
+
+    setStats(stats);
 
     ui->_title->setWordWrap(true);
     ui->_title->setAlignment(Qt::AlignCenter);
@@ -29,11 +52,8 @@ Element::Element(QString title, quint64 size, QString path, Type type, QWidget *
     connect(this, &Element::customContextMenuRequested, this, &Element::menuRequested);
     configureRightClick();
     setAcceptDrops(true);
-    _size = size;
-    _path = path;
-    _type = type;
 
-    setTitle(title);
+    setTitle(_name);
 }
 
 Element::~Element()
@@ -105,9 +125,9 @@ DataElement Element::getDataElement() {
     DataElement dataElem;
 
     dataElem.image = _image;
-    dataElem.name = _title;
-    dataElem.path = _path;
-    dataElem.size = _size;
+    dataElem.name = _name;
+    dataElem.path = _pathServer;
+    dataElem.size = _sizeServer;
 
     return dataElem;
 }
@@ -136,7 +156,7 @@ void Element::dragLeaveEvent(QDragLeaveEvent *event)
 }
 
 void Element::mouseDoubleClickEvent ( QMouseEvent * ) {
-    emit hasBeenDoubleClicked(_title);
+    emit hasBeenDoubleClicked(_name);
 }
 
 void Element::setTitle(QString str) {

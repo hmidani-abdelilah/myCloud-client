@@ -23,14 +23,16 @@ public:
     };
 
     struct Stats {
-        const QString     &name;
-        const quint64     &size;
-        const quint64     &transferedSize;
-        const QString     &pathServer;
-        const QString     &pathClient;
-        const TypeElement &typeElement;
-        const Status      &status;
-        Stats(const QString &name, const quint64 &size, const quint64 &transferedSize, const QString &pathServer, const QString &pathClient, const TypeElement &typeElement, const Status &status)
+        const QString     name;
+        const quint64     size;
+        const quint64     transferedSize;
+        const QString     pathServer;
+        const QString     pathClient;
+        const TypeElement typeElement;
+        const Status      status;
+        Stats(const QString name, const QString pathServer)
+            : name(name), size(0), transferedSize(0), pathServer(pathServer), pathClient("undefined"), typeElement(TypeElement::UNDEFINED), status(Status::NONE) {}
+        Stats(const QString name, const quint64 size, const quint64 transferedSize, const QString pathServer, const QString pathClient, const TypeElement typeElement, const Status status)
         : name(name), size(size), transferedSize(transferedSize), pathServer(pathServer), pathClient(pathClient), typeElement(typeElement), status(status) {}
     };
 
@@ -45,8 +47,8 @@ public:
     inline Status status() {return _status;}
     inline TypeElement typeElement() {return _typeElement;}
 
-    const Stats *stats();
-    bool setStats(Stats *stats);
+    StatsElement::Stats stats();
+    bool setStats(Stats stats);
 
     static QString convertStatusToString(StatsElement::Status status);
     static StatsElement::Status convertStringToStatus(QString status);
@@ -59,7 +61,6 @@ protected:
     QString     _pathClient;
     TypeElement _typeElement;
     Status      _status;
-    const Stats *_stats;
 
 private:
     bool isInitialize();

@@ -3,27 +3,16 @@
 StatsElement::StatsElement(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement type, Status status)
 {
     setStats(name, size, transferedSize, pathServer, pathClient, type, status);
-    _stats = new Stats(_name,
-                       _sizeServer,
-                       _transferedSize,
-                       _pathServer,
-                       _pathClient,
-                       _typeElement,
-                       _status);
 }
 
-void StatsElement::setStats(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status) {
-    _name = name;
-    _sizeServer = size;
-    _transferedSize = transferedSize;
-    _pathServer = pathServer;
-    _pathClient = pathClient;
-    _typeElement = typeElement;
-    _status = status;
-}
-
-const StatsElement::Stats *StatsElement::stats() {
-    return _stats;
+StatsElement::Stats StatsElement::stats() {
+    return Stats(_name,
+                 _sizeServer,
+                 _transferedSize,
+                 _pathServer,
+                 _pathClient,
+                 _typeElement,
+                 _status);
 }
 
 bool StatsElement::isInitialize() {
@@ -39,18 +28,28 @@ bool StatsElement::isInitialize() {
     return true;
 }
 
-
-bool StatsElement::setStats(Stats *stats) {
+bool StatsElement::setStats(Stats stats) {
     if (isInitialize())
         return false;
-    setStats(stats->name,
-             stats->size,
-             stats->transferedSize,
-             stats->pathServer,
-             stats->pathClient,
-             stats->typeElement,
-             stats->status);
+
+    setStats(stats.name,
+             stats.size,
+             stats.transferedSize,
+             stats.pathServer,
+             stats.pathClient,
+             stats.typeElement,
+             stats.status);
     return true;
+}
+
+void StatsElement::setStats(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status) {
+    _name = name;
+    _sizeServer = size;
+    _transferedSize = transferedSize;
+    _pathServer = pathServer;
+    _pathClient = pathClient;
+    _typeElement = typeElement;
+    _status = status;
 }
 
 QString StatsElement::convertStatusToString(StatsElement::Status status) // static

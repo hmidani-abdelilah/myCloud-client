@@ -24,9 +24,6 @@ public:
     inline quint64 id()  {return _id;}
     inline InfoElement::TransfertType type() {return _transfertType;}
 
-    inline void setNameFile(QString name) {_name = name;}
-    inline void setId(quint64 id) {_id = id;}
-
     void setStatus(InfoElement::Status status);
     float getTransfertSpeed();
 

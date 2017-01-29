@@ -1,7 +1,8 @@
 #include "folderelement.h"
 #include "ui_element.h"
 
-FolderElement::FolderElement(QString title, QString path, QWidget *parent) : Element(title, 0, path, Element::FOLDER, parent)
+FolderElement::FolderElement(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent)
+    : Element(name, size, transferedSize, pathServer, pathClient, TypeElement::FOLDER, status, parent)
 {
     setIcon(QPixmap(":/elements/folder"));
 }

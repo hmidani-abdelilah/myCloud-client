@@ -7,7 +7,8 @@
 class FileElement : public Element
 {
 public:
-    FileElement(QString title = "file", quint64 size = 0, QString path = "", QWidget *parent = 0);
+    FileElement(QString title, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent = 0);
+    FileElement(Stats stats, QWidget *parent = 0);
 
 protected:
     void getIcon();

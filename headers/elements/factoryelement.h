@@ -14,8 +14,9 @@ public:
     FactoryElement(const ManagerElements *managerElement);
 
     FolderElement *generateFolderElement(QString name, QString pathServer);
-    FileElement *generateFileElement(QString name, quint64 size, QString path);
 
+    FileElement *generateFileElement(StatsElement::Stats stats);
+    FileElement *generateFileElement(QString name, quint64 size, QString pathServer);
 private:
     const ManagerElements *_managerElement;
 };

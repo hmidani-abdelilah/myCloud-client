@@ -17,12 +17,6 @@
 
 class ManagerElements;
 
-struct FileInfo {
-    QString serverPath;
-    QString name;
-    quint64 size;
-};
-
 class FileManager : public QObject
 {
     Q_OBJECT
@@ -58,8 +52,8 @@ private slots:
 signals:
     void startUploadFile(quint64);
     void fileDeletedInHistoric(quint64);
-    void fileSended(FileInfo);
-    void fileReplaced(FileInfo);
+    void fileSended(StatsElement::Stats);
+    void fileReplaced(StatsElement::Stats);
 
 private:
     explicit FileManager(QObject *parent = 0);
