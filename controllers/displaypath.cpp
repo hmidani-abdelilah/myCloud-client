@@ -22,20 +22,28 @@ void DisplayPath::addElement(QString element) {
 
 void DisplayPath::deleteLastElement() {
     if (this->count() > 1) {
-        delete this->takeAt(this->count() - 1)->widget();
-        delete this->takeAt(this->count() - 1)->widget();
+        QLayoutItem *layoutItem = this->takeAt(this->count() - 1);
+        delete layoutItem->widget();
+        delete layoutItem;
+
+        layoutItem = this->takeAt(this->count() - 1);
+                delete layoutItem->widget();
+                delete layoutItem;
         this->update();
     }
 }
 
 void DisplayPath::onClickElement(int pos) {
+    qDebug("POSITION %d, COUNT %d", pos, this->count());
     while (this->count() != pos) {
         deleteLastElement();
     }
-
     QStringList list;
+    QString str;
     for (int i = 0 ; i < this->count() ; i++) {
-        list.append(((QLabel *)(this->itemAt(i)->widget()))->text());
+        str = ((QLabel *)(this->itemAt(i)->widget()))->text();
+        if (str.length() > 0)
+            list.append(str);
     }
     emit pathChanged(list); //QStringList
 }

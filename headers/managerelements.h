@@ -17,8 +17,6 @@
 class FileManager;
 class FactoryElement;
 
-struct FileInfo;
-
 class ManagerElements : public QWidget
 {
     Q_OBJECT
@@ -29,7 +27,7 @@ public:
 
 private:
     void addOneElement(Element *element);
-    void removeOneElement(QString name, QString path, Element::Type type);
+    void removeOneElement(QString name, QString path, Element::TypeElement type);
     FactoryElement *_factoryElement;
 
 public slots:
@@ -44,8 +42,8 @@ public slots:
 private slots:
     void responseFolderCreate(QNetworkReply *reply);
 
-    void slotFileSended(FileInfo fileInfo);
-    void slotFileReplaced(FileInfo dataElement);
+    void slotFileSended(StatsElement::Stats stats);
+    void slotFileReplaced(StatsElement::Stats stats);
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);

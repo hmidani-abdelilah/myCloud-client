@@ -35,13 +35,13 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
     setLayout(_flowLayout);
 }
 
-void ManagerElements::slotFileSended(FileInfo fileInfo) {
-    FileElement *file = _factoryElement->generateFileElement(fileInfo.name, fileInfo.size, fileInfo.serverPath);
+void ManagerElements::slotFileSended(StatsElement::Stats stats) {
+    FileElement *file = _factoryElement->generateFileElement(stats);
     addOneElement(file);
 }
 
-void ManagerElements::slotFileReplaced(FileInfo fileInfo) {
-    removeOneElement(fileInfo.name, fileInfo.serverPath, Element::FILE);
+void ManagerElements::slotFileReplaced(StatsElement::Stats stats) {
+    removeOneElement(stats.name, stats.pathServer, Element::FILE);
 }
 
 void ManagerElements::moveTo(const QStringList list) {
@@ -129,18 +129,19 @@ void ManagerElements::setContents(QNetworkReply *reply) {
 }
 
 void ManagerElements::addOneElement(Element *element) {
-    if (_path.join("/") == element->path()) {
+    if (_path.join("/") == element->pathServer()) {
         _flowLayout->addWidget(element);
     }
 }
 
-void ManagerElements::removeOneElement(QString name, QString path, Element::Type type) {
+void ManagerElements::removeOneElement(QString name, QString path, Element::TypeElement type) {
+    qDebug("%s - %s - %d", name.toStdString().c_str(), path.toStdString().c_str(), _flowLayout->count());
     if (_path.join("/") == path) {
-        for (int i = 0 ; _flowLayout->count() ; i++) {
-            Element *elem = dynamic_cast<Element *>(_flowLayout->itemAt(i)->widget());
-            if (elem->title() == name && elem->type() == type) {
-                delete _flowLayout->itemAt(i)->widget();
-                delete _flowLayout->takeAt(i);
+        for (int i = 0 ; i < _flowLayout->count() ; i++) {
+            QLayoutItem *layoutItem = _flowLayout->itemAt(i);
+            Element *elem = dynamic_cast<Element *>(layoutItem->widget());
+            if (elem->name() == name && elem->type() == type) {
+                _flowLayout->removeItem(layoutItem);
                 break;
             }
         }
@@ -189,6 +190,7 @@ void ManagerElements::dropEvent(QDropEvent *event)
 {
     QList<QUrl> listFilesUrls = event->mimeData()->urls();
     for (int fileUrlIndex = 0 ; fileUrlIndex < listFilesUrls.length() ; fileUrlIndex++) {
+        qDebug("SIZE : %d", _path.size());
        _fileManager->sendFile(listFilesUrls[fileUrlIndex], _path.join("/"));
     }
      event->acceptProposedAction();

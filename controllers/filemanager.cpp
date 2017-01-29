@@ -125,6 +125,7 @@ void FileManager::sendFile(QUrl urlFile, QString location) {
     prms.addValueToBody("size", QString::number(file.size()));
     prms.addValueToBody("name", urlFile.fileName());
     prms.addValueToBody("status", UploadElement::convertStatusToString(InfoElement::Status::EN_COURS));
+    qDebug("LOCATION %s", location.toStdString().c_str());
     prms.addValueToBody("pathServer", location);
     prms.addValueToBody("pathDevice", urlFile.path().remove(urlFile.path().length() - urlFile.fileName().length() - 1, urlFile.fileName().length() + 1));
     prms.addValueToBody("type", "UPLOAD");
@@ -328,20 +329,16 @@ void FileManager::responseSendFileDataToServer(QNetworkReply *reply) {
     _fileList->value((file["id"]).toULongLong())->actualizeElementBySizeTranfered(_bufferSize);
 
     InfoElement *elem = this->getFile((file["id"]).toULongLong());
-    FileInfo fileInfo;
-    fileInfo.name = elem->name();
-    fileInfo.size = elem->sizeServer();
-    fileInfo.serverPath = elem->pathServer();
 
     switch (_fileList->value((file["id"]).toULongLong())->status()) {
     case InfoElement::Status::EN_COURS:
         this->sendFileDataToServer((file["id"]).toULongLong());
         break;
     case InfoElement::Status::FINISH:
-        emit fileSended(fileInfo);
+        emit fileSended(elem->stats());
         break;
     case InfoElement::Status::DELETE:
-        emit fileSended(fileInfo);
+        emit fileSended(elem->stats());
         break;
     default:
         break;
@@ -359,11 +356,9 @@ void FileManager::responseReplaceFile(QNetworkReply *reply) {
     JsonManager json(reply);
     QMap<QString, QString> file = json.getJson();
 
-    FileInfo fileInfo;
-    fileInfo.name = file["name"];
-    fileInfo.serverPath = file["pathServer"];
+    StatsElement::Stats stats(file["name"], file["pathServer"]);
 
-    emit fileReplaced(fileInfo);
+    emit fileReplaced(stats);
     sendFile(reply->property("pathDevice").toString() + "/" + file["name"], file["pathServer"]);
 }
 

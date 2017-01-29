@@ -7,8 +7,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QStandardItemModel>
-
-//#include "filemanager.h"
+#include "statselement.h"
 
 namespace Ui {
 class Element;
@@ -21,32 +20,24 @@ struct DataElement {
     quint64 size;
 };
 
-class Element : public QWidget
+class Element : public QWidget, public StatsElement
 {
     Q_OBJECT
 
 public:
-    enum Type {
-        UNDEFINED,
-        FILE,
-        FOLDER
-    };
 
-    explicit Element(QString title, quint64 size, QString path, Type type = UNDEFINED, QWidget *parent = 0);
+    explicit Element(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status, QWidget *parent = 0);
+    Element(Stats stats, QWidget *parent);
     ~Element();
 
 public:
-    inline QString title() {return _title;}
-    inline QString path() {return _path;}
-    inline quint64 size() {return _size;}
-    inline Type type() {return _type;}
+    inline TypeElement type() {return _typeElement;} // changer le nom de la fonction typeElement - a surrpime
     void setSelected(bool value);
 
 protected:
     Ui::Element *ui;
     QPixmap _image;
 
-    QString _title;
     void setTitle(QString str);
     void mouseDoubleClickEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *event);
@@ -54,15 +45,12 @@ protected:
     QMenu _menu;
     void paintEvent(QPaintEvent *pe);
     void setIcon(QPixmap picture);
-    Type _type;
    // bool event(QEvent *event);
 
 private:
     QPoint _dragStartPosition;
     void configureRightClick();
 
-    int          _size;
-    QString      _path;
     bool         _isSelected;
 
     DataElement getDataElement();
