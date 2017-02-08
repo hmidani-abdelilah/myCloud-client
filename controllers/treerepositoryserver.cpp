@@ -1,5 +1,6 @@
 #include <QHeaderView>
 #include <QFileInfo>
+#include <QScrollBar>
 
 #include "filemanager.h"
 #include "treerepositoryserver.h"
@@ -13,18 +14,18 @@ TreeRepositoryServer::TreeRepositoryServer() : QTreeWidget()
     setDropIndicatorShown(true);
     viewport()->setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::InternalMove);
-
+    setFrameStyle(QFrame::NoFrame);
     _pathRequest = new PathRequest();
     _fileManager = FileManager::getInstanceFileM();
 
     connect(_pathRequest, &PathRequest::signalRepositoryTree, this, &TreeRepositoryServer::responseRepositoryTree);
     connect(_fileManager, &FileManager::folderCreated, this, &TreeRepositoryServer::addNewWidgetItem);
-
     this->header()->hide();
-    this->setStyleSheet(StyleSheet::GlobalInfo::tree);
+    this->verticalScrollBar()->setStyleSheet(StyleSheet::GlobalInfo::scrollBar);
+    this->setStyleSheet("QTreeView { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::tree);
+    this->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     _treeRepositoryServerList = new QMap<QString, ItemRepositoryServer *>();
-
     actualizeRepository();
 }
 
@@ -86,7 +87,7 @@ void TreeRepositoryServer::dropEvent(QDropEvent *event)
         QFileInfo fileInfo(list[i]);
 
         ItemRepositoryServer *treeWidgetItem = dynamic_cast<ItemRepositoryServer *>(itemAt(event->pos()));
-        if (event->mimeData()->text() != treeWidgetItem->path() + "/" + fileInfo.fileName())
+        if (list[i] != treeWidgetItem->path() + "/" + fileInfo.fileName())
             _fileManager->moveElementTo(list[i], treeWidgetItem->path() + "/" + fileInfo.fileName());
     }
     event->acceptProposedAction();

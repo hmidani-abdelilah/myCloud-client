@@ -9,6 +9,7 @@
 #include <QList>
 #include <QUrl>
 #include <QFileDialog>
+#include <QApplication>
 
 Element::Element(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status, QWidget *parent) :
     QWidget(parent),
@@ -100,10 +101,17 @@ void Element::actionDownloadIn(bool) {
 void Element::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         _dragStartPosition = event->pos();
-
-        if (_isSelected == false)
+        if (_isSelected == false) {
             emit selected(this->stats());
-        setSelected(true);
+            setSelected(true);
+        }
+        else if (QApplication::keyboardModifiers() == Qt::ControlModifier  || QApplication::keyboardModifiers() == Qt::ShiftModifier) {
+            setSelected(!_isSelected);
+            if (_isSelected == true)
+                emit selected(this->stats());
+            else
+                emit unselected(this->stats());
+        }
     }
 }
 
@@ -114,7 +122,7 @@ void Element::mouseReleaseEvent(QMouseEvent *event) {
 
 void Element::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!(event->buttons() & Qt::LeftButton))
+    if (!(event->buttons() & Qt::LeftButton) || QApplication::keyboardModifiers() != Qt::NoModifier)
         return;
     if (_draggableMode == DISABLE)
         return;

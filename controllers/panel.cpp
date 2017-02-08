@@ -1,4 +1,6 @@
 #include "panel.h"
+#include "globalinfo.h"
+
 #include <QScrollArea>
 #include <QHBoxLayout>
 
@@ -40,16 +42,14 @@ Panel::Panel(QWidget *parent) :
     ui->gridLayout->setSpacing(0);
 
     ui->stackedWidget->setStyleSheet("background-color:#" + Color::GlobalInfo::greyLight);
-    ui->scrollArea->setStyleSheet("#scrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";} ");
+    ui->scrollArea->setStyleSheet("#scrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBar);
 
-    ui->gridDownloadWidget->setStyleSheet("#gridDownloadWidget { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}"
-                                          " QWidget {background-color:white;}");
-
-    ui->gridOrderWidget->setStyleSheet("#gridDownloadWidget { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}"
-                                          " QWidget {background-color:white;}");
+    ui->gridDownloadWidget->setStyleSheet("QWidget {background-color:white;}");
+    ui->gridOrderWidget->setStyleSheet("QWidget {background-color:white;}");
 
     ui->wPage2->setStyleSheet("background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";");
     ui->stackedWidget->setCurrentIndex(0);
+    ui->scrollAreaTransfert->setStyleSheet("#scrollAreaTransfert { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBar);
 
     /* Append page in the same order than button left for header bar */
 

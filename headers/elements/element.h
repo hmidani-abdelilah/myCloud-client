@@ -62,6 +62,7 @@ private slots:
 signals:
     void hasBeenDoubleClicked(QString);
     void selected(Stats);
+    void unselected(Stats);
     void isDragged();
 
 protected:

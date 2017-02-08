@@ -317,12 +317,21 @@ void FileManager::responseDownloadFileDataFromServer(QNetworkReply *reply) {
     DownloadElement *file = dynamic_cast<DownloadElement *>(_fileList->value(id));
     QByteArray dataFile = reply->readAll();
     file->write(dataFile);
+    //qDebug("file->size() : %d - file->sizeServer() : %d", file->size(), file->sizeServer());
+
     _fileList->value((QString::number(id)).toULongLong())->actualizeElementBySizeTranfered(dataFile.length());
-    if (file->size() < file->sizeServer()) {
+
+    switch (_fileList->value((QString::number(id)).toULongLong())->status()) {
+    case InfoElement::Status::EN_COURS: {
         downloadFileDataFromServer(id);
+        break;
     }
-    else {
+    case InfoElement::Status::FINISH: {
         file->close();
+        break;
+    }
+    default:
+        break;
     }
 }
 
@@ -408,8 +417,8 @@ void FileManager::responseHistoricByIdUpdate(QNetworkReply *reply) {
         throw HttpError(reply);
 
     if (reply->property("verb") == "delete") {
-       responseHistoricDelete(reply);
-   }
+        responseHistoricDelete(reply);
+    }
 }
 
 void FileManager::createFolder(QString path) {
@@ -482,7 +491,6 @@ void FileManager::responseRename(QNetworkReply *reply) {
     StatsElement::Stats statsOldfFile(oldFileInfo.fileName(), (oldFileInfo.path() == "." ? "" : oldFileInfo.path()));
     StatsElement::Stats statsNewfFile(newFileInfo.fileName(), (newFileInfo.path() == "." ? "" : newFileInfo.path()));
 
-    qDebug("%s - %s", newFileInfo.fileName().toStdString().c_str(), QString((newFileInfo.path() == "." ? "" : newFileInfo.path())).toStdString().c_str());
     emit fileReplaced(statsOldfFile);
     emit fileSended(statsNewfFile);
 }
@@ -490,6 +498,7 @@ void FileManager::responseRename(QNetworkReply *reply) {
 void FileManager::statusFileChanged(qint64 id) {
     InfoElement *file = _fileList->value(id);
 
+    qDebug("status = %d", file->status());
     if (file == NULL)
         return;
 
@@ -532,6 +541,7 @@ void FileManager::statusFileChanged(qint64 id) {
             QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prmsDeleteFile);
             reply->setProperty("deleteFile", "active");
         }
+        // TODO DELETE LE FICHIER SUR L'ORDI SI IL EST INCOMPLET ( DOWNLOAD )
         break;
     }
     default:

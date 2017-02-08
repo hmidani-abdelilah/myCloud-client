@@ -76,7 +76,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="_layoutPage1">
@@ -111,8 +111,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>100</width>
-              <height>30</height>
+              <width>641</width>
+              <height>437</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="scrollManagerElements">
@@ -164,8 +164,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>100</width>
-              <height>30</height>
+              <width>641</width>
+              <height>437</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridDownload">
@@ -202,40 +202,21 @@
           <number>18</number>
          </property>
          <item>
-          <widget class="QScrollArea" name="scrollAreaOrdering">
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Plain</enum>
-           </property>
-           <property name="widgetResizable">
-            <bool>true</bool>
-           </property>
-           <widget class="QWidget" name="gridOrderWidget">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>641</width>
-              <height>437</height>
-             </rect>
+          <widget class="QWidget" name="gridOrderWidget" native="true">
+           <layout class="QGridLayout" name="gridOrder">
+            <property name="leftMargin">
+             <number>0</number>
             </property>
-            <layout class="QGridLayout" name="gridOrder">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+           </layout>
           </widget>
          </item>
         </layout>

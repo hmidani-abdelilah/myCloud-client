@@ -9,6 +9,7 @@ FactoryElement::FactoryElement(const ManagerElements *managerElement)
 FileElement *FactoryElement::generateFileElement(QString name, qint64 size, QString pathServer) {
     FileElement *file = new FileElement(name, size, 0, pathServer, "", StatsElement::Status::NONE);
     connect(file, &FileElement::selected, _managerElement, &ManagerElements::elementHasBeenClicked);
+    connect(file, &FileElement::unselected, _managerElement, &ManagerElements::elementHasBeenUnselected);
     connect(file, &FileElement::isDragged, _managerElement, &ManagerElements::elementsHasBeenDragged);
     file->setDraggableMode(_draggableMode);
     return file;
@@ -17,6 +18,7 @@ FileElement *FactoryElement::generateFileElement(QString name, qint64 size, QStr
 FileElement *FactoryElement::generateFileElement(StatsElement::Stats stats) {
     FileElement *file = new FileElement(stats);
     connect(file, &FileElement::selected, _managerElement, &ManagerElements::elementHasBeenClicked);
+    connect(file, &FileElement::unselected, _managerElement, &ManagerElements::elementHasBeenUnselected);
     connect(file, &FileElement::isDragged, _managerElement, &ManagerElements::elementsHasBeenDragged);
     file->setDraggableMode(_draggableMode);
     return file;
@@ -26,6 +28,7 @@ FolderElement *FactoryElement::generateFolderElement(QString name, QString pathS
     FolderElement *folder = new FolderElement(name, 0, 0, pathServer, "", StatsElement::Status::NONE);
 
     connect(folder, &FolderElement::selected, _managerElement, &ManagerElements::elementHasBeenClicked);
+    connect(folder, &FolderElement::unselected, _managerElement, &ManagerElements::elementHasBeenUnselected);
     connect(folder, &FolderElement::hasBeenDoubleClicked, _managerElement, &ManagerElements::folderHasBeenDoubleClicked);
     connect(folder, &FolderElement::hasBeenDoubleClicked, _managerElement, &ManagerElements::moveInFolder);
     connect(folder, &FolderElement::isDragged, _managerElement, &ManagerElements::elementsHasBeenDragged);

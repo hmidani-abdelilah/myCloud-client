@@ -43,6 +43,7 @@ namespace StyleSheet {
     public:
         GlobalInfo();
         static QString tree;
+        static QString scrollBar;
     };
 }
 

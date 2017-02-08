@@ -22,7 +22,6 @@ class ManagerElements : public QWidget
 
 public:
     explicit ManagerElements(QWidget *parent = 0);
-    //void setDisplayPath(DisplayPath *dispPath);
 
 public slots:
     void moveInFolder(const QString &folder);
@@ -33,6 +32,7 @@ public slots:
     void elementHasBeenClicked(StatsElement::Stats dataElement);
     virtual void elementsHasBeenDragged();
     void setDraggableMode(Element::DraggableMode draggableMode = Element::EMIT);
+    void elementHasBeenUnselected(StatsElement::Stats dataElement);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -41,8 +41,6 @@ protected:
     void removeOneElement(QString name, QString path, Element::TypeElement type);
     void configureRightClick();
     void paintEvent(QPaintEvent *);
-    void keyPressEvent(QKeyEvent *ev);
-    void keyReleaseEvent(QKeyEvent *ev);
 
 protected slots:
     void setContents(QNetworkReply *reply);
@@ -53,16 +51,17 @@ protected slots:
     void actionCreateFolder(bool);
 
 protected:
-    FlowLayout *_flowLayout;
-    PathRequest *_pathRequest;
-    FileManager *_fileManager;
-    QMenu _menu;
-    QStringList _path;
-    DisplayPath *_displayPath;
-    QVector<StatsElement::Stats> _itemsSelected;
-    bool        _ctrlKeyPress;
-    FactoryElement *_factoryElement;
-    QLabelCustom    *_previousAction;
+    FlowLayout                      *_flowLayout;
+    PathRequest                     *_pathRequest;
+    FileManager                     *_fileManager;
+    QMenu                           _menu;
+    QStringList                     _path;
+    DisplayPath                     *_displayPath;
+    QVector<StatsElement::Stats>    _itemsSelected;
+    bool                            _ctrlKeyPress;
+    FactoryElement                  *_factoryElement;
+    QLabelCustom                    *_previousAction;
+    StatsElement::Stats             _lastFileSelected;
 
 signals:
     void folderHasBeenDoubleClicked(QString title);

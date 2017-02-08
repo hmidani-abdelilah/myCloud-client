@@ -3,6 +3,7 @@
 #include "jsonmanager.h"
 #include "httperror.h"
 
+#include <QApplication>
 #include <QNetworkReply>
 #include <QFileInfo>
 #include <QStyleOption>
@@ -13,7 +14,6 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
     _flowLayout = new FlowLayout();
     _pathRequest = new PathRequest();
     _fileManager = FileManager::getInstanceFileM();
-    _ctrlKeyPress = false;
     _factoryElement = new FactoryElement(this);
 
     setFocusPolicy(Qt::StrongFocus);
@@ -149,11 +149,26 @@ void ManagerElements::menuRequested(const QPoint & pos) {
 }
 
 void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
-
-    if (_ctrlKeyPress == true) {
+    if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
         _itemsSelected.append(dataElement);
+        _lastFileSelected = dataElement;
         return;
     }
+    if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
+        bool startSelect = false;
+        for (int index = 0 ; index < _flowLayout->count() ; index++) {
+            Element *elem = dynamic_cast<Element *>(_flowLayout->itemAt(index)->widget());
+            if (_lastFileSelected.name == elem->name() || dataElement.name == elem->name())
+                startSelect = !startSelect;
+
+            if (startSelect == true) {
+                elem->setSelected(true);
+                _itemsSelected.append(dataElement);
+            }
+        }
+        return;
+    }
+    _lastFileSelected = dataElement;
     _itemsSelected.clear();
     _itemsSelected.append(dataElement);
     for (int i = 0 ; i < _flowLayout->count() ; i++) {
@@ -161,16 +176,11 @@ void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
     }
 }
 
-void ManagerElements::keyPressEvent(QKeyEvent *ev)
-{
-    if (ev->key() == 16777249) // CTRL
-        _ctrlKeyPress = true;
-}
-
-void ManagerElements::keyReleaseEvent(QKeyEvent *ev)
-{
-    if (ev->key() == 16777249) // CTRL
-        _ctrlKeyPress = false;
+void ManagerElements::elementHasBeenUnselected(StatsElement::Stats dataElement) {
+    for (int i = 0 ; i < _itemsSelected.length() ; i++) {
+        if (_itemsSelected[i].name == dataElement.name)
+            _itemsSelected.remove(i);
+    }
 }
 
 void ManagerElements::dragEnterEvent(QDragEnterEvent *event)

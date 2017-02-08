@@ -1,3 +1,5 @@
+#include <QScrollArea>
+
 #include "sortpage.h"
 #include "jsonmanager.h"
 #include "globalinfo.h"
@@ -8,21 +10,30 @@ SortPage::SortPage(QWidget *parent) : Page()
     _previousAction = new QLabelCustom();
     _displayPath = new DisplayPath();
     _treeRepositoryServer = new TreeRepositoryServer();
+    QHBoxLayout *_hBox = new QHBoxLayout();
+    QScrollArea *scrollArea = new QScrollArea();
 
     QSizePolicy spLeft(QSizePolicy::Preferred, QSizePolicy::Preferred);
     QSizePolicy spRight(QSizePolicy::Preferred, QSizePolicy::Preferred);
     spLeft.setHorizontalStretch(1);
     spRight.setHorizontalStretch(1);
     _treeRepositoryServer->setSizePolicy(spRight);
-    _manageElements->setSizePolicy(spLeft);
+    scrollArea->setSizePolicy(spLeft);
+    //_manageElements->setSizePolicy(spLeft);
 
 
     connect(_manageElements, &ManagerElements::folderHasBeenDoubleClicked, _displayPath, &DisplayPath::addElement);
-    QHBoxLayout *_hBox = new QHBoxLayout();
-    _hBox->addWidget(_manageElements);
-    _hBox->addWidget(_treeRepositoryServer);
     _manageElements->setDraggableMode(Element::NORMAL);
+
+    scrollArea->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+    scrollArea->setWidgetResizable( true );
+    scrollArea->setWidget(_manageElements);
+    scrollArea->setFrameStyle(QFrame::NoFrame);
+    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBar);
+    _hBox->addWidget(scrollArea);
+    _hBox->addWidget(_treeRepositoryServer);
     _hBox->setContentsMargins(0, 0, 0, 0);
+    _hBox->setSpacing(0);
 
     setLayout(_hBox);
     setHeaderBar();
