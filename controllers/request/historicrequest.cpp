@@ -15,6 +15,7 @@ QString HistoricRequest::getRoute(int route, QMap<QString, QString> params) {
         return "/historic/" + params["id"];
         break;
     default:
+        return "";
         break;
     }
 }

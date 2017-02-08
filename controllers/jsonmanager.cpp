@@ -8,6 +8,12 @@ JsonManager::JsonManager(QNetworkReply *reply) : QJsonDocument()
     _doc = QJsonDocument::fromJson(text);
 }
 
+JsonManager::JsonManager(QByteArray reply) : QJsonDocument()
+{
+    _typeSav = ISDOCUMENT;
+    _doc = QJsonDocument::fromJson(reply);
+}
+
 JsonManager::JsonManager(QString reply)
 {
     _doc = QJsonDocument::fromJson(reply.toUtf8());
@@ -46,7 +52,7 @@ JsonManager *JsonManager::toArray(int index) { //vient d'un array
             array = _arraySav;
             break;
         default:
-            throw JsonError("[toArray] : This format is not an array - index : " + index);
+            throw JsonError("[toArray] : This format is not an array - index : " + QString::number(index));
             break;
         }
 
@@ -70,13 +76,13 @@ JsonManager *JsonManager::toArray(int index) { //vient d'un array
                 return this;
             }
             else
-                throw JsonError("[toArray] : This array is not an array or an object - index : " + index);
+                throw JsonError("[toArray] : This array is not an array or an object - index : " + QString::number(index));
             return this;
         }
-        throw JsonError("[toArray] : This format is not an array - index : " + index);
-        }
+        throw JsonError("[toArray] : This format is not an array - index : " + QString::number(index));
+    }
     catch(JsonError *jsonError) {
-        qDebug() << jsonError->what();
+        qDebug() << jsonError->error();
     }
 
     return this;
@@ -105,8 +111,9 @@ int JsonManager::length() {
         }
     }
     catch(JsonError *jsonError) {
-        qDebug() << jsonError->what();
+        qDebug() << jsonError->error();
     }
+    return 0;
 }
 
 JsonManager *JsonManager::toObject(QString value) {
@@ -148,8 +155,9 @@ JsonManager *JsonManager::toObject(QString value) {
         return this;
     }
     catch(JsonError *jsonError) {
-        qDebug() << jsonError->what();
+        qDebug() << jsonError->error();
     }
+    return this;
 }
 
 QMap<QString, QString> JsonManager::getJson() {
@@ -163,26 +171,26 @@ QMap<QString, QString> JsonManager::getJson() {
             object = _objectSav;
             break;
         default:
-            throw JsonError("[getJson] : This format is not a json - value : " + _typeSav);
+            throw JsonError("[getJson] : This format is not a json - type : " + QString::number(_typeSav));
             break;
         }
-    QJsonObject::Iterator itObj;
-    QMap<QString, QString> map;
+        QJsonObject::Iterator itObj;
+        QMap<QString, QString> map;
 
-    for (itObj = object.begin() ; itObj != object.end() ; itObj++) {
-        if ((*itObj).isDouble()) {
-            map[itObj.key()] = QString::number((*itObj).toDouble(), 'g', 1000);
+        for (itObj = object.begin() ; itObj != object.end() ; itObj++) {
+            if ((*itObj).isDouble()) {
+                map[itObj.key()] = QString::number((*itObj).toDouble(), 'g', 1000);
+            }
+            if ((*itObj).isString()) {
+                map[itObj.key()] = (*itObj).toString();
+            }
         }
-        if ((*itObj).isString()) {
-            map[itObj.key()] = (*itObj).toString();
-        }
-    }
-
-    return map;
+        return map;
     }
     catch(JsonError *jsonError) {
-        qDebug() << jsonError->what();
+        qDebug() << jsonError->error();
     }
+    return QMap<QString, QString>();
 }
 
 

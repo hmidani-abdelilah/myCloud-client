@@ -15,7 +15,7 @@ UploadElement::UploadElement(QString pathFile) : QFile(pathFile)
     _transfertType = TransfertType::UNDEFINED;
 }
 
-UploadElement::UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert, QString transfertType) : QFile(pathFile)
+UploadElement::UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, qint64 size, qint64 id, qint64 octetAlreadyTransfert, QString transfertType) : QFile(pathFile)
 {
     _size = size;
     _id = id;

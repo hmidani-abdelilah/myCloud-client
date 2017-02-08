@@ -14,6 +14,7 @@ bool MyCloudApplication::notify(QObject *receiver, QEvent *event)
         return QApplication::notify(receiver, event);
     }
     catch(HttpError &httpError) {
-        qDebug() << httpError.what();
+        qDebug() << httpError.error();
+        return false;
     }
 }

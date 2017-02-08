@@ -11,6 +11,7 @@ Panel::Panel(QWidget *parent) :
     _listBtnLeftMenu = new QVector<BtnLeftMenu*>();
     _viewFilesPage = new ViewFilesPage();
     _transfertPage = new TransfertPage();
+    _sortPage = new SortPage();
     _headerManageElements = new QHBoxLayout();
     _headerTransfertPage = new QHBoxLayout();
     _listPages = new QVector<QWidget*>();
@@ -28,6 +29,7 @@ Panel::Panel(QWidget *parent) :
     ui->leftMenuLayout->addWidget(titleLeftMenu);
     ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/menu"), QString("DASHBOARD"), true));
     ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/cloud_download"), QString("DOWNLOAD")));
+    ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/cloud_download"), QString("ORDERING")));
     ui->leftMenuLayout->addWidget(this->createBtnLeftMenu(QPixmap (":/logo/user"), QString("PROFIL")));
 
     QWidget* spacer = new QWidget();
@@ -38,10 +40,14 @@ Panel::Panel(QWidget *parent) :
     ui->gridLayout->setSpacing(0);
 
     ui->stackedWidget->setStyleSheet("background-color:#" + Color::GlobalInfo::greyLight);
-    ui->scrollArea->setStyleSheet("QScrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";} ");
+    ui->scrollArea->setStyleSheet("#scrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";} ");
 
     ui->gridDownloadWidget->setStyleSheet("#gridDownloadWidget { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}"
                                           " QWidget {background-color:white;}");
+
+    ui->gridOrderWidget->setStyleSheet("#gridDownloadWidget { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}"
+                                          " QWidget {background-color:white;}");
+
     ui->wPage2->setStyleSheet("background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";");
     ui->stackedWidget->setCurrentIndex(0);
 
@@ -49,12 +55,14 @@ Panel::Panel(QWidget *parent) :
 
     _listPages->append(_viewFilesPage);
     _listPages->append(_transfertPage);
+    _listPages->append(_sortPage);
     initializeHeaderBar();
+
+    /* ADD PAGE TO VIEW */
 
     ui->scrollManagerElements->addWidget(_viewFilesPage);
     ui->gridDownload->addWidget(_transfertPage);
-
-//    ui->headerBarLayout->addLayout(_viewFilesPage->getHeaderBarLayout());
+    ui->gridOrder->addWidget(_sortPage);
 }
 
 Panel::~Panel()
@@ -99,18 +107,5 @@ void Panel::btnMenuClicked(QString title) {
         }
         else
             _listBtnLeftMenu->at(i)->setActive(false);
-    }
-}
-
-void Panel::setHeaderBar(TypeHeaderBar type) {
-    switch (type) {
-    case MANAGE_ELEMENTS:
-        ui->headerBarLayout->addLayout(_headerManageElements);
-        break;
-    case TRANSFERT_PAGE:
-        ui->headerBarLayout->addLayout(_headerTransfertPage);
-        break;
-    default:
-        break;
     }
 }

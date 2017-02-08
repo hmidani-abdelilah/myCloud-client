@@ -44,8 +44,8 @@
          <widget class="QLabel" name="logo">
           <property name="minimumSize">
            <size>
-            <width>60</width>
-            <height>41</height>
+            <width>70</width>
+            <height>40</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -189,12 +189,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color:#87d6f7;
- border: none;
-margin-left:20px;
-margin-right:20px;
- color: black;
- text-decoration: none;</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>SIGN IN</string>

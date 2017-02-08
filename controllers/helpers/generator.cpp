@@ -5,7 +5,7 @@ Generator::Generator()
 
 }
 
-QString Generator::getFormatSize(quint64 size)
+QString Generator::getFormatSize(qint64 size)
 {
     if (size < 1000000)
         return QString::number((float)size / 1000) + " Ko";
@@ -14,5 +14,3 @@ QString Generator::getFormatSize(quint64 size)
     else
         return QString::number((float)size / 1000000000) + "Go";
 }
-
-

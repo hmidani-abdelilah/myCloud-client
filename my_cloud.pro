@@ -11,6 +11,7 @@ QMAKE_MAC_SDK = macosx10.12
 QT += network
 QT += core
 QT += websockets
+QT += svg
 
 LIBS+= -lcurl
 
@@ -21,10 +22,13 @@ INCLUDEPATH += $$PWD/headers\
             += $$PWD/headers/exceptions\
             += $$PWD/headers/info_elements\
             += $$PWD/headers/helpers\
+            += $$PWD/headers/page\
 
 
 TEMPLATE = app
 TARGET = my_cloud
+ICON = my_cloud.icns
+
 INCLUDEPATH += /Users/Aurelien/Qt/5.7/ios/mkspecs/macx-ios-clang/ios .
 
 # Input
@@ -53,16 +57,15 @@ HEADERS += headers/btnleftmenu.h \
            headers/displaypath.h \
            headers/elementpath.h \
            headers/transfertbar.h \
-           headers/transfertpage.h \
+           headers/page/transfertpage.h \
            headers/headerbar.h \
-           headers/page.h \
-           headers/viewfilespage.h \
+           headers/page/page.h \
+           headers/page/viewfilespage.h \
            headers/message_box/messageboxnaming.h \
            headers/request/folderrequest.h \
            headers/request/routeparams.h \
            headers/exceptions/httperror.h \
            headers/exceptions/jsonerror.h \
-           headers/mimedatafile.h \
            headers/info_elements/infoelement.h \
            headers/info_elements/downloadelement.h \
            headers/info_elements/uploadelement.h \
@@ -71,7 +74,13 @@ HEADERS += headers/btnleftmenu.h \
            headers/helpers/generator.h \
            headers/request/historicrequest.h \
            headers/elements/factoryelement.h \
-           headers/statselement.h
+           headers/statselement.h \
+           headers/helpers/image.h \
+           headers/page/sortpage.h \
+    headers/treeelement.h \
+    headers/treerepositoryserver.h \
+    headers/itemrepositoryserver.h \
+    headers/managerelementsorder.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui \
     dialogdropheaderelement.ui
@@ -98,19 +107,18 @@ SOURCES += main.cpp \
            controllers/request/pathrequest.cpp \
            controllers/request/serviceRequest.cpp \
            controllers/request/userrequest.cpp \
-           controllers/transfertpage.cpp \
+           controllers/page/transfertpage.cpp \
            controllers/displaypath.cpp \
            controllers/elementpath.cpp \
            controllers/transfertbar.cpp \
            controllers/headerbar.cpp \
-           controllers/page.cpp \
-           controllers/viewfilespage.cpp \
+           controllers/page/page.cpp \
+           controllers/page/viewfilespage.cpp \
            controllers/message_box/messageboxnaming.cpp \
            controllers/request/folderrequest.cpp \
            controllers/request/routeparams.cpp \
            controllers/exceptions/httperror.cpp \
            controllers/exceptions/jsonerror.cpp \
-           controllers/mimedatafile.cpp \
            controllers/info_elements/infoelement.cpp \
            controllers/info_elements/downloadelement.cpp \
            controllers/info_elements/uploadelement.cpp \
@@ -119,6 +127,12 @@ SOURCES += main.cpp \
            controllers/helpers/generator.cpp \
            controllers/request/historicrequest.cpp \
            controllers/elements/factoryelement.cpp \
-           controllers/statselement.cpp
+           controllers/statselement.cpp \
+           controllers/helpers/image.cpp \
+           controllers/page/sortpage.cpp \
+           controllers/treeelement.cpp \
+    controllers/treerepositoryserver.cpp \
+    controllers/itemrepositoryserver.cpp \
+    controllers/managerelementsorder.cpp
 
 RESOURCES += assets.qrc

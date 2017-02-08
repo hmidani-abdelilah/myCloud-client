@@ -4,6 +4,7 @@
 #include <QException>
 #include <QNetworkReply>
 
+
 class HttpError : public QException
 {
 public:
@@ -15,7 +16,7 @@ private:
 public:
     void raise() const { throw *this; }
     HttpError *clone() const { return new HttpError(*this); }
-    QString what();
+    QString error();
 };
 
 #endif // HTTPERROR_H

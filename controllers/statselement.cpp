@@ -1,6 +1,6 @@
 #include "statselement.h"
 
-StatsElement::StatsElement(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement type, Status status)
+StatsElement::StatsElement(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, TypeElement type, Status status)
 {
     setStats(name, size, transferedSize, pathServer, pathClient, type, status);
 }
@@ -12,7 +12,8 @@ StatsElement::Stats StatsElement::stats() {
                  _pathServer,
                  _pathClient,
                  _typeElement,
-                 _status);
+                 _status,
+                 _image);
 }
 
 bool StatsElement::isInitialize() {
@@ -42,7 +43,7 @@ bool StatsElement::setStats(Stats stats) {
     return true;
 }
 
-void StatsElement::setStats(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status) {
+void StatsElement::setStats(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status) {
     _name = name;
     _sizeServer = size;
     _transferedSize = transferedSize;

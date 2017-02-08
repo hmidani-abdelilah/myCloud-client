@@ -1,7 +1,7 @@
 #include "uploadelement.h"
 
-UploadElement::UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id, quint64 octetAlreadyTransfered) :
-    InfoElement(pathFile, name, pathClient, pathServer, status, size, id)
+UploadElement::UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, qint64 size, qint64 id, qint64 octetAlreadyTransfered, TypeElement typeElement) :
+    InfoElement(pathFile, name, pathClient, pathServer, status, size, id, typeElement)
 {
     _transfertType = TransfertType::UPLOAD;
 
@@ -39,6 +39,6 @@ void UploadElement::setOctetsTransfered(int nbOctet)
     _sizeTransfered += nbOctet;
 }
 
-quint64 UploadElement::getSizeTransfering() {
+qint64 UploadElement::getSizeTransfering() {
     return _sizeTransfered;
 }

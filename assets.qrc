@@ -9,6 +9,8 @@
         <file alias="files">assets/files.png</file>
         <file alias="menu">assets/menu.png</file>
         <file alias="user">assets/user.png</file>
+        <file alias="cloudLogo">assets/cloud_logo.svg</file>
+        <file alias="cloudMacLogo">assets/cloud_mac_logo.svg</file>
     </qresource>
     <qresource prefix="/elements">
         <file alias="folder">assets/folder.png</file>
@@ -30,7 +32,7 @@
         <file alias="fla">assets/fla.svg</file>
         <file alias="flash">assets/flash.svg</file>
         <file alias="html">assets/html.svg</file>
-        <file alias="ai">assets/illustrator.svg</file>
+        <file alias="allustrator">assets/illustrator.svg</file>
         <file alias="indesign">assets/indesign.svg</file>
         <file alias="iso">assets/iso.svg</file>
         <file alias="js">assets/javascript.svg</file>
@@ -44,7 +46,7 @@
         <file alias="ppt">assets/ppt.svg</file>
         <file alias="prelude">assets/prelude.svg</file>
         <file alias="premiere">assets/premiere.svg</file>
-        <file alias="psd">assets/psd.svg</file>
+        <file alias="psd2">assets/psd.svg</file>
         <file alias="rtf">assets/rtf.svg</file>
         <file alias="search">assets/search.svg</file>
         <file alias="svg">assets/svg.svg</file>
@@ -53,5 +55,12 @@
         <file alias="xml">assets/xml.svg</file>
         <file>assets/zip-1.svg</file>
         <file alias="zip">assets/zip.svg</file>
+    </qresource>
+    <qresource prefix="/tree">
+        <file alias="branch-closed">assets/tree/branch-closed.png</file>
+        <file alias="branch-end">assets/tree/branch-end.png</file>
+        <file alias="branch-more">assets/tree/branch-more.png</file>
+        <file alias="branch-open">assets/tree/branch-open.png</file>
+        <file alias="vline">assets/tree/vline.png</file>
     </qresource>
 </RCC>

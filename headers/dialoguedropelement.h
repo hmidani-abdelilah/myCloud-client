@@ -3,6 +3,7 @@
 
 #include "element.h"
 #include "dialogdropheaderelement.h"
+#include "statselement.h"
 
 #include <QDialog>
 #include <QHBoxLayout>
@@ -14,17 +15,17 @@ public:
     DialogueDropElement();
 
 public:
-    void setFiles(QVector<DataElement> fileDatas);
+    void setFiles(QVector<StatsElement::Stats> fileDatas);
 
     QString getSelectedPath();
 
 private slots:
     void slotDirectoryEntered(const QString &directory);
 private:
-    QVector<DataElement>    _itemsSelected;
+    QVector<StatsElement::Stats>    _itemsSelected;
     DialogDropHeaderElement *_header;
-    void createHeaderWithOneFile(DataElement fileData);
-    void createHeaderWithMultiFiles(QVector<DataElement> fileDatas);
+    void createHeaderWithOneFile(StatsElement::Stats fileData);
+    void createHeaderWithMultiFiles(QVector<StatsElement::Stats> fileDatas);
     QFileDialog *_fileDialog;
 };
 

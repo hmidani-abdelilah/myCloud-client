@@ -26,7 +26,7 @@ protected slots:
     virtual void emitSignalResponseReady(QNetworkReply *reply);
 
 protected:
-    QString getRoute(int route, QMap<QString, QString> params);
+    QString getRoute(int route, QMap<QString, QString>);
 
 signals:
     void signalConnected(QNetworkReply *reply);

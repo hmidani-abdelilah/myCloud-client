@@ -21,10 +21,10 @@ protected:
     void setHeaderBar();
 
 private slots:
-    void addNewTransfertBar(quint64 id);
+    void addNewTransfertBar(qint64 id);
     void updateData();
-    void barHasBeenClicked(quint64 id);
-    void slotDeleteTransfertBar(quint64 id);
+    void barHasBeenClicked(qint64 id);
+    void slotDeleteTransfertBar(qint64 id);
     void slotDeleteAllFile(TransfertBar *bar);
     void slotDeleteTransfert();
     void slotPauseTransfert();

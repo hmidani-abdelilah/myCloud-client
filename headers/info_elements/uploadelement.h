@@ -6,14 +6,14 @@
 class UploadElement : public InfoElement
 {
 public:
-    UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id, quint64 octetAlreadyTransfered);
+    UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, qint64 size, qint64 id, qint64 octetAlreadyTransfered, TypeElement typeElement);
 
-    inline quint64 getTransferedSize() {return _sizeTransfered;}
+    inline qint64 getTransferedSize() {return _sizeTransfered;}
 
     int getProgression();
     bool isFinish();
     void setOctetsTransfered(int nbOctet);
-    quint64 getSizeTransfering();
+    qint64 getSizeTransfering();
 };
 
 #endif // UPLOADELEMENT_H

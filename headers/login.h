@@ -18,6 +18,7 @@ public:
     explicit Login(QWidget *parent = 0);
     ~Login();
 
+    QPixmap fromSvgToPixmap(const QSize &ImageSize, const QString &SvgFile);
 private:
     Ui::Login *ui;
     UserRequest *_userRequest;

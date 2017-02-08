@@ -19,20 +19,25 @@ FileManager::FileManager(QObject *parent) : QObject(parent)
 {
     _fileRequest = new FileRequest();
     _historicRequest = new HistoricRequest();
+    _folderRequest = new FolderRequest();
 
     _socketManager = SocketManager::getInstanceSocketM();
     _boundary = "-----------------------------7d935033608e2";
-    _fileList = new QMap<quint64, InfoElement *>();
+    _fileList = new QMap<qint64, InfoElement *>();
     _bufferSize = 16334;
 
     timer = new QTime();
     timer->start();
+
+    _messageBoxCreateFolder = new MessageBoxNaming ("Name of the folder", "Create");
 
     connect(_fileRequest, &FileRequest::signalUpload, this, &FileManager::responseSendFileDataToServer);
     connect(_fileRequest, &FileRequest::signalDownload, this, &FileManager::responseDownloadFileDataFromServer);
     connect(_fileRequest, &FileRequest::signalFile, this, &FileManager::responseFile);
     connect(_historicRequest, &HistoricRequest::signalHistoric, this, &FileManager::responseHistoric);
     connect(_historicRequest, &HistoricRequest::signalHistoricById, this, &FileManager::responseHistoricByIdUpdate);
+    connect(_folderRequest, &FolderRequest::signalCreate, this, &FileManager::responseFolderCreate);
+    connect(_fileRequest, &FileRequest::signalRename, this, &FileManager::responseRename);
     _historicRequest->request(HistoricRequest::GET, HistoricRequest::DefaultHistoric);
 }
 
@@ -74,16 +79,17 @@ QString FileManager::getNameFile(QString &path, bool extension) {
     return list[list.length() - 1];
 }
 
-void FileManager::setNewFile(QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, QString type, quint64 octetAlreadyTransfert) {
+void FileManager::setNewFile(QString name, QString pathClient, QString pathServer, QString status, qint64 size, qint64 id, QString type, qint64 octetAlreadyTransfert) {
     InfoElement *file;
 
-    qDebug(type.toStdString().c_str());
-    if (type == "DOWNLOAD")
-        file = new DownloadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, StatsElement::convertStringToStatus(status), size, id);
-    else if (type == "UPLOAD")
-        file = new UploadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, StatsElement::convertStringToStatus(status), size, id, octetAlreadyTransfert);
-    else
+    if (type == QString("DOWNLOAD"))
+        file = new DownloadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, StatsElement::convertStringToStatus(status), size, id, StatsElement::TypeElement::FILE);
+    else if (type == QString("UPLOAD"))
+        file = new UploadElement(QString (pathClient + "/" + name), name, pathClient, pathServer, StatsElement::convertStringToStatus(status), size, id, octetAlreadyTransfert, StatsElement::TypeElement::FILE);
+    else {
         qDebug("[ERROR] : type incorect"); // TODO lancer une exeption
+        return;
+    }
 
     connect(file, &InfoElement::statusHasChanged, this, &FileManager::statusFileChanged);
 
@@ -132,7 +138,7 @@ void FileManager::sendFile(QUrl urlFile, QString location) {
     _fileRequest->request(FileRequest::POST, FileRequest::DefaultFile, prms);
 }
 
-void FileManager::downloadFile(QString pathFile, QString pathDevice, quint64 size) {
+void FileManager::downloadFile(QString pathFile, QString pathDevice, qint64 size) {
     QUrl urlPathFile(pathFile);
     QUrl urlPathDevice(pathDevice);
     //    QFileInfo file(url.path());
@@ -232,24 +238,26 @@ void FileManager::responseFile(QNetworkReply *reply) {
     else if (reply->property("verb") == "delete") {
         if (reply->property("replaceFile").toString() == "active")
             responseReplaceFile(reply);
-        else if (reply->property("deleteTransferingFile").toString() == "active")
-            responseDeleteTransferingFile(reply);
+        else if (reply->property("deleteFile").toString() == "active")
+            responseDeleteFile(reply);
+        else if (reply->property("deleteFileAndRename").toString() == "active") {
+            moveElementTo(reply->property("oldPath").toString(), reply->property("newPath").toString());
+        }
     }
 }
 
-void FileManager::responseDeleteTransferingFile(QNetworkReply *reply) {
+void FileManager::responseDeleteFile(QNetworkReply *reply) {
     if (reply->error() != QNetworkReply::NoError)
         throw HttpError(reply);
 
     qDebug("DELETE TRANSFERT FILE");
 }
 
-InfoElement *FileManager::getFile(quint64 id) {
-    //qDebug("test : %llu", id);
+InfoElement *FileManager::getFile(qint64 id) {
     return  _fileList->value(id);
 }
 
-void FileManager::sendFileDataToServer(quint64 id) {
+void FileManager::sendFileDataToServer(qint64 id) {
     InfoElement *file = _fileList->value(id);
 
     if (file->isOpen()) {
@@ -264,7 +272,7 @@ void FileManager::sendFileDataToServer(quint64 id) {
             body += data;
             body += "\r\n--" + _boundary + "--\r\n";
 
-            _fileRequest->requestFile(FileRequest::POST, FileRequest::Upload, body, _boundary);
+            _fileRequest->requestFile(FileRequest::POST, FileRequest::Upload, body, _boundary, file->pathServer(), file->size());
             data.clear();
         }
         else {
@@ -276,7 +284,7 @@ void FileManager::sendFileDataToServer(quint64 id) {
     }
 }
 
-void FileManager::downloadFileDataFromServer(quint64 id) {
+void FileManager::downloadFileDataFromServer(qint64 id) {
     qDebug() << "DOWNLOAD FILE DATA FROM SERVER";
     DownloadElement *file = dynamic_cast<DownloadElement *>(_fileList->value(id));
     RouteParams prms;
@@ -310,7 +318,6 @@ void FileManager::responseDownloadFileDataFromServer(QNetworkReply *reply) {
     QByteArray dataFile = reply->readAll();
     file->write(dataFile);
     _fileList->value((QString::number(id)).toULongLong())->actualizeElementBySizeTranfered(dataFile.length());
-    qDebug("size file %s -> %d", file->name().toStdString().c_str(), file->size());
     if (file->size() < file->sizeServer()) {
         downloadFileDataFromServer(id);
     }
@@ -345,7 +352,7 @@ void FileManager::responseSendFileDataToServer(QNetworkReply *reply) {
     }
 }
 
-void FileManager::deleteFile(quint64 id) {
+void FileManager::deleteFile(qint64 id) {
     delete _fileList->value(id);
     _fileList->remove(id);
 }
@@ -360,10 +367,6 @@ void FileManager::responseReplaceFile(QNetworkReply *reply) {
 
     emit fileReplaced(stats);
     sendFile(reply->property("pathDevice").toString() + "/" + file["name"], file["pathServer"]);
-}
-
-void FileManager::bytesWritten(qint64 bytes) {
-    qDebug(QString::number(bytes).toStdString().c_str());
 }
 
 void FileManager::responseHistoric(QNetworkReply *reply) {
@@ -409,11 +412,89 @@ void FileManager::responseHistoricByIdUpdate(QNetworkReply *reply) {
    }
 }
 
-void FileManager::statusFileChanged(quint64 id) {
+void FileManager::createFolder(QString path) {
+    _messageBoxCreateFolder->exec();
+
+    RouteParams prms;
+
+    prms.addValueToBody("pathServer", path);
+    prms.addValueToBody("name", _messageBoxCreateFolder->text());
+
+    _folderRequest->request(FolderRequest::POST, FolderRequest::Folder::Create, prms);
+}
+
+void FileManager::responseFolderCreate(QNetworkReply *reply) {
+    if (reply->error() != QNetworkReply::NoError)
+        throw HttpError(reply);
+    emit folderCreated(reply->readAll());
+}
+
+void FileManager::moveElementTo(QString oldPath, QString newPath) {
+    RouteParams prms;
+
+    prms.addValueToBody("oldPath", oldPath);
+    prms.addValueToBody("newPath", newPath);
+    _fileRequest->request(FileRequest::Type::PUT, FileRequest::Rename, prms);
+}
+
+void FileManager::responseRename(QNetworkReply *reply) {
+    if (reply->error() != QNetworkReply::NoError)
+        throw HttpError(reply);
+
+    JsonManager json(reply);
+
+    QMap<QString, QString> file = json.getJson();
+    QFileInfo oldFileInfo(file["oldPath"]);
+    QFileInfo newFileInfo(file["newPath"]);
+
+    if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 202) // file already exist
+    {
+        QMessageBox msgBox;
+
+        msgBox.setText(file["msg"]);
+        msgBox.setInformativeText("Do you want to replace this file ?");
+        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = msgBox.exec();
+        switch (ret) {
+        case QMessageBox::Yes: {
+            RouteParams prms;
+            prms.addQueryItem("pathServer", (newFileInfo.path() == "." ? "" : newFileInfo.path()));
+            prms.addQueryItem("name", newFileInfo.fileName());
+            QNetworkReply *replyRequest = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prms);
+            replyRequest->setProperty("deleteFileAndRename", "active");
+            replyRequest->setProperty("oldPath", file["oldPath"]);
+            replyRequest->setProperty("newPath", file["newPath"]);
+            break;
+        }
+        case QMessageBox::Cancel: {
+            // Don't Save was clicked
+            break;
+        }
+        default: {
+            // should never be reached
+            break;
+        }
+        }
+        return;
+    }
+
+    StatsElement::Stats statsOldfFile(oldFileInfo.fileName(), (oldFileInfo.path() == "." ? "" : oldFileInfo.path()));
+    StatsElement::Stats statsNewfFile(newFileInfo.fileName(), (newFileInfo.path() == "." ? "" : newFileInfo.path()));
+
+    qDebug("%s - %s", newFileInfo.fileName().toStdString().c_str(), QString((newFileInfo.path() == "." ? "" : newFileInfo.path())).toStdString().c_str());
+    emit fileReplaced(statsOldfFile);
+    emit fileSended(statsNewfFile);
+}
+
+void FileManager::statusFileChanged(qint64 id) {
     InfoElement *file = _fileList->value(id);
 
     if (file == NULL)
         return;
+
+    RouteParams prms;
+    prms.setParam("id", QString::number(id));
 
     switch (file->status()) {
     case InfoElement::Status::EN_COURS: {
@@ -422,11 +503,17 @@ void FileManager::statusFileChanged(quint64 id) {
             this->sendFileDataToServer(id);
         else if (file->type() == InfoElement::TransfertType::DOWNLOAD)
             this->downloadFileDataFromServer(id);
+
+        prms.addValueToBody("status", InfoElement::convertStatusToString(InfoElement::EN_COURS));
+        _historicRequest->request(HistoricRequest::PUT, HistoricRequest::HistoricById, prms);
+        break;
+    }
+    case InfoElement::Status::PAUSE: {
+        prms.addValueToBody("status", InfoElement::convertStatusToString(InfoElement::PAUSE));
+        _historicRequest->request(HistoricRequest::PUT, HistoricRequest::HistoricById, prms);
         break;
     }
     case InfoElement::Status::FINISH: {
-        RouteParams prms;
-        prms.setParam("id", QString::number(id));
         prms.addValueToBody("status", InfoElement::convertStatusToString(InfoElement::FINISH));
         _historicRequest->request(HistoricRequest::PUT, HistoricRequest::HistoricById, prms);
 
@@ -443,7 +530,7 @@ void FileManager::statusFileChanged(quint64 id) {
             prmsDeleteFile.addQueryItem("pathServer", file->pathServer());
             prmsDeleteFile.addQueryItem("name", file->name());
             QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prmsDeleteFile);
-            reply->setProperty("deleteTransferingFile", "active");
+            reply->setProperty("deleteFile", "active");
         }
         break;
     }

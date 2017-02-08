@@ -6,11 +6,13 @@ FolderRequest::FolderRequest() : ServiceRequest()
 }
 
 QString FolderRequest::getRoute(int route, QMap<QString, QString> params) {
+    Q_UNUSED(params)
     switch (route) {
     case Create:
         return "/folder";
         break;
     default:
+        return "";
         break;
     }
 }

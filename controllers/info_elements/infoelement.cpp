@@ -1,8 +1,8 @@
 #include "infoelement.h"
 
-InfoElement::InfoElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id)  :
+InfoElement::InfoElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, qint64 size, qint64 id, TypeElement typeElement)  :
     QFile(pathFile),
-    StatsElement(name, size, 0, pathServer, pathClient, TypeElement::UNDEFINED, status)
+    StatsElement(name, size, 0, pathServer, pathClient, typeElement, status)
 {
     _id = id;
     _constRefreshSpeed = 1000;

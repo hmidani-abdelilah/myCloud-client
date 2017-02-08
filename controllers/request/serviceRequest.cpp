@@ -45,12 +45,18 @@ void ServiceRequest::getCookieKey(QNetworkReply * reply) {
     }
 }
 
-void ServiceRequest::slotSslErrors(QList<QSslError> error) {
+void ServiceRequest::slotSslErrors(QList<QSslError>) {
     qDebug("ERROR : SSL");
 }
 
 QNetworkReply* ServiceRequest::request(Type type, int request, RouteParams prms) { // mettre l'enum au lieu du int
-    QString strRequest = "http://" + _host + _prefixRoute + getRoute(request, prms.params()) + prms.query();
+    QString route = getRoute(request, prms.params());
+    if (route.length() <= 0) {
+        qDebug("[ERROR] : BAD REQUEST");
+        return NULL;
+    }
+
+    QString strRequest = "http://" + _host + _prefixRoute + route + prms.query();
     qDebug() << "REQUEST : [" << _typeEnumList[type] << "] " << strRequest.toStdString().c_str();
 
     QNetworkRequest networkRequest = QNetworkRequest(QUrl(strRequest));
@@ -88,8 +94,14 @@ QNetworkReply* ServiceRequest::request(Type type, int request, RouteParams prms)
     return reply;
 }
 
-void ServiceRequest::requestFile(Type type, int request, QByteArray body, QByteArray boundary) { // mettre l'enum au lieu du int
-    QString strRequest = "http://" + _host + _prefixRoute + getRoute(request, QMap<QString, QString>());
+QNetworkReply* ServiceRequest::requestFile(Type type, int request, QByteArray body, QByteArray boundary, QString pathServer, qint64 totalSize) { // mettre l'enum au lieu du int
+    QString route = getRoute(request, QMap<QString, QString>());
+    if (route.length() <= 0) {
+        qDebug("[ERROR] : BAD REQUEST");
+        return NULL;
+    }
+
+    QString strRequest = "http://" + _host + _prefixRoute + route;
     qDebug() << "REQUEST : [" << _typeEnumList[type] << "] " << strRequest.toStdString().c_str();
 
     QNetworkRequest networkRequest = QNetworkRequest(QUrl(strRequest));
@@ -97,6 +109,8 @@ void ServiceRequest::requestFile(Type type, int request, QByteArray body, QByteA
     networkRequest.setRawHeader( "User-Agent" , _userAgent );
     networkRequest.setRawHeader("Cookie", Server::GlobalInfo::sid);
     networkRequest.setRawHeader("Content-Type","multipart/form-data; boundary=" + boundary);
+    networkRequest.setRawHeader("path-server", QByteArray(pathServer.toStdString().c_str()));
+    networkRequest.setRawHeader("total-size", QByteArray(QString::number(totalSize).toStdString().c_str()));
     networkRequest.setHeader(QNetworkRequest::ContentLengthHeader, body.size());
 
     QNetworkReply *reply;
@@ -106,10 +120,12 @@ void ServiceRequest::requestFile(Type type, int request, QByteArray body, QByteA
         reply = this->post(networkRequest, body);
         break;
     default:
+        return NULL;
         break;
     }
 
     reply->setProperty("routeId", request);
     reply->setProperty("verb", _typeEnumList[type]);
     connect(reply, &QNetworkReply::sslErrors, this, &ServiceRequest::slotSslErrors);
+    return reply;
 }

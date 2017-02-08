@@ -15,10 +15,10 @@ public:
     explicit DialogDropHeaderElement(QWidget *parent = 0);
     ~DialogDropHeaderElement();
 
-    void setInformation(QPixmap pixmap, QString title, QString path, QString createAt, quint64 size);
+    void setInformation(QPixmap pixmap, QString title, QString path, QString createAt, qint64 size);
 private:
     Ui::DialogDropHeaderElement *ui;
-    void paintEvent(QPaintEvent *pe);
+    void paintEvent(QPaintEvent *);
     void setIcon(QPixmap picture);
 };
 

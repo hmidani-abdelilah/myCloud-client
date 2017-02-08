@@ -20,8 +20,10 @@ BtnLeftMenu::BtnLeftMenu(QPixmap image, QString text, QWidget *parent) :
     ui->logo->setScaledContents(true);
     ui->title->setText(text);
 
-    QFont f = QFont(Font::GlobalInfo::name, 12);
+    QFont f = QFont(Font::GlobalInfo::name, 11);
     f.setStyleName("Moyen");
+    f.setLetterSpacing(QFont::PercentageSpacing, 105);
+    f.setWeight(450);
     ui->title->setFont(f);
     ui->horizontalLayout->setSpacing(0);
 }
@@ -59,6 +61,6 @@ void BtnLeftMenu::setActive(bool value) {
     }
 }
 
-void BtnLeftMenu::mousePressEvent ( QMouseEvent * event ) {
+void BtnLeftMenu::mousePressEvent ( QMouseEvent * ) {
     emit hasBeenClicked(_title);
 }

@@ -34,7 +34,6 @@ void DisplayPath::deleteLastElement() {
 }
 
 void DisplayPath::onClickElement(int pos) {
-    qDebug("POSITION %d, COUNT %d", pos, this->count());
     while (this->count() != pos) {
         deleteLastElement();
     }

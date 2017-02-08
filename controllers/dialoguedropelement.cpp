@@ -29,7 +29,7 @@ DialogueDropElement::DialogueDropElement()
     layout->addWidget(_fileDialog);
 }
 
-void DialogueDropElement::setFiles(QVector<DataElement> fileDatas)
+void DialogueDropElement::setFiles(QVector<StatsElement::Stats> fileDatas)
 {
     _itemsSelected = fileDatas;
     switch (fileDatas.size()) {
@@ -49,11 +49,16 @@ QString DialogueDropElement::getSelectedPath() {
     return _fileDialog->directoryUrl().toString();
 }
 
-void DialogueDropElement::createHeaderWithOneFile(DataElement fileData) {
-    _header->setInformation(fileData.image, fileData.name, fileData.path, "Created at 24h00 on 24 septembre", fileData.size);
+void DialogueDropElement::createHeaderWithOneFile(StatsElement::Stats fileData) {
+    _header->setInformation(fileData.image, fileData.name, fileData.pathServer, "Created at 24h00 on 24 septembre", fileData.size);
 }
 
-void DialogueDropElement::createHeaderWithMultiFiles(QVector<DataElement> fileDatas) {
-    _header->setInformation(QPixmap(":/logo/files"), QString::number(fileDatas.size()) + " files to upload", "multiple files path", "File created between 24/12/02 and today", 546);
+void DialogueDropElement::createHeaderWithMultiFiles(QVector<StatsElement::Stats> fileDatas) {
+    // TODO Calculer la taille totale
+    qint64 totalSize = 0;
+    for (int i = 0 ; i < fileDatas.size() ; i++) {
+        totalSize += fileDatas[i].size;
+    }
+    _header->setInformation(QPixmap(":/logo/files"), QString::number(fileDatas.size()) + " files to upload", "multiple files path", "File created between 24/12/02 and today", totalSize);
 }
 

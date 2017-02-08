@@ -31,14 +31,14 @@ public:
     QLabelCustom    *_statusLabel;
     InfoElement     *_file;
 
-    quint64         _sizeTransfered;
+    qint64         _sizeTransfered;
     float           _speed;
     QTime           *_time;
 
 public:
     void setPourcentage();
     void setSpeed();
-    void setSize(quint64 size);
+    void setSize(qint64 size);
     void setName(QString name);
     void setTransferedSize();
     void updateElement();
@@ -47,7 +47,7 @@ public:
     void setStatus();
     void hasBeenSelected(bool value);
 
-    quint64 id();
+    qint64 id();
     InfoElement::Status status();
 
     void changeStatusOfFile(InfoElement::Status status);
@@ -59,7 +59,7 @@ protected:
 private:
 
 signals:
-    void clicked(quint64);
+    void clicked(qint64);
     void clickOnDelete(TransfertBar*);
 
 private slots:

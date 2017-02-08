@@ -31,7 +31,7 @@ DialogDropHeaderElement::~DialogDropHeaderElement()
     delete ui;
 }
 
-void DialogDropHeaderElement::setInformation(QPixmap pixmap, QString title, QString path, QString createAt, quint64 size) {
+void DialogDropHeaderElement::setInformation(QPixmap pixmap, QString title, QString path, QString createAt, qint64 size) {
     //ui->_picture->setPixmap(pixmap);
     setIcon(pixmap);
     ui->_title->setText(title);
@@ -46,12 +46,11 @@ void DialogDropHeaderElement::setIcon(QPixmap picture) {
 
     QPixmap image = picture.scaled(w,h,Qt::KeepAspectRatio);
 
-    qDebug("%d", image.width());
     ui->_picture->setMinimumSize(image.width(), image.height());
     ui->_picture->setPixmap(image);
 }
 
-void DialogDropHeaderElement::paintEvent(QPaintEvent *pe) {
+void DialogDropHeaderElement::paintEvent(QPaintEvent *) {
   QStyleOption o;
   o.initFrom(this);
   QPainter p(this);

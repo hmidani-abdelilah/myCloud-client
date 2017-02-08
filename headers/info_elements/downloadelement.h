@@ -7,14 +7,14 @@
 class DownloadElement : public InfoElement
 {
 public:
-    DownloadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id);
+    DownloadElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, qint64 size, qint64 id, TypeElement typeElement);
 
 public:
-    inline quint64 getTransferedSize() {return this->size();}
+    inline qint64 getTransferedSize() {return this->size();}
     int getProgression();
     bool isFinish();
 
-    quint64 getSizeTransfering();
+    qint64 getSizeTransfering();
 };
 
 #endif // DOWNLOADELEMENT_H

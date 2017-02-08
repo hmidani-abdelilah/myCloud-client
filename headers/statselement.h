@@ -2,6 +2,7 @@
 #define STATSELEMENT_H
 
 #include <QString>
+#include <QPixmap>
 
 class StatsElement
 {
@@ -23,25 +24,28 @@ public:
     };
 
     struct Stats {
-        const QString     name;
-        const quint64     size;
-        const quint64     transferedSize;
-        const QString     pathServer;
-        const QString     pathClient;
-        const TypeElement typeElement;
-        const Status      status;
-        Stats(const QString name, const QString pathServer)
-            : name(name), size(0), transferedSize(0), pathServer(pathServer), pathClient("undefined"), typeElement(TypeElement::UNDEFINED), status(Status::NONE) {}
-        Stats(const QString name, const quint64 size, const quint64 transferedSize, const QString pathServer, const QString pathClient, const TypeElement typeElement, const Status status)
-        : name(name), size(size), transferedSize(transferedSize), pathServer(pathServer), pathClient(pathClient), typeElement(typeElement), status(status) {}
+        QString     name;
+        qint64     size;
+        qint64     transferedSize;
+        QString     pathServer;
+        QString     pathClient;
+        TypeElement typeElement;
+        Status      status;
+        QPixmap     image;
+        Stats()
+            : name(""), size(0), transferedSize(0), pathServer("undefined"), pathClient("undefined"), typeElement(TypeElement::UNDEFINED), status(Status::NONE), image(QPixmap()) {}
+        Stats(QString name, QString pathServer)
+            : name(name), size(0), transferedSize(0), pathServer(pathServer), pathClient("undefined"), typeElement(TypeElement::UNDEFINED), status(Status::NONE), image(QPixmap()) {}
+        Stats(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status, QPixmap image)
+        : name(name), size(size), transferedSize(transferedSize), pathServer(pathServer), pathClient(pathClient), typeElement(typeElement), status(status), image(image) {}
     };
 
-    StatsElement(QString name = "", quint64 size = 0, quint64 transferedSize = 0, QString pathServer = "undefined", QString pathClient = "undefined", TypeElement type = TypeElement::UNDEFINED, Status status = Status::NONE);
+    StatsElement(QString name = "", qint64 size = 0, qint64 transferedSize = 0, QString pathServer = "undefined", QString pathClient = "undefined", TypeElement type = TypeElement::UNDEFINED, Status status = Status::NONE);
     ~StatsElement() {}
 
     inline const QString name() {return _name;}
-    inline quint64 sizeServer() {return _sizeServer;}
-    inline quint64 transferedSize() {return _transferedSize;}
+    inline qint64 sizeServer() {return _sizeServer;}
+    inline qint64 transferedSize() {return _transferedSize;}
     inline const QString pathServer() {return _pathServer;}
     inline const QString pathClient() {return _pathClient;}
     inline Status status() {return _status;}
@@ -55,16 +59,17 @@ public:
 
 protected:
     QString     _name;
-    quint64     _sizeServer; // size total
-    quint64     _transferedSize; // size transfered
+    qint64     _sizeServer; // size total
+    qint64     _transferedSize; // size transfered
     QString     _pathServer;
     QString     _pathClient;
     TypeElement _typeElement;
     Status      _status;
+    QPixmap     _image;
 
 private:
     bool isInitialize();
-    void setStats(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status);
+    void setStats(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status);
 };
 
 #endif // STATSELEMENT_H

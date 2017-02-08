@@ -25,7 +25,7 @@ public:
     ServiceRequest();
     ~ServiceRequest() {}
     QNetworkReply *request(Type type, int request, RouteParams prms = RouteParams());
-    void requestFile(Type type, int request, QByteArray body, QByteArray boundary);
+    QNetworkReply *requestFile(Type type, int request, QByteArray body, QByteArray boundary, QString pathServer, qint64 totalSize);
     void setParams(QMap<QString, QString> *params);
     void setParam(QString key, QString value);
 
@@ -40,7 +40,7 @@ protected:
     virtual QString getRoute(int route, QMap<QString, QString> params) = 0;
 
 public slots:
-    void slotSslErrors(QList<QSslError> error);
+    void slotSslErrors(QList<QSslError>);
 
 protected slots:
     virtual void emitSignalResponseReady(QNetworkReply *reply) = 0;

@@ -9,7 +9,7 @@ public:
     Generator();
 
 public:
-    static QString getFormatSize(quint64 size);
+    static QString getFormatSize(qint64 size);
 };
 
 #endif // GENERATOR_H

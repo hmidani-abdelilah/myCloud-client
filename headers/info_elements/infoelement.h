@@ -19,9 +19,9 @@ public:
     };
 
 public:
-    InfoElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, quint64 size, quint64 id);
+    InfoElement(QString pathFile, QString name, QString pathClient, QString pathServer, Status status, qint64 size, qint64 id, TypeElement typeElement);
 
-    inline quint64 id()  {return _id;}
+    inline qint64 id()  {return _id;}
     inline InfoElement::TransfertType type() {return _transfertType;}
 
     void setStatus(InfoElement::Status status);
@@ -29,16 +29,16 @@ public:
 
     virtual bool isFinish() = 0;
     virtual int getProgression() = 0;
-    virtual quint64 getTransferedSize() = 0;
-    virtual quint64 getSizeTransfering() = 0;
+    virtual qint64 getTransferedSize() = 0;
+    virtual qint64 getSizeTransfering() = 0;
     void actualizeElementBySizeTranfered(int nbOctet);
 
 signals:
-    void statusHasChanged(quint64);
+    void statusHasChanged(qint64);
 
 protected:
-    quint64                         _id;
-    quint64                         _sizeTransfered;
+    qint64                         _id;
+    qint64                         _sizeTransfered;
     TransfertType                   _transfertType;
     float                           _rangeTransfertSpeed;
     int                             _constRefreshSpeed;

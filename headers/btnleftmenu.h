@@ -18,7 +18,7 @@ public:
     QString getTitle();
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *);
 
 private:
     Ui::BtnLeftMenu *ui;

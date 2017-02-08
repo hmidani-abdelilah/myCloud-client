@@ -1,6 +1,7 @@
 #include "login.h"
 #include "ui_login.h"
 #include "serviceRequest.h"
+#include "image.h"
 
 #include <QKeyEvent>
 #include <QPushButton>
@@ -10,7 +11,10 @@
 #include <QGraphicsItem>
 #include <QUrl>
 #include <QNetworkRequest>
+#include "globalinfo.h"
 #include "httperror.h"
+#include <QSvgRenderer>
+#include <QPainter>
 
 Login::Login(QWidget *parent) :
     QWidget(parent),
@@ -27,9 +31,13 @@ Login::Login(QWidget *parent) :
     ui->desc->setAlignment(Qt::AlignCenter);
     ui->desc->setPalette(pal);
 
-    QPixmap pic = QPixmap(":/logo/cloud.png");
-    ui->logo->setScaledContents(true);
-    ui->logo->setPixmap(pic);
+    ui->signBtn->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlue + ";border: none; margin-left:20px; margin-right:20px; color: black; text-decoration: none;");
+    QPixmap pic = Image::fromSvgToPixmap(QSize(70, 40), ":/logo/cloudLogo");
+    //ui->logo->setScaledContents(true);
+
+    int w = ui->logo->width();
+    int h = ui->logo->height();
+    ui->logo->setPixmap(pic.scaled(w,h,Qt::KeepAspectRatio));
 
     ui->errorMsg->setStyleSheet("QLabel { color : #cc0000; }");
     ui->errorMsg->setAlignment(Qt::AlignCenter);

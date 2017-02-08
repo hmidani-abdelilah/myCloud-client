@@ -4,7 +4,7 @@
 
 #include <QFileInfo>
 
-FileElement::FileElement(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent)
+FileElement::FileElement(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent)
     : Element(name, size, transferedSize, pathServer, pathClient, TypeElement::FILE, status, parent)
 {
     _fileRequest = new FileRequest();
@@ -32,6 +32,8 @@ void FileElement::getIcon() {
     }
     else {
         prms.setParam("name", _name);
+        prms.addQueryItem("pathServer", _pathServer);
+
         _fileRequest->request(FileRequest::Type::GET, FileRequest::File::Reduce, prms);
     }
 }

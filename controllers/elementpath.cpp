@@ -10,7 +10,7 @@ ElementPath::ElementPath(const QString &pathImg, int w, int h, int pos, QWidget 
     _position = pos;
 }
 
-void ElementPath::mousePressEvent(QMouseEvent* event)
+void ElementPath::mousePressEvent(QMouseEvent*)
 {
     emit clicked(_position);
 }

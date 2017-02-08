@@ -5,7 +5,7 @@ JsonError::JsonError(QString msg)
     _msg = msg;
 }
 
-QString JsonError::what()
+QString JsonError::error()
 {
     QString msg = "[ERROR JSON] : " + _msg;
     return msg;

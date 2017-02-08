@@ -21,7 +21,7 @@ void QLabelCustom::createBtnImg(QString imgPath, int w, int h) {
     this->setCursor(Qt::PointingHandCursor);
 }
 
-void QLabelCustom::mousePressEvent(QMouseEvent* event)
+void QLabelCustom::mousePressEvent(QMouseEvent*)
 {
     emit clicked();
 }

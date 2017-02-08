@@ -15,7 +15,7 @@ public:
 
      void changeImageColor(QString color);
 protected:
-    virtual void mousePressEvent(QMouseEvent* event);
+    virtual void mousePressEvent(QMouseEvent*);
 
 signals:
      void clicked();

@@ -8,6 +8,7 @@ FileRequest::FileRequest() : ServiceRequest()
     _listRoute.insert(Historic, &FileRequest::signalHistoric);
     _listRoute.insert(Reduce, &FileRequest::signalReduce);
     _listRoute.insert(HistoricById, &FileRequest::signalHistoricById);
+    _listRoute.insert(Rename, &FileRequest::signalRename);
 }
 
 QString FileRequest::getRoute(int route, QMap<QString, QString> params) {
@@ -30,7 +31,11 @@ QString FileRequest::getRoute(int route, QMap<QString, QString> params) {
     case Reduce:
         return "/file/reduce/" + params["name"];
         break;
+    case Rename:
+        return "/file/rename";
+        break;
     default:
+        return "";
         break;
     }
 }

@@ -29,18 +29,18 @@ public:
 public :
     UploadElement();
     UploadElement(QString pathFile);
-    UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, quint64 octetAlreadyTransfert, QString transfertType);
+    UploadElement(QString pathFile, QString name, QString pathClient, QString pathServer, QString status, qint64 size, qint64 id, qint64 octetAlreadyTransfert, QString transfertType);
 
-    inline quint64 getSize() {return _size;}
-    inline quint64 getId() {return _id;}
+    inline qint64 getSize() {return _size;}
+    inline qint64 getId() {return _id;}
     inline QString getNameFile() {return _name;}
-    inline quint64 getTransferedSize() {return _sizeTransfered;}
+    inline qint64 getTransferedSize() {return _sizeTransfered;}
     inline QString getPathServer() {return _pathServer;}
     inline InfoElement::Status getStatus() {return _status;}
 
     inline void setNameFile(QString name) {_name = name;}
-    inline void setSize(quint64 size) {_size = size;}
-    inline void setId(quint64 id) {_id = id;}
+    inline void setSize(qint64 size) {_size = size;}
+    inline void setId(qint64 id) {_id = id;}
 
     void setOctetsTransfered(int nbOctet);
     void setStatus(InfoElement::Status status);
@@ -57,14 +57,14 @@ public :
     TransfertType type();
 
 signals:
-    void statusHasChanged(quint64);
+    void statusHasChanged(qint64);
 
 private:
-    quint64                         _id;
+    qint64                         _id;
     Status                          _status;
-    quint64                         _size;
+    qint64                         _size;
     QString                         _name;
-    quint64                         _sizeTransfered;
+    qint64                         _sizeTransfered;
     QString                         _pathServer;
     QString                         _pathClient;
     TransfertType                   _transfertType;

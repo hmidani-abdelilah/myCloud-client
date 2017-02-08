@@ -14,7 +14,7 @@ private:
 public:
     void raise() const { throw *this; }
     JsonError *clone() const { return new JsonError(*this); }
-    QString what();
+    QString error();
 };
 
 #endif // JSONERROR_H

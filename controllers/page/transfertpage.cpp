@@ -30,7 +30,7 @@ TransfertPage::TransfertPage() : Page()
     setHeaderBar();
 }
 
-void TransfertPage::addNewTransfertBar(quint64 id) {
+void TransfertPage::addNewTransfertBar(qint64 id) {
 
     TransfertBar *bar = new TransfertBar(_fileManager->getFile(id));
 
@@ -49,7 +49,7 @@ void TransfertPage::updateData() { // OPTIMISATION : Active this function only w
     _timer->start(1000);
 }
 
-void TransfertPage::barHasBeenClicked (quint64 id) {
+void TransfertPage::barHasBeenClicked (qint64 id) {
     for (int i = 0 ; i < _listBar->length() ; i++) {
         if (_listBar->at(i) && _listBar->at(i)->id() == id)
             _barSelected = _listBar->at(i);
@@ -58,7 +58,7 @@ void TransfertPage::barHasBeenClicked (quint64 id) {
     updateHeaderBar();
 }
 
-void TransfertPage::slotDeleteTransfertBar(quint64 id)
+void TransfertPage::slotDeleteTransfertBar(qint64 id)
 {
     for (int i = 0 ; i < _layout->count() ; i++) {
         if (reinterpret_cast<TransfertBar*>(_layout->itemAt(i)->widget())->id() == id) {

@@ -10,7 +10,6 @@
 #include "displaypath.h"
 #include "filemanager.h"
 #include "messageboxnaming.h"
-#include "folderrequest.h"
 #include "dialoguedropelement.h"
 #include "factoryelement.h"
 
@@ -25,52 +24,46 @@ public:
     explicit ManagerElements(QWidget *parent = 0);
     //void setDisplayPath(DisplayPath *dispPath);
 
-private:
-    void addOneElement(Element *element);
-    void removeOneElement(QString name, QString path, Element::TypeElement type);
-    FactoryElement *_factoryElement;
-
 public slots:
     void moveInFolder(const QString &folder);
     void moveBackToFolder();
     void moveTo(const QStringList list);
     void refreshActualPage();
     void elementHasBeenDoubleClicked(QString title);
-    void elementHasBeenClicked(DataElement dataElement);
-    void elementsHasBeenDragged();
+    void elementHasBeenClicked(StatsElement::Stats dataElement);
+    virtual void elementsHasBeenDragged();
+    void setDraggableMode(Element::DraggableMode draggableMode = Element::EMIT);
 
-private slots:
-    void responseFolderCreate(QNetworkReply *reply);
-
-    void slotFileSended(StatsElement::Stats stats);
-    void slotFileReplaced(StatsElement::Stats stats);
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
+    void addOneElement(Element *element);
+    void removeOneElement(QString name, QString path, Element::TypeElement type);
+    void configureRightClick();
+    void paintEvent(QPaintEvent *);
+    void keyPressEvent(QKeyEvent *ev);
+    void keyReleaseEvent(QKeyEvent *ev);
 
 protected slots:
     void setContents(QNetworkReply *reply);
     void menuRequested(const QPoint &pos);
-    void actionCreateFolder(bool checked);
+    void responseFolderCreate(QByteArray reply);
+    void slotFileSended(StatsElement::Stats stats);
+    void slotFileReplaced(StatsElement::Stats stats);
+    void actionCreateFolder(bool);
 
 protected:
     FlowLayout *_flowLayout;
     PathRequest *_pathRequest;
-    FolderRequest *_folderRequest;
     FileManager *_fileManager;
     QMenu _menu;
     QStringList _path;
     DisplayPath *_displayPath;
-    MessageBoxNaming *_messageBoxCreateFolder;
-    QVector<DataElement> _itemsSelected;
+    QVector<StatsElement::Stats> _itemsSelected;
     bool        _ctrlKeyPress;
-    void configureRightClick();
-
+    FactoryElement *_factoryElement;
     QLabelCustom    *_previousAction;
-    void paintEvent(QPaintEvent *pe);
 
-    void keyPressEvent(QKeyEvent *ev);
-    void keyReleaseEvent(QKeyEvent *ev);
 signals:
     void folderHasBeenDoubleClicked(QString title);
 };

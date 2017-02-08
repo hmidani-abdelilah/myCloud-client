@@ -17,7 +17,7 @@ private:
     int _position;
 
 protected:
-    virtual void mousePressEvent(QMouseEvent* event);
+    virtual void mousePressEvent(QMouseEvent*);
 
 signals:
     void clicked(int);

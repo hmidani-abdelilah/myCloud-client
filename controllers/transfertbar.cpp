@@ -59,7 +59,8 @@ TransfertBar::TransfertBar(InfoElement *file) : QWidget()
     _labelTime->setAttribute( Qt::WA_TransparentForMouseEvents );
 
     _statusLabel->setAttribute( Qt::WA_TransparentForMouseEvents );
-
+    _statusLabel->setStyleSheet("color:#FFFFFF; border-radius: 25px; background-color:#DDEEEE; padding-left: 3px; padding-right: 3px");
+    _statusLabel->setMinimumHeight(18);
     _progressBar->setRange(0, 100);
     _progressBar->setValue(file->getProgression());
     _progressBar->setMinimumSize(100, 17);
@@ -132,7 +133,7 @@ void TransfertBar::setPourcentage() {
 }
 
 void TransfertBar::setTransferedSize() { // mettre cette fonction dans une classe helper ou autre ( CustomFIle )
-    quint64 size = _file->getTransferedSize();
+    qint64 size = _file->getTransferedSize();
 
     _sizeTransfered = size;
     _transferedSize->setText(Generator::getFormatSize(size));
@@ -148,7 +149,7 @@ void TransfertBar::setSpeed() { // set speed with syntax ( ie: 2 mo/s)
         _speedLabel->setText(QString::number(_speed / 1000) + " Mo/s");
 }
 
-void TransfertBar::setSize(quint64 size) {
+void TransfertBar::setSize(qint64 size) {
     _size->setText(Generator::getFormatSize(size));
 }
 
@@ -165,26 +166,31 @@ void TransfertBar::setStatus() {
     _statusLabel->setText(InfoElement::convertStatusToString(_file->status()));
 
     switch (_file->status()) {
-    case InfoElement::Status::FINISH: {
-        _iconStatus->changeImageColor("1BB71E");
-        break;
-    }
-    case InfoElement::Status::PAUSE: {
-        _iconStatus->changeImageColor("FFD400");
-        break;
-    }
-    case InfoElement::Status::EN_COURS: {
-        _iconStatus->changeImageColor("329ED1");
-        break;
-    }
-    case InfoElement::Status::DELETE: {
-        break;
+        case InfoElement::Status::FINISH: {
+            _iconStatus->changeImageColor("1BB71E");
+            _statusLabel->setStyleSheet("color:#FFFFFF; border-style: solid; border-radius: 3px; background-color:#1BB71E; padding-left: 3px; padding-right: 3px");
+            break;
+        }
+        case InfoElement::Status::PAUSE: {
+            _iconStatus->changeImageColor("FFD400");
+            _statusLabel->setStyleSheet("color:#FFFFFF; border-style: solid; border-radius: 3px; background-color:#FFD400; padding-left: 3px; padding-right: 3px");
+            break;
+        }
+        case InfoElement::Status::EN_COURS: {
+            _iconStatus->changeImageColor("329ED1");
+            _statusLabel->setStyleSheet("color:#FFFFFF; border-style: solid; border-radius: 3px; background-color:#329ED1; padding-left: 3px; padding-right: 3px");
+            break;
+        }
+        case InfoElement::Status::DELETE: {
+            break;
 
-    }
-    case InfoElement::Status::ERROR_CLIENT_PATH: {
-        _iconStatus->changeImageColor("F45342");
-        break;
-    }
+        }
+        case InfoElement::Status::ERROR_CLIENT_PATH: {
+            _iconStatus->changeImageColor("F45342");
+            break;
+        }
+        default:
+            return;
     }
 }
 
@@ -217,7 +223,7 @@ QLabelCustom* TransfertBar::getBtnDelete() {
     return _btnDelete;
 }
 
-quint64 TransfertBar::id() {
+qint64 TransfertBar::id() {
     return _file->id();
 }
 

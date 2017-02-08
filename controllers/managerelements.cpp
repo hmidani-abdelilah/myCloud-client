@@ -12,10 +12,8 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
 {
     _flowLayout = new FlowLayout();
     _pathRequest = new PathRequest();
-    _folderRequest = new FolderRequest();
     _fileManager = FileManager::getInstanceFileM();
     _ctrlKeyPress = false;
-    _messageBoxCreateFolder = new MessageBoxNaming ("Name of the folder", "Create");
     _factoryElement = new FactoryElement(this);
 
     setFocusPolicy(Qt::StrongFocus);
@@ -28,7 +26,7 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
     connect(_fileManager, &FileManager::fileSended, this, &ManagerElements::slotFileSended);
     connect(_fileManager, &FileManager::fileReplaced, this, &ManagerElements::slotFileReplaced);
     connect(_pathRequest, &PathRequest::signalContent, this, &ManagerElements::setContents);
-    connect(_folderRequest, &FolderRequest::signalCreate, this, &ManagerElements::responseFolderCreate);
+    connect(_fileManager, &FileManager::folderCreated, this, &ManagerElements::responseFolderCreate);
     configureRightClick();
 
     moveTo(_path);
@@ -37,6 +35,8 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
 
 void ManagerElements::slotFileSended(StatsElement::Stats stats) {
     FileElement *file = _factoryElement->generateFileElement(stats);
+
+    removeOneElement(file->name(), file->pathServer(), file->type());
     addOneElement(file);
 }
 
@@ -83,20 +83,11 @@ void ManagerElements::configureRightClick() {
     _menu.addAction(createFolderA);
 }
 
-void ManagerElements::actionCreateFolder(bool checked) {
-    _messageBoxCreateFolder->exec();
-
-    RouteParams prms;
-
-    prms.addValueToBody("pathServer", _path.join("/"));
-    prms.addValueToBody("name", _messageBoxCreateFolder->text());
-
-    _folderRequest->request(FolderRequest::POST, FolderRequest::Folder::Create, prms);
+void ManagerElements::actionCreateFolder(bool) {
+    _fileManager->createFolder(_path.join("/"));
 }
 
-void ManagerElements::responseFolderCreate(QNetworkReply *reply) {
-    if (reply->error() != QNetworkReply::NoError)
-        throw HttpError(reply);
+void ManagerElements::responseFolderCreate(QByteArray reply) {
     JsonManager *jsonFiles = new JsonManager(reply);
     QMap<QString, QString> map = jsonFiles->getJson();
     addOneElement(_factoryElement->generateFolderElement(map["name"], map["pathServer"]));
@@ -135,13 +126,14 @@ void ManagerElements::addOneElement(Element *element) {
 }
 
 void ManagerElements::removeOneElement(QString name, QString path, Element::TypeElement type) {
-    qDebug("%s - %s - %d", name.toStdString().c_str(), path.toStdString().c_str(), _flowLayout->count());
     if (_path.join("/") == path) {
         for (int i = 0 ; i < _flowLayout->count() ; i++) {
             QLayoutItem *layoutItem = _flowLayout->itemAt(i);
             Element *elem = dynamic_cast<Element *>(layoutItem->widget());
             if (elem->name() == name && elem->type() == type) {
                 _flowLayout->removeItem(layoutItem);
+                delete layoutItem->widget();
+                delete layoutItem;
                 break;
             }
         }
@@ -156,7 +148,7 @@ void ManagerElements::menuRequested(const QPoint & pos) {
     _menu.popup(mapToGlobal(pos));
 }
 
-void ManagerElements::elementHasBeenClicked(DataElement dataElement) {
+void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
 
     if (_ctrlKeyPress == true) {
         _itemsSelected.append(dataElement);
@@ -190,7 +182,6 @@ void ManagerElements::dropEvent(QDropEvent *event)
 {
     QList<QUrl> listFilesUrls = event->mimeData()->urls();
     for (int fileUrlIndex = 0 ; fileUrlIndex < listFilesUrls.length() ; fileUrlIndex++) {
-        qDebug("SIZE : %d", _path.size());
        _fileManager->sendFile(listFilesUrls[fileUrlIndex], _path.join("/"));
     }
      event->acceptProposedAction();
@@ -214,7 +205,7 @@ void ManagerElements::elementsHasBeenDragged() {
             QFile file(QUrl(directory + "/" + _itemsSelected[index].name).path());
 
             if (!file.exists()) {
-                _fileManager->downloadFile(_itemsSelected[index].path + "/" + _itemsSelected[index].name, directory, _itemsSelected[index].size);
+                _fileManager->downloadFile(_itemsSelected[index].pathServer + "/" + _itemsSelected[index].name, directory, _itemsSelected[index].size);
                 continue;
             }
 
@@ -225,7 +216,7 @@ void ManagerElements::elementsHasBeenDragged() {
             switch (ret) {
             case QMessageBox::Yes: {
                 if (file.remove())
-                    _fileManager->downloadFile(_itemsSelected[index].path + "/" + _itemsSelected[index].name, directory, _itemsSelected[index].size);
+                    _fileManager->downloadFile(_itemsSelected[index].pathServer + "/" + _itemsSelected[index].name, directory, _itemsSelected[index].size);
                 else
                     QMessageBox::critical(this, "Can not delete file " + _itemsSelected[index].name,
                                                    "This document does not exist, try it again");
@@ -243,9 +234,15 @@ void ManagerElements::elementsHasBeenDragged() {
     }
 }
 
-void ManagerElements::paintEvent(QPaintEvent *pe) {
+void ManagerElements::setDraggableMode(Element::DraggableMode draggableMode)
+{
+     _factoryElement->setDraggableMode(draggableMode);
+}
+
+void ManagerElements::paintEvent(QPaintEvent *) {
   QStyleOption o;
   o.initFrom(this);
   QPainter p(this);
   style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
+

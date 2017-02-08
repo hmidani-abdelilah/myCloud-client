@@ -6,6 +6,7 @@ UserRequest::UserRequest() : ServiceRequest()
 }
 
 QString UserRequest::getRoute(int route, QMap<QString, QString> params) {
+    Q_UNUSED(params);
     switch (route) {
     case Connection:
         return "/user/login";
@@ -14,6 +15,7 @@ QString UserRequest::getRoute(int route, QMap<QString, QString> params) {
         return "/user";
         break;
     default:
+        return "";
         break;
     }
 }

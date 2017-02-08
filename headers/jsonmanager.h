@@ -18,6 +18,7 @@ class JsonManager : public QJsonDocument
 
 public:
     JsonManager(QNetworkReply *reply);
+    JsonManager(QByteArray reply);
     JsonManager(QString reply);
 
     QVector<QString> getArray(const QString key) const;

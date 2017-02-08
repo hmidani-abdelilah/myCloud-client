@@ -19,6 +19,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include "displaypath.h"
+#include "sortpage.h"
 
 namespace Ui {
 class Panel;
@@ -32,19 +33,12 @@ public:
     explicit Panel(QWidget *parent = 0);
     ~Panel();
 
-    enum TypeHeaderBar {
-        MANAGE_ELEMENTS,
-        TRANSFERT_PAGE
-    };
-
 public slots:
     void btnMenuClicked(QString title);
 
 private:
     BtnLeftMenu     *createBtnLeftMenu(QPixmap picture, QString title, bool value = false);
   //  void            configureHeaderBarManageElements();
-    void            setHeaderBar(TypeHeaderBar type);
-
 
 private:
     Ui::Panel               *ui;
@@ -58,6 +52,7 @@ private:
     QLabelCustom            *_previousAction;
     DisplayPath             *_displayPath;
     TransfertPage           *_transfertPage;
+    SortPage                *_sortPage;
     QVector<QWidget*>       *_listPages;
     void initializeHeaderBar();
 };

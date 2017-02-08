@@ -16,9 +16,12 @@ public:
     FolderElement *generateFolderElement(QString name, QString pathServer);
 
     FileElement *generateFileElement(StatsElement::Stats stats);
-    FileElement *generateFileElement(QString name, quint64 size, QString pathServer);
+    FileElement *generateFileElement(QString name, qint64 size, QString pathServer);
+    inline void setDraggableMode(Element::DraggableMode draggableMode = Element::EMIT) {_draggableMode = draggableMode;}
+
 private:
     const ManagerElements *_managerElement;
+    Element::DraggableMode _draggableMode;
 };
 
 #endif // FACTORYELEMENT_H

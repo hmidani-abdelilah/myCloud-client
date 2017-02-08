@@ -6,7 +6,7 @@
 class FolderElement : public Element
 {
 public:
-    FolderElement(QString name, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent = 0);
+    FolderElement(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent = 0);
 protected:
 };
 

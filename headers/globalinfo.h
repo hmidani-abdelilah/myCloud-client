@@ -37,4 +37,13 @@ namespace Font {
     };
 }
 
+namespace StyleSheet {
+    class GlobalInfo
+    {
+    public:
+        GlobalInfo();
+        static QString tree;
+    };
+}
+
 #endif // GLOBALINFO_H

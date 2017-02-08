@@ -7,7 +7,7 @@
 class FileElement : public Element
 {
 public:
-    FileElement(QString title, quint64 size, quint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent = 0);
+    FileElement(QString title, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, Status status, QWidget *parent = 0);
     FileElement(Stats stats, QWidget *parent = 0);
 
 protected:

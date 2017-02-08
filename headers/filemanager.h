@@ -6,6 +6,9 @@
 #include "infoelement.h"
 #include "filerequest.h"
 #include "historicrequest.h"
+#include "messageboxnaming.h"
+#include "folderrequest.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -26,18 +29,20 @@ public:
     static FileManager *getInstanceFileM();
     void sendFile(QUrl urlFile, QString location);
 
-    InfoElement *getFile(quint64 id);
-    void deleteFile(quint64 id);
-    void downloadFile(QString pathFile, QString pathDevice, quint64 size);
+    InfoElement *getFile(qint64 id);
+    void deleteFile(qint64 id);
+    void downloadFile(QString pathFile, QString pathDevice, qint64 size);
+    void createFolder(QString path);
 
+    void moveElementTo(QString oldPath, QString newPath);
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
+    MessageBoxNaming *_messageBoxCreateFolder;
 
 private slots:
-    void bytesWritten(qint64 bytes);
     void responseSendFileDataToServer(QNetworkReply *reply);
 
-    void statusFileChanged(quint64 id);
+    void statusFileChanged(qint64 id);
     void getlistTransfertOnServer(QNetworkReply *reply);
 
     void responseReplaceFile(QNetworkReply *reply);
@@ -45,27 +50,31 @@ private slots:
 
     void responseHistoricDelete(QNetworkReply *reply);
     void responseFile(QNetworkReply *reply);
-    void responseDeleteTransferingFile(QNetworkReply *reply);
+    void responseDeleteFile(QNetworkReply *reply);
     void responseDownloadFileDataFromServer(QNetworkReply *reply);
     void responseHistoricByIdUpdate(QNetworkReply *reply);
+    void responseFolderCreate(QNetworkReply *reply);
+    void responseRename(QNetworkReply *reply);
 
 signals:
-    void startUploadFile(quint64);
-    void fileDeletedInHistoric(quint64);
+    void startUploadFile(qint64);
+    void fileDeletedInHistoric(qint64);
     void fileSended(StatsElement::Stats);
     void fileReplaced(StatsElement::Stats);
+    void folderCreated(QByteArray reply);
 
 private:
     explicit FileManager(QObject *parent = 0);
     SocketManager *_socketManager;
     FileRequest *_fileRequest;
+    FolderRequest *_folderRequest;
     HistoricRequest *_historicRequest;
 
     QString _pathSendFile;
     QString _locationFileServer;
     QString getNameFile(QString &path, bool extension = true);
     QString getPathFile(QFile &file);
-    void sendFileDataToServer(quint64 id);
+    void sendFileDataToServer(qint64 id);
     std::ifstream *_file;
     std::ofstream _myfileTest;
     QDataStream *_in;
@@ -75,9 +84,9 @@ private:
     QByteArray _boundary;
     QTime *timer;
     int     _bufferSize;
-    QMap<quint64, InfoElement*> *_fileList;
-    void setNewFile(QString name, QString pathClient, QString pathServer, QString status, quint64 size, quint64 id, QString type, quint64 octetAlreadyTransfert = 0);
-    void downloadFileDataFromServer(quint64 id);
+    QMap<qint64, InfoElement*> *_fileList;
+    void setNewFile(QString name, QString pathClient, QString pathServer, QString status, qint64 size, qint64 id, QString type, qint64 octetAlreadyTransfert = 0);
+    void downloadFileDataFromServer(qint64 id);
 
     void responseInitializeForUpload(QNetworkReply *reply);
     void responseInitializeForDownload(QNetworkReply *reply);
