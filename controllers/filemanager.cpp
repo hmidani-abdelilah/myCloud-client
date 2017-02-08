@@ -541,6 +541,9 @@ void FileManager::statusFileChanged(qint64 id) {
             QNetworkReply *reply = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prmsDeleteFile);
             reply->setProperty("deleteFile", "active");
         }
+        if (file->type() == InfoElement::DOWNLOAD && file->getSizeTransfering() < file->sizeServer()) {
+            file->remove();
+        }
         // TODO DELETE LE FICHIER SUR L'ORDI SI IL EST INCOMPLET ( DOWNLOAD )
         break;
     }
