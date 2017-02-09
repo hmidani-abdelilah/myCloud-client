@@ -105,21 +105,20 @@ void FileManager::getlistTransfertOnServer(QNetworkReply *reply) {
         throw HttpError(reply);
 
     JsonManager json(reply);
+    QMap<QString, QVariant> map;
+
     int size = json.length();
     for (int i = 0 ; i < size ; i++) {
-        QMap<QString, QString> map;
         map = json.toArray(i)->getJson();
-        QMap<QString, QString>::iterator it;
 
-        this->setNewFile(map["name"],
-                map["pathDevice"],
-                map["pathServer"],
-                map["status"],
-                ((QString)(map["size"])).toULongLong(),
-                ((QString)(map["id"])).toULongLong(),
-                map["type"],
-                ((QString)(map["actualSize"])).toULongLong());
-        json.initialize();
+        this->setNewFile(map["name"].toString(),
+                map["pathDevice"].toString(),
+                map["pathServer"].toString(),
+                map["status"].toString(),
+                map["size"].toLongLong(),
+                map["id"].toLongLong(),
+                map["type"].toString(),
+                map["actualSize"].toLongLong());
     }
 
 }
@@ -131,7 +130,6 @@ void FileManager::sendFile(QUrl urlFile, QString location) {
     prms.addValueToBody("size", QString::number(file.size()));
     prms.addValueToBody("name", urlFile.fileName());
     prms.addValueToBody("status", UploadElement::convertStatusToString(InfoElement::Status::EN_COURS));
-    qDebug("LOCATION %s", location.toStdString().c_str());
     prms.addValueToBody("pathServer", location);
     prms.addValueToBody("pathDevice", urlFile.path().remove(urlFile.path().length() - urlFile.fileName().length() - 1, urlFile.fileName().length() + 1));
     prms.addValueToBody("type", "UPLOAD");
@@ -141,10 +139,8 @@ void FileManager::sendFile(QUrl urlFile, QString location) {
 void FileManager::downloadFile(QString pathFile, QString pathDevice, qint64 size) {
     QUrl urlPathFile(pathFile);
     QUrl urlPathDevice(pathDevice);
-    //    QFileInfo file(url.path());
     RouteParams prms;
 
-    qDebug("[DOWNLOAD FILE FUNCTION]");
     prms.addQueryItem("size", QString::number(size));
     prms.addQueryItem("name", urlPathFile.fileName());
     prms.addQueryItem("status", UploadElement::convertStatusToString(InfoElement::Status::EN_COURS));
@@ -161,10 +157,10 @@ void FileManager::responseInitializeForUpload(QNetworkReply *reply) {
     if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 202) // file already exist
     {
         JsonManager jsonFile(reply);
-        QMap<QString, QString> file = jsonFile.getJson();
+        QMap<QString, QVariant> file = jsonFile.getJson();
         QMessageBox msgBox;
 
-        msgBox.setText(file["msg"]);
+        msgBox.setText(file["msg"].toString());
         msgBox.setInformativeText("Do you want to replace this file ?");
         msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
         msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -172,8 +168,8 @@ void FileManager::responseInitializeForUpload(QNetworkReply *reply) {
         switch (ret) {
         case QMessageBox::Yes: {
             RouteParams prms;
-            prms.addQueryItem("pathServer", file["pathServer"]);
-            prms.addQueryItem("name", file["name"]);
+            prms.addQueryItem("pathServer", file["pathServer"].toString());
+            prms.addQueryItem("name", file["name"].toString());
             QNetworkReply *replyRequest = _fileRequest->request(FileRequest::DELETE, FileRequest::DefaultFile, prms);
             replyRequest->setProperty("pathDevice", file["pathDevice"]);
             replyRequest->setProperty("replaceFile", "active");
@@ -193,39 +189,39 @@ void FileManager::responseInitializeForUpload(QNetworkReply *reply) {
 
     JsonManager jsonFile(reply);
 
-    QMap<QString, QString> file = jsonFile.getJson();
+    QMap<QString, QVariant> file = jsonFile.getJson();
 
-    if (file["idDeleted"].length() > 0) {
+    if (file.contains("idDeleted")) {
         emit fileDeletedInHistoric((file["idDeleted"]).toULongLong());
     }
 
-    this->setNewFile(file["name"],
-            file["pathDevice"],
-            file["pathServer"],
-            file["status"],
-            ((QString)file["size"]).toULongLong(),
-            ((QString)file["id"]).toULongLong(),
-            file["type"]);
+    this->setNewFile(file["name"].toString(),
+            file["pathDevice"].toString(),
+            file["pathServer"].toString(),
+            file["status"].toString(),
+            file["size"].toLongLong(),
+            file["id"].toLongLong(),
+            file["type"].toString());
 }
 
 void FileManager::responseInitializeForDownload(QNetworkReply *reply) {
     JsonManager json(reply);
-    QMap<QString, QString> fileCreate;
+    QMap<QString, QVariant> fileCreate;
 
     fileCreate = json.getJson();
 
     // delete TransfertBar link with historic file destroy
-    if (fileCreate["idDeleted"].length() > 0) {
+    if (fileCreate.contains("idDeleted")) {
         emit fileDeletedInHistoric((fileCreate["idDeleted"]).toULongLong());
     }
 
-    this->setNewFile(fileCreate["name"],
-            fileCreate["pathDevice"],
-            fileCreate["pathServer"],
-            fileCreate["status"],
-            ((QString)(fileCreate["size"])).toULongLong(),
-            ((QString)(fileCreate["id"])).toULongLong(),
-            fileCreate["type"]);
+    this->setNewFile(fileCreate["name"].toString(),
+            fileCreate["pathDevice"].toString(),
+            fileCreate["pathServer"].toString(),
+            fileCreate["status"].toString(),
+            fileCreate["size"].toLongLong(),
+            fileCreate["id"].toLongLong(),
+            fileCreate["type"].toString());
 }
 
 void FileManager::responseFile(QNetworkReply *reply) {
@@ -285,7 +281,6 @@ void FileManager::sendFileDataToServer(qint64 id) {
 }
 
 void FileManager::downloadFileDataFromServer(qint64 id) {
-    qDebug() << "DOWNLOAD FILE DATA FROM SERVER";
     DownloadElement *file = dynamic_cast<DownloadElement *>(_fileList->value(id));
     RouteParams prms;
 
@@ -340,15 +335,15 @@ void FileManager::responseSendFileDataToServer(QNetworkReply *reply) {
         throw HttpError(reply);
 
     JsonManager jsonFile(reply);
-    QMap<QString, QString> file = jsonFile.getJson();
-    dynamic_cast<UploadElement *>(_fileList->value((file["id"]).toULongLong()))->setOctetsTransfered(_bufferSize);
-    _fileList->value((file["id"]).toULongLong())->actualizeElementBySizeTranfered(_bufferSize);
+    QMap<QString, QVariant> file = jsonFile.getJson();
+    dynamic_cast<UploadElement *>(_fileList->value(file["id"].toLongLong()))->setOctetsTransfered(_bufferSize);
+    _fileList->value(file["id"].toLongLong())->actualizeElementBySizeTranfered(_bufferSize);
 
-    InfoElement *elem = this->getFile((file["id"]).toULongLong());
+    InfoElement *elem = this->getFile(file["id"].toLongLong());
 
-    switch (_fileList->value((file["id"]).toULongLong())->status()) {
+    switch (_fileList->value(file["id"].toLongLong())->status()) {
     case InfoElement::Status::EN_COURS:
-        this->sendFileDataToServer((file["id"]).toULongLong());
+        this->sendFileDataToServer(file["id"].toLongLong());
         break;
     case InfoElement::Status::FINISH:
         emit fileSended(elem->stats());
@@ -370,12 +365,12 @@ void FileManager::responseReplaceFile(QNetworkReply *reply) {
     if (reply->error() != QNetworkReply::NoError)
         throw HttpError(reply);
     JsonManager json(reply);
-    QMap<QString, QString> file = json.getJson();
+    QMap<QString, QVariant> file = json.getJson();
 
-    StatsElement::Stats stats(file["name"], file["pathServer"]);
+    StatsElement::Stats stats(file["name"].toString(), file["pathServer"].toString());
 
     emit fileReplaced(stats);
-    sendFile(reply->property("pathDevice").toString() + "/" + file["name"], file["pathServer"]);
+    sendFile(reply->property("pathDevice").toString() + "/" + file["name"].toString(), file["pathServer"].toString());
 }
 
 void FileManager::responseHistoric(QNetworkReply *reply) {
@@ -386,18 +381,17 @@ void FileManager::responseHistoric(QNetworkReply *reply) {
         JsonManager json(reply);
         int size = json.length();
         for (int i = 0 ; i < size ; i++) {
-            QMap<QString, QString> map;
+            QMap<QString, QVariant> map;
             map = json.toArray(i)->getJson();
-            QMap<QString, QString>::iterator it;
 
-            this->setNewFile(map["name"],
-                    map["pathDevice"],
-                    map["pathServer"],
-                    map["status"],
-                    ((QString)(map["size"])).toULongLong(),
-                    ((QString)(map["id"])).toULongLong(),
-                    map["type"],
-                    ((QString)(map["actualSize"])).toULongLong());
+            this->setNewFile(map["name"].toString(),
+                    map["pathDevice"].toString(),
+                    map["pathServer"].toString(),
+                    map["status"].toString(),
+                    map["size"].toLongLong(),
+                    map["id"].toLongLong(),
+                    map["type"].toString(),
+                    map["actualSize"].toLongLong());
             json.initialize();
         }
     }
@@ -408,8 +402,8 @@ void FileManager::responseHistoricDelete(QNetworkReply *reply) {
     if (reply->error() != QNetworkReply::NoError)
         throw HttpError(reply);
 
-    QMap<QString, QString> file = json.getJson();
-    emit fileDeletedInHistoric((file["id"]).toULongLong());
+    QMap<QString, QVariant> file = json.getJson();
+    emit fileDeletedInHistoric(file["id"].toLongLong());
 }
 
 void FileManager::responseHistoricByIdUpdate(QNetworkReply *reply) {
@@ -452,15 +446,15 @@ void FileManager::responseRename(QNetworkReply *reply) {
 
     JsonManager json(reply);
 
-    QMap<QString, QString> file = json.getJson();
-    QFileInfo oldFileInfo(file["oldPath"]);
-    QFileInfo newFileInfo(file["newPath"]);
+    QMap<QString, QVariant> file = json.getJson();
+    QFileInfo oldFileInfo(file["oldPath"].toString());
+    QFileInfo newFileInfo(file["newPath"].toString());
 
     if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 202) // file already exist
     {
         QMessageBox msgBox;
 
-        msgBox.setText(file["msg"]);
+        msgBox.setText(file["msg"].toString());
         msgBox.setInformativeText("Do you want to replace this file ?");
         msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Yes);
         msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -498,7 +492,6 @@ void FileManager::responseRename(QNetworkReply *reply) {
 void FileManager::statusFileChanged(qint64 id) {
     InfoElement *file = _fileList->value(id);
 
-    qDebug("status = %d", file->status());
     if (file == NULL)
         return;
 

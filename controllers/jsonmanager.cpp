@@ -27,14 +27,14 @@ void JsonManager::initialize() {
     _typeSav = ISDOCUMENT;
 }
 
-QVector<QString> JsonManager::getArray(const QString key) const {
-    QVector<QString> array;
+QVector<QVariant> JsonManager::getArray(const QString key) const {
+    QVector<QVariant> array;
     QJsonArray jsonArray = _arrayValue[key].toArray();
 
     QJsonArray::iterator it;
 
     for (it = jsonArray.begin() ; it != jsonArray.end() ; it++)
-        array.append((*it).toString());
+        array.append((*it).toVariant());
 
     return array;
 }
@@ -160,7 +160,7 @@ JsonManager *JsonManager::toObject(QString value) {
     return this;
 }
 
-QMap<QString, QString> JsonManager::getJson() {
+QMap<QString, QVariant> JsonManager::getJson() {
     try {
         QJsonObject object;
         switch (_typeSav) {
@@ -175,27 +175,20 @@ QMap<QString, QString> JsonManager::getJson() {
             break;
         }
         QJsonObject::Iterator itObj;
-        QMap<QString, QString> map;
+        QMap<QString, QVariant> map;
 
         for (itObj = object.begin() ; itObj != object.end() ; itObj++) {
-            if ((*itObj).isDouble()) {
-                map[itObj.key()] = QString::number((*itObj).toDouble(), 'g', 1000);
-            }
-            if ((*itObj).isString()) {
-                map[itObj.key()] = (*itObj).toString();
-            }
+            map[itObj.key()] = (*itObj).toVariant();
         }
         return map;
     }
     catch(JsonError *jsonError) {
         qDebug() << jsonError->error();
     }
-    return QMap<QString, QString>();
+    return QMap<QString, QVariant>();
 }
 
-
-
-QVector<QString> JsonManager::getArray() {
+QVector<QVariant> JsonManager::getArray() {
     QJsonArray jsonArray;
     switch (_typeSav) {
     case ISDOCUMENT:
@@ -209,14 +202,10 @@ QVector<QString> JsonManager::getArray() {
         break;
     }
 
-    QVector<QString> array;
+    QVector<QVariant> array;
     QJsonArray::iterator it;
 
     for (it = jsonArray.begin() ; it != jsonArray.end() ; it++)
-        if ((*it).isDouble()) {
-            array.append(QString::number((*it).toDouble(), 'g', 1000));
-        }
-        else
-            array.append((*it).toString());
+        array.append((*it).toVariant());
     return array;
 }

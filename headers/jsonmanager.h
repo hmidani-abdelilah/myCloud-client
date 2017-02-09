@@ -21,14 +21,14 @@ public:
     JsonManager(QByteArray reply);
     JsonManager(QString reply);
 
-    QVector<QString> getArray(const QString key) const;
+    QVector<QVariant> getArray(const QString key) const;
 
     QJsonDocument getJsonDocument();
 
     JsonManager *toArray(int index);
     JsonManager *toObject(QString value);
-    QMap<QString, QString> getJson();
-    QVector<QString> getArray();
+    QMap<QString, QVariant> getJson();
+    QVector<QVariant> getArray();
 
     int length();
     void initialize();

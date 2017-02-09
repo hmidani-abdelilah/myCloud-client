@@ -89,8 +89,8 @@ void ManagerElements::actionCreateFolder(bool) {
 
 void ManagerElements::responseFolderCreate(QByteArray reply) {
     JsonManager *jsonFiles = new JsonManager(reply);
-    QMap<QString, QString> map = jsonFiles->getJson();
-    addOneElement(_factoryElement->generateFolderElement(map["name"], map["pathServer"]));
+    QMap<QString, QVariant> map = jsonFiles->getJson();
+    addOneElement(_factoryElement->generateFolderElement(map["name"].toString(), map["pathServer"].toString()));
 }
 
 void ManagerElements::setContents(QNetworkReply *reply) {
@@ -101,20 +101,20 @@ void ManagerElements::setContents(QNetworkReply *reply) {
     jsonFiles->initialize();
 
     for (int i = 0 ; i < nbFile ; i++) {
-        QMap<QString, QString> fileStat = jsonFiles->toObject("files")->toArray(i)->getJson();
+        QMap<QString, QVariant> fileStat = jsonFiles->toObject("files")->toArray(i)->getJson();
 
-        FileElement *file = _factoryElement->generateFileElement(fileStat["name"], fileStat["size"].toULongLong(), fileStat["path"]);
+        FileElement *file = _factoryElement->generateFileElement(fileStat["name"].toString(), fileStat["size"].toLongLong(), fileStat["path"].toString());
         _flowLayout->addWidget(file);
         jsonFiles->initialize();
     }
 
-    QString path = jsonFiles->getJson()["path"];
+    QString path = jsonFiles->getJson()["path"].toString();
     jsonFiles->initialize();
 
-    QVector<QString> folders = jsonFiles->toObject("folders")->getArray();
+    QVector<QVariant> folders = jsonFiles->toObject("folders")->getArray();
 
     for (int i = 0 ; i < folders.length() ; i++) {
-        FolderElement *folder = _factoryElement->generateFolderElement(folders.at(i), path);
+        FolderElement *folder = _factoryElement->generateFolderElement(folders.at(i).toString(), path);
         _flowLayout->addWidget(folder);
     }
 }
@@ -158,12 +158,13 @@ void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
         bool startSelect = false;
         for (int index = 0 ; index < _flowLayout->count() ; index++) {
             Element *elem = dynamic_cast<Element *>(_flowLayout->itemAt(index)->widget());
-            if (_lastFileSelected.name == elem->name() || dataElement.name == elem->name())
-                startSelect = !startSelect;
-
-            if (startSelect == true) {
-                elem->setSelected(true);
-                _itemsSelected.append(dataElement);
+            if (startSelect == true || _lastFileSelected.name == elem->name() || dataElement.name == elem->name()) {
+                if (elem->isSelected() == false) {
+                    elem->setSelected(true);
+                    _itemsSelected.append(elem->stats());
+                }
+                if (_lastFileSelected.name == elem->name() || dataElement.name == elem->name())
+                    startSelect = !startSelect;
             }
         }
         return;

@@ -32,6 +32,7 @@ public:
     inline TypeElement type() {return _typeElement;} // changer le nom de la fonction typeElement - a surrpime
     void setSelected(bool value);
     inline void setDraggableMode(DraggableMode draggableMode = EMIT) {_draggableMode = draggableMode;}
+    inline bool isSelected() {return _isSelected;}
 
 protected:
     Ui::Element *ui;

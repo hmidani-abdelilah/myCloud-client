@@ -52,10 +52,10 @@ void TreeRepositoryServer::createTreeWidgetItem(QString path) {
 void TreeRepositoryServer::responseRepositoryTree(QNetworkReply *reply) {
     JsonManager json(reply);
 
-    QVector<QString> array = json.getArray();
+    QVector<QVariant> array = json.getArray();
 
     for (int index = 0 ; index < array.length() ; index++) {
-        createTreeWidgetItem(array[index]);
+        createTreeWidgetItem(array[index].toString());
     }
 }
 
@@ -65,13 +65,13 @@ void TreeRepositoryServer::clickCreateFolder(bool) {
 
 void TreeRepositoryServer::addNewWidgetItem(QByteArray reply) {
     JsonManager *jsonFiles = new JsonManager(reply);
-    QMap<QString, QString> map = jsonFiles->getJson();
+    QMap<QString, QVariant> map = jsonFiles->getJson();
     QString pathServer = "";
 
-    if (map["pathServer"].length() > 0)
-        pathServer = map["pathServer"] + '/';
+    if (map["pathServer"].toString().length() > 0)
+        pathServer = map["pathServer"].toString() + '/';
 
-    createTreeWidgetItem(pathServer + map["name"]);
+    createTreeWidgetItem(pathServer + map["name"].toString());
 }
 
 void TreeRepositoryServer::dragEnterEvent(QDragEnterEvent *event)
