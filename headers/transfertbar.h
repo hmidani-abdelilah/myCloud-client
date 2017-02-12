@@ -31,6 +31,7 @@ public:
     QLabelCustom    *_statusLabel;
     InfoElement     *_file;
 
+    QString         _barColor;
     qint64         _sizeTransfered;
     float           _speed;
     QTime           *_time;
@@ -52,6 +53,7 @@ public:
 
     void changeStatusOfFile(InfoElement::Status status);
     QLabelCustom *getBtnDelete();
+    void setBarColor(QString color);
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);

@@ -21,7 +21,7 @@ TreeRepositoryServer::TreeRepositoryServer() : QTreeWidget()
     connect(_pathRequest, &PathRequest::signalRepositoryTree, this, &TreeRepositoryServer::responseRepositoryTree);
     connect(_fileManager, &FileManager::folderCreated, this, &TreeRepositoryServer::addNewWidgetItem);
     this->header()->hide();
-    this->verticalScrollBar()->setStyleSheet(StyleSheet::GlobalInfo::scrollBar);
+    this->verticalScrollBar()->setStyleSheet(StyleSheet::GlobalInfo::scrollBarVertical);
     this->setStyleSheet("QTreeView { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::tree);
     this->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
@@ -54,6 +54,12 @@ void TreeRepositoryServer::responseRepositoryTree(QNetworkReply *reply) {
 
     QVector<QVariant> array = json.getArray();
 
+    ItemRepositoryServer *widgetItem = new ItemRepositoryServer(this);
+    widgetItem->setPath("");
+    widgetItem->setText(0, "HOME");
+    widgetItem->setIcon(0, QIcon(":/logo/cloud2"));
+    _treeRepositoryServerList->insert("", widgetItem);
+
     for (int index = 0 ; index < array.length() ; index++) {
         createTreeWidgetItem(array[index].toString());
     }
@@ -85,10 +91,14 @@ void TreeRepositoryServer::dropEvent(QDropEvent *event)
 
     for (int i = 0 ; i < list.length() ; i++) {
         QFileInfo fileInfo(list[i]);
-
         ItemRepositoryServer *treeWidgetItem = dynamic_cast<ItemRepositoryServer *>(itemAt(event->pos()));
-        if (list[i] != treeWidgetItem->path() + "/" + fileInfo.fileName())
-            _fileManager->moveElementTo(list[i], treeWidgetItem->path() + "/" + fileInfo.fileName());
+
+        QString path = "";
+        if (treeWidgetItem->path().length() > 0)
+            path = treeWidgetItem->path() + "/";
+
+        if (list[i] != path + fileInfo.fileName())
+            _fileManager->moveElementTo(list[i], path + fileInfo.fileName());
     }
     event->acceptProposedAction();
 }

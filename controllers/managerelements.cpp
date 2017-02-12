@@ -24,7 +24,7 @@ ManagerElements::ManagerElements(QWidget *parent) : QWidget(parent)
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &ManagerElements::customContextMenuRequested, this, &ManagerElements::menuRequested);
     connect(_fileManager, &FileManager::fileSended, this, &ManagerElements::slotFileSended);
-    connect(_fileManager, &FileManager::fileReplaced, this, &ManagerElements::slotFileReplaced);
+    connect(_fileManager, &FileManager::fileDeleted, this, &ManagerElements::slotFileDeleted);
     connect(_pathRequest, &PathRequest::signalContent, this, &ManagerElements::setContents);
     connect(_fileManager, &FileManager::folderCreated, this, &ManagerElements::responseFolderCreate);
     configureRightClick();
@@ -40,7 +40,7 @@ void ManagerElements::slotFileSended(StatsElement::Stats stats) {
     addOneElement(file);
 }
 
-void ManagerElements::slotFileReplaced(StatsElement::Stats stats) {
+void ManagerElements::slotFileDeleted(StatsElement::Stats stats) {
     removeOneElement(stats.name, stats.pathServer, Element::FILE);
 }
 
@@ -58,6 +58,16 @@ void ManagerElements::moveInFolder(const QString &folder) {
     _path.append(folder);
     prms.addValueToBody("path", _path.join("/"));
     _pathRequest->request(PathRequest::POST, PathRequest::Contents, prms);
+}
+
+void ManagerElements::deleteFileSelectedOnServer() {
+    QString pathServer = "";
+
+    for (int index = 0 ; index < _itemsSelected.length() ; index++) {
+        if (_itemsSelected[index].pathServer.length() > 0)
+            pathServer = _itemsSelected[index].pathServer + '/';
+        _fileManager->deleteFileOnServer(pathServer + _itemsSelected[index].name);
+    }
 }
 
 void ManagerElements::refreshActualPage() {
@@ -152,6 +162,7 @@ void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
     if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
         _itemsSelected.append(dataElement);
         _lastFileSelected = dataElement;
+        emit nbElementsSelectedChanged(_itemsSelected.length() > 0);
         return;
     }
     if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
@@ -167,6 +178,7 @@ void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
                     startSelect = !startSelect;
             }
         }
+        emit nbElementsSelectedChanged(_itemsSelected.length());
         return;
     }
     _lastFileSelected = dataElement;
@@ -175,6 +187,7 @@ void ManagerElements::elementHasBeenClicked(StatsElement::Stats dataElement) {
     for (int i = 0 ; i < _flowLayout->count() ; i++) {
         dynamic_cast<Element *>(_flowLayout->itemAt(i)->widget())->setSelected(false);
     }
+    emit nbElementsSelectedChanged(_itemsSelected.length());
 }
 
 void ManagerElements::elementHasBeenUnselected(StatsElement::Stats dataElement) {
@@ -193,9 +206,9 @@ void ManagerElements::dropEvent(QDropEvent *event)
 {
     QList<QUrl> listFilesUrls = event->mimeData()->urls();
     for (int fileUrlIndex = 0 ; fileUrlIndex < listFilesUrls.length() ; fileUrlIndex++) {
-       _fileManager->sendFile(listFilesUrls[fileUrlIndex], _path.join("/"));
+        _fileManager->sendFile(listFilesUrls[fileUrlIndex], _path.join("/"));
     }
-     event->acceptProposedAction();
+    event->acceptProposedAction();
 }
 
 void ManagerElements::elementsHasBeenDragged() {
@@ -230,7 +243,7 @@ void ManagerElements::elementsHasBeenDragged() {
                     _fileManager->downloadFile(_itemsSelected[index].pathServer + "/" + _itemsSelected[index].name, directory, _itemsSelected[index].size);
                 else
                     QMessageBox::critical(this, "Can not delete file " + _itemsSelected[index].name,
-                                                   "This document does not exist, try it again");
+                                          "This document does not exist, try it again");
             }
             case QMessageBox::Cancel: {
                 // Don't Save was clicked
@@ -247,13 +260,13 @@ void ManagerElements::elementsHasBeenDragged() {
 
 void ManagerElements::setDraggableMode(Element::DraggableMode draggableMode)
 {
-     _factoryElement->setDraggableMode(draggableMode);
+    _factoryElement->setDraggableMode(draggableMode);
 }
 
 void ManagerElements::paintEvent(QPaintEvent *) {
-  QStyleOption o;
-  o.initFrom(this);
-  QPainter p(this);
-  style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
+    QStyleOption o;
+    o.initFrom(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 

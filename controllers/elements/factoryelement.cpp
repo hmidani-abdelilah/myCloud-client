@@ -8,18 +8,21 @@ FactoryElement::FactoryElement(const ManagerElements *managerElement)
 
 FileElement *FactoryElement::generateFileElement(QString name, qint64 size, QString pathServer) {
     FileElement *file = new FileElement(name, size, 0, pathServer, "", StatsElement::Status::NONE);
-    connect(file, &FileElement::selected, _managerElement, &ManagerElements::elementHasBeenClicked);
-    connect(file, &FileElement::unselected, _managerElement, &ManagerElements::elementHasBeenUnselected);
-    connect(file, &FileElement::isDragged, _managerElement, &ManagerElements::elementsHasBeenDragged);
-    file->setDraggableMode(_draggableMode);
+    createConnection(file);
     return file;
 }
 
 FileElement *FactoryElement::generateFileElement(StatsElement::Stats stats) {
     FileElement *file = new FileElement(stats);
+    createConnection(file);
+    return file;
+}
+
+FileElement *FactoryElement::createConnection(FileElement *file) {
     connect(file, &FileElement::selected, _managerElement, &ManagerElements::elementHasBeenClicked);
     connect(file, &FileElement::unselected, _managerElement, &ManagerElements::elementHasBeenUnselected);
     connect(file, &FileElement::isDragged, _managerElement, &ManagerElements::elementsHasBeenDragged);
+    connect(file, &FileElement::isDeleted, _managerElement, &ManagerElements::deleteFileSelectedOnServer);
     file->setDraggableMode(_draggableMode);
     return file;
 }

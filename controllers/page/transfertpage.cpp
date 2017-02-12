@@ -1,5 +1,7 @@
 #include "transfertpage.h"
 #include "transfertbar.h"
+#include "factorybutton.h"
+
 #include <QPushButton>
 
 TransfertPage::TransfertPage() : Page()
@@ -33,11 +35,13 @@ TransfertPage::TransfertPage() : Page()
 void TransfertPage::addNewTransfertBar(qint64 id) {
 
     TransfertBar *bar = new TransfertBar(_fileManager->getFile(id));
+    if ((_listBar->count() % 2) == 0)
+        bar->setBarColor("#" + ColorTransfertBar::GlobalInfo::grey);
 
     connect(bar, &TransfertBar::clickOnDelete, this, &TransfertPage::slotDeleteAllFile);
     connect(bar, &TransfertBar::clicked, this, &TransfertPage::barHasBeenClicked);
 
-    _listBar->append(bar);
+    _listBar->insert(0, bar);
     _layout->insertWidget(0, bar);
 }
 
@@ -60,18 +64,28 @@ void TransfertPage::barHasBeenClicked (qint64 id) {
 
 void TransfertPage::slotDeleteTransfertBar(qint64 id)
 {
-    for (int i = 0 ; i < _layout->count() ; i++) {
-        if (reinterpret_cast<TransfertBar*>(_layout->itemAt(i)->widget())->id() == id) {
-            delete _layout->takeAt(i)->widget();
-            break;
-        }
-    }
+    TransfertBar *bar;
+    QLayoutItem *item;
+    bool         color = false;
 
-    for (int i = 0 ; i < _listBar->count() ; i++) {
-        if (_listBar->at(i)->id() == id) {
+    for (int i = 0 ; i < _layout->count() - 1 ; i++) {
+        bar = reinterpret_cast<TransfertBar*>(_layout->itemAt(i)->widget());
+        if (bar->id() == id) {
             _listBar->removeAt(i);
             _fileManager->deleteFile(id);
+
+            item = _layout->itemAt(i);
+            _layout->removeItem(item);
+            delete item->widget();
+            delete item;
+            i = i - 1;
+            continue;
         }
+        if (color)
+            bar->setBarColor("#" + ColorTransfertBar::GlobalInfo::grey);
+        else
+            bar->setBarColor("#" + Color::GlobalInfo::white);
+        color = !color;
     }
 }
 
@@ -111,9 +125,11 @@ void TransfertPage::updateHeaderBar() {
 void TransfertPage::setHeaderBar() {
     QHBoxLayout *layout = new QHBoxLayout();
 
-    _deleteBtn = new QPushButton("Delete");
-    _pauseBtn = new QPushButton("Pause");
-    _startBtn = new QPushButton("Start");
+    _headerLayout->setContentsMargins(0, 0, 12, 0);
+
+    _deleteBtn = FactoryButton("DELETE").size(QSize(80, 24)).icon(":/elements/folder", QSize(10, 10)).gen();
+    _pauseBtn = FactoryButton("PAUSE").size(QSize(80, 24)).icon(":/logo/pause", QSize(10, 10)).gen();
+    _startBtn = FactoryButton("START").size(QSize(80, 24)).icon(":/logo/start", QSize(10, 10)).gen();
 
     QSpacerItem *spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 

@@ -9,6 +9,8 @@ namespace Color {
     public:
         GlobalInfo();
         static QString grey;
+        static QString greyHover;
+        static QString mainBleu;
         static QString greySolid;
         static QString lightBlue;
         static QString greyLight;
@@ -16,6 +18,15 @@ namespace Color {
         static QString greyBorder;
         static QString lightBlueSelection;
         static QByteArray sid;
+    };
+}
+
+namespace ColorTransfertBar {
+    class GlobalInfo
+    {
+        public:
+        GlobalInfo();
+        static QString grey;
     };
 }
 
@@ -43,7 +54,9 @@ namespace StyleSheet {
     public:
         GlobalInfo();
         static QString tree;
-        static QString scrollBar;
+        static QString scrollBarVertical;
+        static QString scrollBarHorizontal;
+        static QString button;
     };
 }
 

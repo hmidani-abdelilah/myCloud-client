@@ -33,6 +33,8 @@ public slots:
     virtual void elementsHasBeenDragged();
     void setDraggableMode(Element::DraggableMode draggableMode = Element::EMIT);
     void elementHasBeenUnselected(StatsElement::Stats dataElement);
+    void actionCreateFolder(bool);
+    void deleteFileSelectedOnServer();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -47,8 +49,7 @@ protected slots:
     void menuRequested(const QPoint &pos);
     void responseFolderCreate(QByteArray reply);
     void slotFileSended(StatsElement::Stats stats);
-    void slotFileReplaced(StatsElement::Stats stats);
-    void actionCreateFolder(bool);
+    void slotFileDeleted(StatsElement::Stats stats);
 
 protected:
     FlowLayout                      *_flowLayout;
@@ -64,7 +65,8 @@ protected:
     StatsElement::Stats             _lastFileSelected;
 
 signals:
-    void folderHasBeenDoubleClicked(QString title);
+    void nbElementsSelectedChanged(bool);
+    void folderHasBeenDoubleClicked(QString);
 };
 
 #endif // MANAGERELEMENTS_H

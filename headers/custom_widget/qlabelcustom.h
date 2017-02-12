@@ -14,6 +14,7 @@ public:
      QLabelCustom(const QString& pathImg, int w, int h, QWidget* parent = 0);
 
      void changeImageColor(QString color);
+
 protected:
     virtual void mousePressEvent(QMouseEvent*);
 

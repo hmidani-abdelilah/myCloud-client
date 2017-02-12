@@ -23,7 +23,8 @@ INCLUDEPATH += $$PWD/headers\
             += $$PWD/headers/info_elements\
             += $$PWD/headers/helpers\
             += $$PWD/headers/page\
-
+            += $$PWD/headers/factory\
+            += $$PWD/headers/custom_widget
 
 TEMPLATE = app
 TARGET = my_cloud
@@ -44,7 +45,7 @@ HEADERS += headers/btnleftmenu.h \
            headers/managerelements.h \
            headers/mycloudapplication.h \
            headers/panel.h \
-           headers/qlabelcustom.h \
+           headers/custom_widget/qlabelcustom.h \
            headers/socketmanager.h \
            headers/userInfo.h \
            headers/elements/element.h \
@@ -77,10 +78,12 @@ HEADERS += headers/btnleftmenu.h \
            headers/statselement.h \
            headers/helpers/image.h \
            headers/page/sortpage.h \
-    headers/treeelement.h \
-    headers/treerepositoryserver.h \
-    headers/itemrepositoryserver.h \
-    headers/managerelementsorder.h
+           headers/treeelement.h \
+           headers/treerepositoryserver.h \
+           headers/itemrepositoryserver.h \
+           headers/managerelementsorder.h \
+           headers/factory/factorybutton.h \
+           headers/custom_widget/qpushbuttoncustom.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui \
     dialogdropheaderelement.ui
@@ -97,7 +100,7 @@ SOURCES += main.cpp \
            controllers/managerelements.cpp \
            controllers/mycloudapplication.cpp \
            controllers/panel.cpp \
-           controllers/qlabelcustom.cpp \
+           controllers/custom_widget/qlabelcustom.cpp \
            controllers/socketmanager.cpp \
            controllers/userInfo.cpp \
            controllers/elements/element.cpp \
@@ -131,8 +134,10 @@ SOURCES += main.cpp \
            controllers/helpers/image.cpp \
            controllers/page/sortpage.cpp \
            controllers/treeelement.cpp \
-    controllers/treerepositoryserver.cpp \
-    controllers/itemrepositoryserver.cpp \
-    controllers/managerelementsorder.cpp
+           controllers/treerepositoryserver.cpp \
+           controllers/itemrepositoryserver.cpp \
+           controllers/managerelementsorder.cpp \
+           controllers/factory/factorybutton.cpp \
+           controllers/custom_widget/qpushbuttoncustom.cpp
 
 RESOURCES += assets.qrc

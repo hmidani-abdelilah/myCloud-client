@@ -11,6 +11,11 @@
         <file alias="user">assets/user.png</file>
         <file alias="cloudLogo">assets/cloud_logo.svg</file>
         <file alias="cloudMacLogo">assets/cloud_mac_logo.svg</file>
+        <file alias="delete">assets/delete.png</file>
+        <file alias="download">assets/download.png</file>
+        <file alias="start">assets/play.png</file>
+        <file alias="stop">assets/stop.png</file>
+        <file alias="pause">assets/pause.png</file>
     </qresource>
     <qresource prefix="/elements">
         <file alias="folder">assets/folder.png</file>

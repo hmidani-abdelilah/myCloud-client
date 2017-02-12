@@ -42,14 +42,14 @@ Panel::Panel(QWidget *parent) :
     ui->gridLayout->setSpacing(0);
 
     ui->stackedWidget->setStyleSheet("background-color:#" + Color::GlobalInfo::greyLight);
-    ui->scrollArea->setStyleSheet("#scrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBar);
+    ui->scrollArea->setStyleSheet("#scrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBarVertical);
 
     ui->gridDownloadWidget->setStyleSheet("QWidget {background-color:white;}");
     ui->gridOrderWidget->setStyleSheet("QWidget {background-color:white;}");
 
     ui->wPage2->setStyleSheet("background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";");
     ui->stackedWidget->setCurrentIndex(0);
-    ui->scrollAreaTransfert->setStyleSheet("#scrollAreaTransfert { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBar);
+    ui->scrollAreaTransfert->setStyleSheet("#scrollAreaTransfert { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBarVertical + StyleSheet::GlobalInfo::scrollBarHorizontal);
 
     /* Append page in the same order than button left for header bar */
 

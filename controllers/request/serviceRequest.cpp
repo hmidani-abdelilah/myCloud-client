@@ -57,7 +57,7 @@ QNetworkReply* ServiceRequest::request(Type type, int request, RouteParams prms)
     }
 
     QString strRequest = "http://" + _host + _prefixRoute + route + prms.query();
-    //qDebug() << "REQUEST : [" << _typeEnumList[type] << "] " << strRequest.toStdString().c_str();
+    qDebug() << "REQUEST : [" << _typeEnumList[type] << "] " << strRequest.toStdString().c_str();
 
     QNetworkRequest networkRequest = QNetworkRequest(QUrl(strRequest));
     networkRequest.setRawHeader("User-Agent", _userAgent);

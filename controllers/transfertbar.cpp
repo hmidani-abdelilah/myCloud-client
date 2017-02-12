@@ -24,7 +24,7 @@ TransfertBar::TransfertBar(InfoElement *file) : QWidget()
     _name = new QLabelCustom("");
     _progressBar = new QProgressBar();
     _btnDelete = new QLabelCustom(":/logo/downloadDelete", 12, 12);
-
+    _barColor = "#FFFFFF";
     switch (file->type()) {
     case InfoElement::UPLOAD:
         _iconStatus = new QLabelCustom(":/logo/downloadFinish", 16, 16);
@@ -211,8 +211,13 @@ void TransfertBar::hasBeenSelected(bool value) {
         this->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlueSelection + ";");
     }
     else {
-        this->setStyleSheet("background-color:#FFFFFF;");
+        this->setStyleSheet("background-color:" + _barColor + ";");
     }
+}
+
+void TransfertBar::setBarColor(QString color) {
+    _barColor = color;
+    this->setStyleSheet("background-color:" + _barColor + ";");
 }
 
 void TransfertBar::slotClickOnDelete() {

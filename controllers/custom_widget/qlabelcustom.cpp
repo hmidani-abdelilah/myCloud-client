@@ -1,6 +1,7 @@
 #include <QPainter>
 
 #include "qlabelcustom.h"
+#include "generator.h"
 
 QLabelCustom::QLabelCustom(const QString& text, QWidget* parent): QLabel(text, parent)
 {
@@ -27,9 +28,5 @@ void QLabelCustom::mousePressEvent(QMouseEvent*)
 }
 
 void QLabelCustom::changeImageColor(QString color) {
-    QPainter painters(&_image);
-    painters.setCompositionMode(QPainter::CompositionMode_SourceIn);
-    painters.fillRect(_image.rect(), QColor("#" + color));
-    painters.end();
-    this->setPixmap(_image);
+    this->setPixmap(Generator::changeLogoColor(_image, color));
 }

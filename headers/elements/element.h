@@ -58,13 +58,13 @@ private slots:
 
     void actionDelete(bool);
     void actionDownload(bool);
-    void actionDownloadIn(bool);
 
 signals:
     void hasBeenDoubleClicked(QString);
     void selected(Stats);
     void unselected(Stats);
     void isDragged();
+    void isDeleted();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;

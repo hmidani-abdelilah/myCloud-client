@@ -3,6 +3,7 @@
 #include "sortpage.h"
 #include "jsonmanager.h"
 #include "globalinfo.h"
+#include "factorybutton.h"
 
 SortPage::SortPage(QWidget *parent) : Page()
 {
@@ -29,7 +30,7 @@ SortPage::SortPage(QWidget *parent) : Page()
     scrollArea->setWidgetResizable( true );
     scrollArea->setWidget(_manageElements);
     scrollArea->setFrameStyle(QFrame::NoFrame);
-    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBar);
+    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBarVertical);
     _hBox->addWidget(scrollArea);
     _hBox->addWidget(_treeRepositoryServer);
     _hBox->setContentsMargins(0, 0, 0, 0);
@@ -42,12 +43,14 @@ SortPage::SortPage(QWidget *parent) : Page()
 void SortPage::setHeaderBar() {
     QHBoxLayout *layout = new QHBoxLayout();
 
+    _headerLayout->setContentsMargins(0, 0, 12, 0);
+
     QWidget* spacerHorizontal = new QWidget();
 
     QPixmap image(":/elements/previous");
-    QPushButton *createFolder = new QPushButton("Create folder");
-    QPushButton *start = new QPushButton("Start");
-    QPushButton *stop = new QPushButton("Stop");
+    QPushButton *createFolder = FactoryButton("CREATE FOLDER").size(QSize(110, 24)).icon(":/elements/folder", QSize(10, 10)).gen();
+    QPushButton *start = FactoryButton("START").size(QSize(80, 24)).icon(":/logo/start", QSize(10, 10)).gen();
+    QPushButton *stop = FactoryButton("STOP").size(QSize(80, 24)).icon(":/logo/stop", QSize(10, 10)).gen();
 
     connect(createFolder, &QPushButton::clicked, _treeRepositoryServer, &TreeRepositoryServer::clickCreateFolder);
 
@@ -65,9 +68,9 @@ void SortPage::setHeaderBar() {
     layout->addLayout(_displayPath);
 
     layout->addWidget(spacerHorizontal);
-    layout->addWidget(createFolder);
     layout->addWidget(start);
     layout->addWidget(stop);
+    layout->addWidget(createFolder);
     connect(_previousAction, &QLabelCustom::clicked, _displayPath, &DisplayPath::deleteLastElement);
     connect(_previousAction, &QLabelCustom::clicked, _manageElements, &ManagerElements::moveBackToFolder);
 

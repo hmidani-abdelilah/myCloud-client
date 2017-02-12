@@ -33,8 +33,9 @@ public:
     void deleteFile(qint64 id);
     void downloadFile(QString pathFile, QString pathDevice, qint64 size);
     void createFolder(QString path);
-
     void moveElementTo(QString oldPath, QString newPath);
+    void deleteFileOnServer(QString path);
+
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     MessageBoxNaming *_messageBoxCreateFolder;
@@ -50,17 +51,18 @@ private slots:
 
     void responseHistoricDelete(QNetworkReply *reply);
     void responseFile(QNetworkReply *reply);
-    void responseDeleteFile(QNetworkReply *reply);
+    void responseBasic(QNetworkReply *reply);
     void responseDownloadFileDataFromServer(QNetworkReply *reply);
     void responseHistoricByIdUpdate(QNetworkReply *reply);
     void responseFolderCreate(QNetworkReply *reply);
     void responseRename(QNetworkReply *reply);
+    void responseDeleteFileOnServer(QNetworkReply *reply);
 
 signals:
     void startUploadFile(qint64);
     void fileDeletedInHistoric(qint64);
     void fileSended(StatsElement::Stats);
-    void fileReplaced(StatsElement::Stats);
+    void fileDeleted(StatsElement::Stats);
     void folderCreated(QByteArray reply);
 
 private:

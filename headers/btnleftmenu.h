@@ -24,7 +24,6 @@ private:
     Ui::BtnLeftMenu *ui;
     QString _title;
     QPixmap _logo;
-    void changeLogoColor(QString color);
 
 signals:
     void hasBeenClicked(QString);

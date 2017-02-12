@@ -14,3 +14,12 @@ QString Generator::getFormatSize(qint64 size)
     else
         return QString::number((float)size / 1000000000) + "Go";
 }
+
+QPixmap Generator::changeLogoColor(QPixmap pixmap, QString color) {
+    QPainter painters (&pixmap);
+    painters.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painters.fillRect(pixmap.rect(), QColor("#" + color));
+    painters.end();
+
+    return pixmap;
+}

@@ -22,6 +22,9 @@ public:
 private:
     const ManagerElements *_managerElement;
     Element::DraggableMode _draggableMode;
+
+private:
+    FileElement *createConnection(FileElement *file);
 };
 
 #endif // FACTORYELEMENT_H

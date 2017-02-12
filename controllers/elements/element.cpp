@@ -69,12 +69,8 @@ void Element::configureRightClick() {
     QAction *downloadA = new QAction("Telecharger");
     connect(downloadA, &QAction::triggered, this, &Element::actionDownload);
 
-    QAction *downloadInA = new QAction("Telecharger vers ...");
-    connect(downloadInA, &QAction::triggered, this, &Element::actionDownloadIn);
-
     _menu.addAction(deleteA);
     _menu.addAction(downloadA);
-    _menu.addAction(downloadInA);
 }
 
 void Element::dragEnterEvent(QDragEnterEvent *event) {
@@ -86,16 +82,11 @@ void Element::dragMoveEvent(QDragMoveEvent *event) {
 }
 
 void Element::actionDelete(bool) {
-    qDebug("delete");
+    emit isDeleted();
 }
 
 void Element::actionDownload(bool) {
-    qDebug("download");
-}
-
-void Element::actionDownloadIn(bool) {
-    //FileManager *fileManager = FileManager::getInstanceFileM();
-    //fileManager->downloadFile(_path + "/" + _title, _size);
+    emit isDragged();
 }
 
 void Element::mousePressEvent(QMouseEvent *event) {
