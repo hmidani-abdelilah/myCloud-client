@@ -32,6 +32,16 @@ void InfoElement::setStatus(InfoElement::Status status)
 {
     if (status == _status)
         return;
+
+    switch (status) {
+    case InfoElement::Status::PAUSE:
+        _rangeTransfertSpeed = 0;
+
+        break;
+    default:
+        break;
+    }
+
     _status = status;
 
     emit statusHasChanged(_id);

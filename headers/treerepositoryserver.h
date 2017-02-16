@@ -26,7 +26,7 @@ private:
     FileManager                         *_fileManager;
 
 private slots:
-    void responseRepositoryTree(QNetworkReply *reply);
+    void responseTreeRepository(QNetworkReply *reply);
     void addNewWidgetItem(QByteArray reply);
 };
 

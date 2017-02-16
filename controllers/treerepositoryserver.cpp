@@ -18,7 +18,7 @@ TreeRepositoryServer::TreeRepositoryServer() : QTreeWidget()
     _pathRequest = new PathRequest();
     _fileManager = FileManager::getInstanceFileM();
 
-    connect(_pathRequest, &PathRequest::signalRepositoryTree, this, &TreeRepositoryServer::responseRepositoryTree);
+    connect(_pathRequest, &PathRequest::signalTreeRepository, this, &TreeRepositoryServer::responseTreeRepository);
     connect(_fileManager, &FileManager::folderCreated, this, &TreeRepositoryServer::addNewWidgetItem);
     this->header()->hide();
     this->verticalScrollBar()->setStyleSheet(StyleSheet::GlobalInfo::scrollBarVertical);
@@ -30,7 +30,7 @@ TreeRepositoryServer::TreeRepositoryServer() : QTreeWidget()
 }
 
 void TreeRepositoryServer::actualizeRepository() {
-    this->_pathRequest->request(PathRequest::GET, PathRequest::RepositoryTree);
+    this->_pathRequest->request(PathRequest::GET, PathRequest::TreeRepository);
 }
 
 void TreeRepositoryServer::createTreeWidgetItem(QString path) {
@@ -49,7 +49,7 @@ void TreeRepositoryServer::createTreeWidgetItem(QString path) {
     _treeRepositoryServerList->insert(path, widgetItem);
 }
 
-void TreeRepositoryServer::responseRepositoryTree(QNetworkReply *reply) {
+void TreeRepositoryServer::responseTreeRepository(QNetworkReply *reply) {
     JsonManager json(reply);
 
     QVector<QVariant> array = json.getArray();

@@ -46,10 +46,29 @@ void TransfertPage::addNewTransfertBar(qint64 id) {
 }
 
 void TransfertPage::updateData() { // OPTIMISATION : Active this function only when we are on the transfertpage
+    int speedDownload = 0;
+    int speedUpload = 0;
+
     for (int i = 0 ; i < _listBar->length() ; i++) {
         if (_listBar->at(i))
             _listBar->at(i)->updateElement();
+
+        switch (_listBar->at(i)->file()->type()) {
+        case InfoElement::TransfertType::DOWNLOAD:
+            speedDownload += _listBar->at(i)->speed();
+            break;
+        case InfoElement::TransfertType::UPLOAD:
+            speedUpload += _listBar->at(i)->speed();
+            break;
+        default:
+            break;
+        }
     }
+    if (Server::GlobalInfo::uploadBarItem != NULL && Server::GlobalInfo::downloadBarItem != NULL) {
+        Server::GlobalInfo::uploadBarItem->setValue(BoxDataBarItem::TypeUnit::SPEED, speedUpload);
+        Server::GlobalInfo::downloadBarItem->setValue(BoxDataBarItem::TypeUnit::SPEED, speedDownload);
+    }
+
     _timer->start(1000);
 }
 

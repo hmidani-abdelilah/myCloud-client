@@ -65,7 +65,7 @@ void Login::clickBtnSignIn() {
 void Login::getDataConnexion(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
-        emit connexionSuccess();
+        emit connexionSuccess(reply);
     else if (reply->error() == QNetworkReply::AuthenticationRequiredError)
         ui->errorMsg->setText(reply->readAll());
     else

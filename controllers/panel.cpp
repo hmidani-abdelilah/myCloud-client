@@ -1,5 +1,6 @@
 #include "panel.h"
 #include "globalinfo.h"
+#include "qlabelcustom.h"
 
 #include <QScrollArea>
 #include <QHBoxLayout>
@@ -14,8 +15,7 @@ Panel::Panel(QWidget *parent) :
     _viewFilesPage = new ViewFilesPage();
     _transfertPage = new TransfertPage();
     _sortPage = new SortPage();
-    _headerManageElements = new QHBoxLayout();
-    _headerTransfertPage = new QHBoxLayout();
+    _profilPage = new ProfilPage();
     _listPages = new QVector<QWidget*>();
 
     QLabel *titleLeftMenu = new QLabel("Main");
@@ -47,15 +47,19 @@ Panel::Panel(QWidget *parent) :
     ui->gridDownloadWidget->setStyleSheet("QWidget {background-color:white;}");
     ui->gridOrderWidget->setStyleSheet("QWidget {background-color:white;}");
 
-    ui->wPage2->setStyleSheet("background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";");
+    ui->gridProfilWidget->setStyleSheet("#gridProfilWidget {background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}");
+
     ui->stackedWidget->setCurrentIndex(0);
     ui->scrollAreaTransfert->setStyleSheet("#scrollAreaTransfert { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBarVertical + StyleSheet::GlobalInfo::scrollBarHorizontal);
+
+    ui->gridProfil->setContentsMargins(0, 0, 0, 0);
 
     /* Append page in the same order than button left for header bar */
 
     _listPages->append(_viewFilesPage);
     _listPages->append(_transfertPage);
     _listPages->append(_sortPage);
+    _listPages->append(_profilPage);
     initializeHeaderBar();
 
     /* ADD PAGE TO VIEW */
@@ -63,6 +67,7 @@ Panel::Panel(QWidget *parent) :
     ui->scrollManagerElements->addWidget(_viewFilesPage);
     ui->gridDownload->addWidget(_transfertPage);
     ui->gridOrder->addWidget(_sortPage);
+    ui->gridProfil->addWidget(_profilPage);
 }
 
 Panel::~Panel()
@@ -89,6 +94,7 @@ BtnLeftMenu* Panel::createBtnLeftMenu(QPixmap picture, QString title, bool value
 void Panel::btnMenuClicked(QString title) {
     for (int i = 0 ; i < _listBtnLeftMenu->length() ; i++) {
         if (title == _listBtnLeftMenu->at(i)->getTitle()) {
+            emit pageNameChange(_listBtnLeftMenu->at(i)->title());
             _listBtnLeftMenu->at(i)->setActive(true);
             ui->stackedWidget->setCurrentIndex(i);
             if (ui->stackedWidget->currentIndex() == 0) {

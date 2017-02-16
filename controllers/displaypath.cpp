@@ -4,7 +4,7 @@
 
 DisplayPath::DisplayPath() : QHBoxLayout()
 {
-    ElementPath *cloud = new ElementPath(":/logo/cloudLogo", 29, 29, this->count() + 1);
+    ElementPath *cloud = new ElementPath(":/logo/cloud", 34, 21, this->count() + 1);
     connect(cloud, &ElementPath::clicked, this, &DisplayPath::onClickElement);
     this->addWidget(cloud);
 }

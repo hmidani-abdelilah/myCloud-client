@@ -2,6 +2,7 @@
 #define GLOBALINFO_H
 
 #include <QString>
+#include "boxdatabaritem.h"
 
 namespace Color {
     class GlobalInfo
@@ -17,7 +18,8 @@ namespace Color {
         static QString white;
         static QString greyBorder;
         static QString lightBlueSelection;
-        static QByteArray sid;
+        static QString greyText;
+        static QString greyBorderElement;
     };
 }
 
@@ -36,6 +38,8 @@ namespace Server {
     public:
         GlobalInfo();
         static QByteArray sid;
+        static BoxDataBarItem *uploadBarItem;
+        static BoxDataBarItem *downloadBarItem;
     };
 }
 

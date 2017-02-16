@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/logo">
-        <file>cloud.png</file>
+        <file alias="cloud">cloud.png</file>
         <file alias="cloud_download">cloud_download.png</file>
         <file alias="cloud2">cloud2.png</file>
         <file alias="pathSpacer">next.png</file>
@@ -16,6 +16,15 @@
         <file alias="start">assets/play.png</file>
         <file alias="stop">assets/stop.png</file>
         <file alias="pause">assets/pause.png</file>
+        <file alias="upload">assets/upload.png</file>
+        <file alias="picture">assets/picture.png</file>
+        <file alias="folder">assets/folder.png</file>
+        <file alias="folderIcon">assets/folderIcon.png</file>
+        <file alias="fileLogo">assets/fileLogo.png</file>
+        <file alias="movie">assets/movie.png</file>
+        <file alias="avatar">assets/avatar.png</file>
+        <file alias="line">assets/substract.png</file>
+        <file alias="down-arrow">assets/down-arrow.png</file>
     </qresource>
     <qresource prefix="/elements">
         <file alias="folder">assets/folder.png</file>

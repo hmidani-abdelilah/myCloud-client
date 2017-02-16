@@ -24,7 +24,8 @@ INCLUDEPATH += $$PWD/headers\
             += $$PWD/headers/helpers\
             += $$PWD/headers/page\
             += $$PWD/headers/factory\
-            += $$PWD/headers/custom_widget
+            += $$PWD/headers/custom_widget\
+            += $$PWD/headers/box
 
 TEMPLATE = app
 TARGET = my_cloud
@@ -83,7 +84,14 @@ HEADERS += headers/btnleftmenu.h \
            headers/itemrepositoryserver.h \
            headers/managerelementsorder.h \
            headers/factory/factorybutton.h \
-           headers/custom_widget/qpushbuttoncustom.h
+           headers/custom_widget/qpushbuttoncustom.h \
+    headers/page/profilpage.h \
+    headers/box/box.h \
+    headers/box/boxglobalutilization.h \
+    headers/box/boxdata.h \
+    headers/box/boxdatabaritem.h \
+    headers/box/boxtranfert.h \
+    headers/factory/factoryfont.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui \
     dialogdropheaderelement.ui
@@ -138,6 +146,13 @@ SOURCES += main.cpp \
            controllers/itemrepositoryserver.cpp \
            controllers/managerelementsorder.cpp \
            controllers/factory/factorybutton.cpp \
-           controllers/custom_widget/qpushbuttoncustom.cpp
+           controllers/custom_widget/qpushbuttoncustom.cpp \
+    controllers/page/profilpage.cpp \
+    controllers/box/box.cpp \
+    controllers/box/boxglobalutilization.cpp \
+    controllers/box/boxdata.cpp \
+    controllers/box/boxdatabaritem.cpp \
+    controllers/box/boxtranfert.cpp \
+    controllers/factory/factoryfont.cpp
 
 RESOURCES += assets.qrc

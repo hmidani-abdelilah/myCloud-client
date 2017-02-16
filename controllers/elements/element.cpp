@@ -1,6 +1,5 @@
 #include "element.h"
 #include "ui_element.h"
-#include "globalinfo.h"
 #include "filemanager.h"
 
 #include <QAction>
@@ -10,6 +9,8 @@
 #include <QUrl>
 #include <QFileDialog>
 #include <QApplication>
+#include <QPainter>
+#include <QBitmap>
 
 Element::Element(QString name, qint64 size, qint64 transferedSize, QString pathServer, QString pathClient, TypeElement typeElement, Status status, QWidget *parent) :
     QWidget(parent),
@@ -23,6 +24,7 @@ Element::Element(QString name, qint64 size, qint64 transferedSize, QString pathS
 
     _draggableMode = EMIT;
     _isSelected = false;
+    _sizeIcon = QSize(60, 60);
 
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setCursor(Qt::PointingHandCursor);
@@ -157,12 +159,9 @@ void Element::setTitle(QString str) {
 }
 
 void Element::setIcon(QPixmap picture) { // CUSTOM UNE CLASS ET FAIRE UN TRUC GENERIC, CE TRUC EST UTILISE PLUSIEUR FOIS
-    int w = ui->_icon->width();
-    int h = ui->_icon->height();
+    _image = picture.scaled(_sizeIcon, Qt::KeepAspectRatio);
 
-    _image = picture.scaled(w,h,Qt::KeepAspectRatio);
-
-    ui->_icon->setMinimumSize(_image.width(), ui->_icon->height());
+    ui->containerIcon->setFixedSize(_image.width() + 8, _image.height() + 8);
     ui->_icon->setPixmap(_image);
 }
 
@@ -173,7 +172,7 @@ void Element::menuRequested(const QPoint & pos) {
 void Element::setSelected(bool value) {
     if (value == true) {
         _isSelected = true;
-        this->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlueSelection + "; border-radius:2px;");
+        this->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlueSelection + "; border-radius:2px");
     }
     else {
         _isSelected = false;

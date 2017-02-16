@@ -13,6 +13,16 @@ QLabelCustom::QLabelCustom(const QString& pathImg, int w, int h, QWidget* parent
     this->createBtnImg(pathImg, w, h);
 }
 
+QLabelCustom::QLabelCustom(const QPixmap img, int w, int h, QWidget* parent): QLabel(parent)
+{
+    _image = img;
+
+    this->setPixmap(_image);
+    this->setFixedSize(w, h);
+    this->setScaledContents(true);
+    this->setCursor(Qt::PointingHandCursor);
+}
+
 void QLabelCustom::createBtnImg(QString imgPath, int w, int h) {
     _image = QPixmap(imgPath);
 

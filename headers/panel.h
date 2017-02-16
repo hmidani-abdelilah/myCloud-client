@@ -20,6 +20,7 @@
 #include <QPushButton>
 #include "displaypath.h"
 #include "sortpage.h"
+#include "profilpage.h"
 
 namespace Ui {
 class Panel;
@@ -42,8 +43,6 @@ private:
 
 private:
     Ui::Panel               *ui;
-    QHBoxLayout             *_headerManageElements;
-    QHBoxLayout             *_headerTransfertPage;
 
     QVector<BtnLeftMenu*>   *_listBtnLeftMenu;
     QPushButton             *_btnBack;
@@ -53,8 +52,12 @@ private:
     DisplayPath             *_displayPath;
     TransfertPage           *_transfertPage;
     SortPage                *_sortPage;
+    ProfilPage              *_profilPage;
     QVector<QWidget*>       *_listPages;
     void initializeHeaderBar();
+
+signals:
+    void pageNameChange(QString);
 };
 
 #endif // PANEL_H

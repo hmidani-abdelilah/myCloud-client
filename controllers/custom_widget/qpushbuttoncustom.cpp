@@ -17,6 +17,5 @@ void QPushButtonCustom::enterEvent(QEvent *)
 
 void QPushButtonCustom::leaveEvent(QEvent *)
 {
-    if (isEnabled())
-        this->setIcon(Generator::changeLogoColor(this->icon().pixmap(this->iconSize()), Color::GlobalInfo::mainBleu));
+    this->setIcon(Generator::changeLogoColor(this->icon().pixmap(this->iconSize()), Color::GlobalInfo::mainBleu));
 }

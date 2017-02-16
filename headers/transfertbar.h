@@ -18,7 +18,7 @@ public:
 public:
     TransfertBar(InfoElement *file);
 
-public:
+private:
     QHBoxLayout     *_layout;
     QLabelCustom    *_iconStatus;
     QLabelCustom    *_size;
@@ -54,6 +54,10 @@ public:
     void changeStatusOfFile(InfoElement::Status status);
     QLabelCustom *getBtnDelete();
     void setBarColor(QString color);
+
+    float inline speed() {return _speed;}
+    InfoElement *file();
+
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);

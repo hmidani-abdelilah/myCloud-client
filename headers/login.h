@@ -24,7 +24,7 @@ private:
     UserRequest *_userRequest;
 
 signals:
-    void connexionSuccess();
+    void connexionSuccess(QNetworkReply* reply);
 
 public slots:
     void getDataConnexion(QNetworkReply *reply);

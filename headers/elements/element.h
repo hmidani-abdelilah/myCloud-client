@@ -7,7 +7,9 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QStandardItemModel>
+
 #include "statselement.h"
+#include "globalinfo.h"
 
 namespace Ui {
 class Element;
@@ -43,8 +45,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     QMenu _menu;
     void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
-    void setIcon(QPixmap picture);
-   // bool event(QEvent *event);
+    virtual void setIcon(QPixmap picture);
+
+    QSize   _sizeIcon;
 
 private:
     QPoint _dragStartPosition;

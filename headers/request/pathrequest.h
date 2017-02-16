@@ -12,9 +12,9 @@ class PathRequest : public ServiceRequest
 public:
     enum Path {
         Contents,
-        RepositoryTree
+        TreeRepository,
+        StatsRepository
     };
-
 
     PathRequest();
 
@@ -30,7 +30,8 @@ protected:
 
 signals:
     void signalContent(QNetworkReply *reply);
-    void signalRepositoryTree(QNetworkReply *reply);
+    void signalTreeRepository(QNetworkReply *reply);
+    void signalStatsRepository(QNetworkReply *reply);
 };
 
 #endif // PATHREQUEST_H

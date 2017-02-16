@@ -16,6 +16,7 @@ public:
     ~BtnLeftMenu();
     void setActive(bool value);
     QString getTitle();
+    inline QString title() {return _title;}
 
 protected:
     void mousePressEvent(QMouseEvent *);

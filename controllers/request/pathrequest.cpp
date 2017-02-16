@@ -3,7 +3,8 @@
 PathRequest::PathRequest() : ServiceRequest()
 {
     _listRoute.insert(Contents, &PathRequest::signalContent);
-    _listRoute.insert(RepositoryTree, &PathRequest::signalRepositoryTree);
+    _listRoute.insert(TreeRepository, &PathRequest::signalTreeRepository);
+    _listRoute.insert(StatsRepository, &PathRequest::signalStatsRepository);
 }
 
 QString PathRequest::getRoute(int route, QMap<QString, QString> params) {
@@ -12,8 +13,11 @@ QString PathRequest::getRoute(int route, QMap<QString, QString> params) {
     case Contents:
         return "/path/contents";
         break;
-    case RepositoryTree:
-        return "/path/repositoryTree";
+    case TreeRepository:
+        return "/path/treeRepository";
+        break;
+    case StatsRepository:
+        return "/path/statsRepository";
         break;
     default:
         return "";

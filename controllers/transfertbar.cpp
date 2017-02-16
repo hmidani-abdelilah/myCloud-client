@@ -46,6 +46,7 @@ TransfertBar::TransfertBar(InfoElement *file) : QWidget()
 
     _time = new QTime();
     _sizeTransfered = 0;
+    _speed = 0;
 
     connect(_btnDelete, &QLabelCustom::clicked, this, &TransfertBar::slotClickOnDelete);
 
@@ -114,6 +115,10 @@ TransfertBar::TransfertBar(InfoElement *file) : QWidget()
     setLayout(_layout);
 }
 
+InfoElement *TransfertBar::file() {
+    return _file;
+}
+
 void TransfertBar::updateElement() {
     setPourcentage();
     setSpeed();
@@ -139,21 +144,16 @@ void TransfertBar::setTransferedSize() { // mettre cette fonction dans une class
     _transferedSize->setText(Generator::getFormatSize(size));
 }
 
-void TransfertBar::setSpeed() { // set speed with syntax ( ie: 2 mo/s)
+void TransfertBar::setSpeed() {
     _speed = _file->getTransfertSpeed();
-
-    if (_speed < 1000) {
-        _speedLabel->setText(QString::number(_speed) + " Ko/s");
-    }
-    else
-        _speedLabel->setText(QString::number(_speed / 1000) + " Mo/s");
+    _speedLabel->setText(Generator::getFormatSpeed(_speed));
 }
 
 void TransfertBar::setSize(qint64 size) {
     _size->setText(Generator::getFormatSize(size));
 }
 
-void TransfertBar::setTime() {
+void TransfertBar::setTime() { //TODO PROBLEME Avec le Timer
     int secondToWait = 0;
     if (!_file->isFinish() && _speed > 0)
         secondToWait = qRound(((float)(_file->sizeServer() - _sizeTransfered)) / (_speed * 1000));

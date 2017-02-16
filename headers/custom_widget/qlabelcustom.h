@@ -15,6 +15,7 @@ public:
 
      void changeImageColor(QString color);
 
+     QLabelCustom(const QPixmap img, int w, int h, QWidget *parent = 0);
 protected:
     virtual void mousePressEvent(QMouseEvent*);
 

@@ -9,7 +9,11 @@ QString Color::GlobalInfo::mainBleu = "556080";
 QString Color::GlobalInfo::greyLight = "F3F5F5";
 QString Color::GlobalInfo::white = "FFFFFF";
 QString Color::GlobalInfo::greyBorder = "EAECEC";
+QString Color::GlobalInfo::greyText = "5b5b5b";
+QString Color::GlobalInfo::greyBorderElement = "c6c6c6";
 
+BoxDataBarItem* Server::GlobalInfo::uploadBarItem = NULL;
+BoxDataBarItem* Server::GlobalInfo::downloadBarItem = NULL;
 
 QString ColorTransfertBar::GlobalInfo::grey = "EDEDED";
 

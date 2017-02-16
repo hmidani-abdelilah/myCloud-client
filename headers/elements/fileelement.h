@@ -11,7 +11,8 @@ public:
     FileElement(Stats stats, QWidget *parent = 0);
 
 protected:
-    void getIcon();
+    void getIcon();    
+    void setIcon(QPixmap picture);
 
 private slots:
     void responseReduceImage(QNetworkReply *reply);

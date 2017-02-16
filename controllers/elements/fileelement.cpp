@@ -46,6 +46,7 @@ void FileElement::responseReduceImage(QNetworkReply *reply) {
     }
 
     QPixmap icon;
+
     QByteArray data = reply->readAll();
 
     if (data.length() > 0)
@@ -53,4 +54,12 @@ void FileElement::responseReduceImage(QNetworkReply *reply) {
     else
         icon.load(":/elements/file");
     setIcon(icon);
+}
+
+void FileElement::setIcon(QPixmap picture) {
+    _image = picture.scaled(_sizeIcon, Qt::KeepAspectRatio);
+
+    ui->containerIcon->setFixedSize(_image.width() + 8, _image.height() + 8);
+    ui->containerIcon->setStyleSheet("[accessibleName=\"containerIcon\"] {border-color:#" + Color::GlobalInfo::greyBorderElement + "; border-style:double; border-width:4px;}");
+    ui->_icon->setPixmap(_image);
 }
