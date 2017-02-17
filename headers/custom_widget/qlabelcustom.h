@@ -11,20 +11,22 @@ class QLabelCustom : public QLabel
 
 public:
      explicit QLabelCustom( const QString &text = "", QWidget* parent = 0 );
+     QLabelCustom(QWidget *parent);
      QLabelCustom(const QString& pathImg, int w, int h, QWidget* parent = 0);
-
-     void changeImageColor(QString color);
-
      QLabelCustom(const QPixmap img, int w, int h, QWidget *parent = 0);
+
 protected:
-    virtual void mousePressEvent(QMouseEvent*);
+    virtual void mousePressEvent(QMouseEvent*ev);
 
 signals:
      void clicked();
+     void clickedPos(QPoint);
 
-private:
+public:
      void createBtnImg(QString imgPath, int w, int h);
+     void changeImageColor(QString color);
 
+     void createBtnImg(QPixmap img, int w, int h);
 private:
      QPixmap    _image;
 };

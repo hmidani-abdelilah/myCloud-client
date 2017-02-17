@@ -25,7 +25,7 @@ public:
     ServiceRequest();
     ~ServiceRequest() {}
     QNetworkReply *request(Type type, int request, RouteParams prms = RouteParams());
-    QNetworkReply *requestFile(Type type, int request, QByteArray body, QByteArray boundary, QString pathServer, qint64 totalSize);
+    QNetworkReply *requestFile(Type type, int request, QByteArray body, QByteArray boundary, QString pathServer = "", qint64 totalSize = -1);
     void setParams(QMap<QString, QString> *params);
     void setParam(QString key, QString value);
 

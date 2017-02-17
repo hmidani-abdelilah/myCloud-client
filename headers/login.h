@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QNetworkReply>
 
+#include "subscribepopup.h"
 #include "userrequest.h"
 
 namespace Ui {
@@ -19,9 +20,12 @@ public:
     ~Login();
 
     QPixmap fromSvgToPixmap(const QSize &ImageSize, const QString &SvgFile);
+    void clearForm();
+
 private:
-    Ui::Login *ui;
-    UserRequest *_userRequest;
+    Ui::Login       *ui;
+    UserRequest     *_userRequest;
+    SubscribePopup  *_subscribePopPup;
 
 signals:
     void connexionSuccess(QNetworkReply* reply);

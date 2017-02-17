@@ -3,6 +3,9 @@
 UserRequest::UserRequest() : ServiceRequest()
 {
     _listRoute.insert(Connection, &UserRequest::signalConnected);
+    _listRoute.insert(LogOut, &UserRequest::signalLogOut);
+    _listRoute.insert(Subscribe, &UserRequest::signalSubscribe);
+    _listRoute.insert(ProfilPicture, &UserRequest::signalProfilPicture);
 }
 
 QString UserRequest::getRoute(int route, QMap<QString, QString> params) {
@@ -11,8 +14,14 @@ QString UserRequest::getRoute(int route, QMap<QString, QString> params) {
     case Connection:
         return "/user/login";
         break;
-    case Test:
-        return "/user";
+    case LogOut:
+        return "/user/logout";
+        break;
+    case Subscribe:
+        return "/user/subscribe";
+        break;
+    case ProfilPicture:
+        return "/user/uploadProfilPicture";
         break;
     default:
         return "";

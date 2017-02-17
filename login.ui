@@ -17,6 +17,22 @@
    <string notr="true">background-color:#282D31</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <item row="9" column="1">
+    <spacer name="verticalSpacer_7">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>4</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="7" column="1">
     <widget class="QWidget" name="widgetConnection" native="true">
      <property name="minimumSize">
@@ -34,7 +50,7 @@
      <property name="styleSheet">
       <string notr="true">background-color:#22272B;</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="widgetConnectionLayout">
       <item>
        <layout class="QHBoxLayout" name="layoutLogo">
         <property name="sizeConstraint">
@@ -136,6 +152,9 @@
          </font>
         </property>
         <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
          <string>Email</string>
         </property>
        </widget>
@@ -149,6 +168,12 @@
          </font>
         </property>
         <property name="text">
+         <string/>
+        </property>
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+        <property name="placeholderText">
          <string>Password</string>
         </property>
        </widget>
@@ -271,54 +296,6 @@
      </layout>
     </widget>
    </item>
-   <item row="11" column="1">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="10" column="1">
-    <widget class="QPushButton" name="createAccountBtn">
-     <property name="font">
-      <font>
-       <family>Open Sans</family>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">  color: #87d6f7;
-  background: #161A1D;
-  padding: 10px 20px 10px 20px;
-  border: 1px solid #8A939A;
-  border-color:#8A939A;
-  text-decoration: none;
-margin-left:6px;
-margin-right:6px;</string>
-     </property>
-     <property name="text">
-      <string>CREATE AN ACCOUNT</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="7" column="2">
     <spacer name="horizontalSpacer_2">
      <property name="orientation">
@@ -345,18 +322,53 @@ margin-right:6px;</string>
      </property>
     </spacer>
    </item>
-   <item row="9" column="1">
-    <spacer name="verticalSpacer_7">
+   <item row="10" column="1">
+    <widget class="QPushButton" name="createAccountBtn">
+     <property name="font">
+      <font>
+       <family>Open Sans</family>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">  color: #87d6f7;
+  background: #161A1D;
+  padding: 10px 20px 10px 20px;
+  border: 1px solid #8A939A;
+  border-color:#8A939A;
+  text-decoration: none;
+margin-left:6px;
+margin-right:6px;</string>
+     </property>
+     <property name="text">
+      <string>CREATE AN ACCOUNT</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>4</height>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="7" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
@@ -368,7 +380,7 @@ margin-right:6px;</string>
   <customwidget>
    <class>LineEditCustom</class>
    <extends>QLineEdit</extends>
-   <header>lineEditCustom.h</header>
+   <header>LineEditCustom.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

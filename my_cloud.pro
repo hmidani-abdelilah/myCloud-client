@@ -91,7 +91,8 @@ HEADERS += headers/btnleftmenu.h \
     headers/box/boxdata.h \
     headers/box/boxdatabaritem.h \
     headers/box/boxtranfert.h \
-    headers/factory/factoryfont.h
+    headers/factory/factoryfont.h \
+    headers/subscribepopup.h
 
 FORMS += btnleftmenu.ui element.ui login.ui mainwindow.ui panel.ui \
     dialogdropheaderelement.ui
@@ -153,6 +154,7 @@ SOURCES += main.cpp \
     controllers/box/boxdata.cpp \
     controllers/box/boxdatabaritem.cpp \
     controllers/box/boxtranfert.cpp \
-    controllers/factory/factoryfont.cpp
+    controllers/factory/factoryfont.cpp \
+    controllers/subscribepopup.cpp
 
 RESOURCES += assets.qrc

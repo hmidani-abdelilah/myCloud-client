@@ -20,6 +20,7 @@ namespace Color {
         static QString lightBlueSelection;
         static QString greyText;
         static QString greyBorderElement;
+        static QString backgroundLoginView;
     };
 }
 
@@ -61,6 +62,7 @@ namespace StyleSheet {
         static QString scrollBarVertical;
         static QString scrollBarHorizontal;
         static QString button;
+        static QString input;
     };
 }
 

@@ -12,7 +12,9 @@ class UserRequest : public ServiceRequest
 public:
     enum User {
         Connection,
-        Test
+        LogOut,
+        Subscribe,
+        ProfilPicture
     };
 
 
@@ -30,6 +32,9 @@ protected:
 
 signals:
     void signalConnected(QNetworkReply *reply);
+    void signalLogOut(QNetworkReply *reply);
+    void signalSubscribe(QNetworkReply *reply);
+    void signalProfilPicture(QNetworkReply *reply);
 };
 
 #endif // USERREQUEST_H

@@ -1,13 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "login.h"
-#include "panel.h"
 #include "image.h"
 #include "globalinfo.h"
 #include "factorybutton.h"
 #include "factoryfont.h"
 #include "jsonmanager.h"
 #include "generator.h"
+#include "httperror.h"
 
 #include <QLabel>
 #include <QVariant>
@@ -18,19 +17,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    Login *log = new Login();
-    ui->stackedWidget->addWidget(log);
+    _loginView = new Login();
+    ui->stackedWidget->addWidget(_loginView);
     ui->stackedWidget->setCurrentIndex(0);
     ui->stackedWidget->setStyleSheet("background-color:#282D31");
     ui->toolBar->hide();
-    connect(log, &Login::connexionSuccess, this, &MainWindow::activeMainView);
+    connect(_loginView, &Login::connexionSuccess, this, &MainWindow::activeMainView);
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(stackerWidgetChanged(int)));
     ui->toolBar->setStyleSheet("background-color:#" + Color::GlobalInfo::white + "; spacing:0px;");
 
-    _btnParamsAccount = new QLabelCustom(":/logo/down-arrow", 15, 15);
-    connect(_btnParamsAccount, &QLabelCustom::clicked, this, &MainWindow::menuParamsRequested);
+    _userRequest = new UserRequest();
+    connect(_userRequest, &UserRequest::signalLogOut, this, &MainWindow::slotDisconnected);
 
-    QAction *disconnection = new QAction("Disconnection");
+    _btnParamsAccount = new QLabelCustom(":/logo/down-arrow", 15, 15);
+    connect(_btnParamsAccount, &QLabelCustom::clickedPos, this, &MainWindow::menuParamsRequested);
+
+    QAction *disconnection = new QAction("Log out");
     connect(disconnection, &QAction::triggered, this, &MainWindow::actionDisconnection);
     _menu.addAction(disconnection);
 
@@ -75,9 +77,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QHBoxLayout *hLayout = new QHBoxLayout();
     _labelCustom = new QLabelCustom(":/logo/avatar", 50, 50);
-    _labelLastName = new QLabelCustom("NEGRIER");
-    _labelFirstName = new QLabelCustom("Aurelien");
-    _labelFreeSize = new QLabelCustom("1.3 Go Free");
+    _labelLastName = new QLabelCustom("");
+    _labelFirstName = new QLabelCustom("");
+    _labelFreeSize = new QLabelCustom("");
     QVBoxLayout  *vLayout = new QVBoxLayout();
 
     hLayout->setContentsMargins(0, 0, 20, 0);
@@ -123,7 +125,7 @@ void MainWindow::menuParamsRequested(const QPoint & pos) {
 }
 
 void MainWindow::actionDisconnection(bool) {
-    qDebug("disconnect");
+    _userRequest->request(UserRequest::Type::GET, UserRequest::LogOut);
 }
 
 void MainWindow::slotChangePageName(QString name) {
@@ -151,10 +153,10 @@ void MainWindow::activeMainView(QNetworkReply* reply)
         _labelCustom = new QLabelCustom(":/logo/avatar", 50, 50);
 
 
-    Panel *mainPanel = new Panel();
+    _mainPanel = new Panel();
 
-    connect(mainPanel, &Panel::pageNameChange, this, &MainWindow::slotChangePageName);
-    ui->stackedWidget->addWidget(mainPanel);
+    connect(_mainPanel, &Panel::pageNameChange, this, &MainWindow::slotChangePageName);
+    ui->stackedWidget->addWidget(_mainPanel);
     ui->stackedWidget->setCurrentIndex(1);
 }
 
@@ -171,6 +173,17 @@ void MainWindow::stackerWidgetChanged(int index) {
     default:
         break;
     }
+}
+
+void MainWindow::slotDisconnected(QNetworkReply *reply) {
+    if (reply->error() != QNetworkReply::NoError)
+        throw HttpError(reply);
+
+    _loginView->clearForm();
+    ui->stackedWidget->setCurrentIndex(0);
+        ui->stackedWidget->setStyleSheet("background-color:#282D31");
+    if (_mainPanel != NULL)
+        delete _mainPanel;
 }
 
 MainWindow::~MainWindow()

@@ -15,6 +15,7 @@
 #include "httperror.h"
 #include <QSvgRenderer>
 #include <QPainter>
+#include "lineEditCustom.h"
 
 Login::Login(QWidget *parent) :
     QWidget(parent),
@@ -23,6 +24,7 @@ Login::Login(QWidget *parent) :
     ui->setupUi(this);
 
     //initialiseGraphic
+
     QPalette pal = QPalette();
     pal.setColor(QPalette::WindowText, QColor("#FFFFFF"));
 
@@ -31,28 +33,60 @@ Login::Login(QWidget *parent) :
     ui->desc->setAlignment(Qt::AlignCenter);
     ui->desc->setPalette(pal);
 
-    ui->signBtn->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlue + ";border: none; margin-left:20px; margin-right:20px; color: black; text-decoration: none;");
+    ui->signBtn->setStyleSheet("background-color:#" + Color::GlobalInfo::lightBlue + ";border: none; margin-left:13px; margin-right:13px; color: black; text-decoration: none;");
+
+    _subscribePopPup = new SubscribePopup(this);
+    connect(this->ui->createAccountBtn, &QPushButton::clicked, _subscribePopPup, &SubscribePopup::show);
+
+    /* CONFIGURATION LOGO */
+
     QPixmap pic = Image::fromSvgToPixmap(QSize(70, 40), ":/logo/cloudLogo");
-    //ui->logo->setScaledContents(true);
 
     int w = ui->logo->width();
     int h = ui->logo->height();
     ui->logo->setPixmap(pic.scaled(w,h,Qt::KeepAspectRatio));
+    ui->logo->setFocusPolicy(Qt::StrongFocus);
+
+    /* CONFIGURATION ERROR MESSAGE */
 
     ui->errorMsg->setStyleSheet("QLabel { color : #cc0000; }");
     ui->errorMsg->setAlignment(Qt::AlignCenter);
     ui->errorMsg->setText("");
 
+    /* CONFIGURATION INPUT */
+
+   // int pos = ui->widgetConnectionLayout->indexOf(ui->emailInput); // a supprimer
+   // ui->emailInput->hide();
+
+//    //delete item;
+//    ui->widgetConnectionLayout->insertWidget(pos, new LineEditCustom(this));
+
+//    ui->emailInput->setStyleSheet(StyleSheet::GlobalInfo::input);
+
+//    ui->emailInput->setMinimumHeight(35);
+//    ui->emailInput->setFocusPolicy(Qt::StrongFocus);
+//    ui->emailInput->setAttribute(Qt::WA_MacShowFocusRect, 0);
+//    ui->passwordInput->setStyleSheet(StyleSheet::GlobalInfo::input);
+//    ui->passwordInput->setMinimumHeight(35);
+//    ui->passwordInput->setFocusPolicy(Qt::StrongFocus);
+//    ui->passwordInput->setAttribute(Qt::WA_MacShowFocusRect, 0);
+//    ui->signBtn->setFocusPolicy(Qt::StrongFocus);
+//    ui->signBtn->setAttribute(Qt::WA_MacShowFocusRect, 0);
+
     _userRequest = new UserRequest();
+
     connect(_userRequest, &UserRequest::signalConnected, this, &Login::getDataConnexion);
-   // connect(ui->emailInput, &LineEditCustom::returnPressed, this, &Login::clickBtnSignIn);
-   // connect(ui->passwordInput, &LineEditCustom::returnPressed, this, &Login::clickBtnSignIn);
     connect(ui->signBtn, &QPushButton::clicked, this, &Login::clickBtnSignIn);
 }
 
 Login::~Login()
 {
     delete ui;
+}
+
+void Login::clearForm() {
+    ui->emailInput->setText("");
+    ui->passwordInput->setText("");
 }
 
 void Login::clickBtnSignIn() {
@@ -64,10 +98,15 @@ void Login::clickBtnSignIn() {
 
 void Login::getDataConnexion(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError)
+    if (reply->error() == QNetworkReply::NoError) {
+        ui->errorMsg->setText("");
         emit connexionSuccess(reply);
+    }
     else if (reply->error() == QNetworkReply::AuthenticationRequiredError)
         ui->errorMsg->setText(reply->readAll());
-    else
+    else {
+        if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 0)
+            ui->errorMsg->setText("MyCloud server down");
       throw HttpError(reply);
+    }
 }

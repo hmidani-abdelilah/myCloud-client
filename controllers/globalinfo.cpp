@@ -10,7 +10,8 @@ QString Color::GlobalInfo::greyLight = "F3F5F5";
 QString Color::GlobalInfo::white = "FFFFFF";
 QString Color::GlobalInfo::greyBorder = "EAECEC";
 QString Color::GlobalInfo::greyText = "5b5b5b";
-QString Color::GlobalInfo::greyBorderElement = "c6c6c6";
+QString Color::GlobalInfo::greyBorderElement = "C6C6C6";
+QString Color::GlobalInfo::backgroundLoginView = "282D31";
 
 BoxDataBarItem* Server::GlobalInfo::uploadBarItem = NULL;
 BoxDataBarItem* Server::GlobalInfo::downloadBarItem = NULL;
@@ -139,4 +140,20 @@ QString StyleSheet::GlobalInfo::button =
         "QPushButton:hover {"\
         "background-color:#" + Color::GlobalInfo::mainBleu +";"\
         "color:#" + Color::GlobalInfo::white +";"\
+        "}";
+
+QString StyleSheet::GlobalInfo::input =
+        "QLineEdit {"\
+        "background-color:#1A1D22;"\
+        "border: 1px solid #DDDDDD;"\
+        "color:#FFFFFF;"\
+        "padding-left:3px;"\
+        "qproperty-frame: false;"\
+        "}"\
+        "QLineEdit:focus {"\
+        "background-color:#FFFFFF;"\
+        "border: 1px solid #000000;"\
+        "color:#000000;"\
+        "padding-left:3px;"\
+        "qproperty-frame: false;"\
         "}";
