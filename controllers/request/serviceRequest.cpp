@@ -10,7 +10,7 @@
 
 ServiceRequest::ServiceRequest() : QNetworkAccessManager()
 {
-    _host = "127.0.0.1:3000";
+    _host = "localhost:3000";
     _prefixRoute = "/api";
     _userAgent = "MyCloud/1.0 (Mac; Qt)";
 

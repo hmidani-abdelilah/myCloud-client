@@ -237,6 +237,12 @@
          </property>
          <item>
           <widget class="QWidget" name="gridProfilWidget" native="true">
+           <property name="accessibleName">
+            <string>gridProfilWidgetAN</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <layout class="QGridLayout" name="gridProfil"/>
           </widget>
          </item>

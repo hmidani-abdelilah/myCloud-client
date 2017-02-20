@@ -47,7 +47,8 @@ Panel::Panel(QWidget *parent) :
     ui->gridDownloadWidget->setStyleSheet("QWidget {background-color:white;}");
     ui->gridOrderWidget->setStyleSheet("QWidget {background-color:white;}");
 
-    ui->gridProfilWidget->setStyleSheet("#gridProfilWidget {background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}");
+    qDebug("%s", ui->gridProfilWidget->accessibleName().toStdString().c_str());
+    ui->gridProfilWidget->setStyleSheet("[accessibleName=\"gridProfilWidgetAN\"] {background-color:white; border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}");
 
     ui->stackedWidget->setCurrentIndex(0);
     ui->scrollAreaTransfert->setStyleSheet("#scrollAreaTransfert { border: 1px solid #" + Color::GlobalInfo::greyBorder + ";}" + StyleSheet::GlobalInfo::scrollBarVertical + StyleSheet::GlobalInfo::scrollBarHorizontal);

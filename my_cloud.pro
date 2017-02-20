@@ -27,6 +27,7 @@ INCLUDEPATH += $$PWD/headers\
             += $$PWD/headers/custom_widget\
             += $$PWD/headers/box
 
+
 TEMPLATE = app
 TARGET = my_cloud
 ICON = my_cloud.icns
