@@ -17,17 +17,52 @@ If you didn't install the server yet, I am invited you to install it [first](htt
 
 You just need to clone the project and start it with QtCreator
 
-
 ## Demo
 
 
-### First use
+### FIRST PAGE
 
-When you start myCloud, you will find a pannel to connect youself.
-Create an account to access to your pannel.
+When you start my Cloud, you will find a panel to connect yourself.
 
-![alt tag](https://github.com/negrie-a/myCloud-client/blob/master/assets/fileLogo.png)
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/login.png" width="400">
+* Create an account to access to your panel.
 
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/subscrib.png" width="500">
+
+* Connect yourself and you will be able to use the cloud.
+
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/main_page.png" width="400">
+
+### DASHBOARD PAGE
+
+* Drag and drop files that you want to upload to the server into the windows
+
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/upload.png" width="400">
+
+* Drag and drop files that you want to download. It will open a popup to indicate where you want to download the file.
+
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/download.png" width="400">
+
+### DOWNLOAD PAGE
+
+* This section is a resume of all actual download and upload from the server. You can start, stop or cancel the transfer.  
+* It is possible to leave the application and come back later. The transfer will continue where it stopped.
+
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/download_page.png" width="400">
+
+### ORDERING PAGE
+
+* This section allows you to re-order your files thanks to the tree on the right. You just need to drag and drop your file.
+
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/order_page.png" width="400">
+
+### PROFIL PAGE
+
+* This section allows you to see some stats on your server like free memory, memory used or your current transfer speed...
+
+<img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/profil_page.png" width="400">
+
+###
 ## Built With
 
 * [Qt](https://www.qt.io/developers/) - Application Development
