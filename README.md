@@ -22,24 +22,24 @@ You just need to clone the project and start it with QtCreator
 
 ### FIRST PAGE
 
-When you start my Cloud, you will find a panel to connect yourself.
+When you will start myCloud, you will find a panel to connect yourself.
 
 <img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/login.png" width="400">
-* Create an account to access to your panel.
+* Create an account to access to your dashboard.
 
 <img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/subscrib.png" width="500">
 
-* Connect yourself and you will be able to use the cloud.
+* Connect yourself.
 
 <img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/main_page.png" width="400">
 
 ### DASHBOARD PAGE
 
-* Drag and drop files that you want to upload to the server into the windows
+* Into the windows, drag and drop files that you want to upload to the server.
 
 <img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/upload.png" width="400">
 
-* Drag and drop files that you want to download. It will open a popup to indicate where you want to download the file.
+* Drag files that you want to download. It will open a popup where you will have to indicate the download path location.
 
 <img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/download.png" width="400">
 
@@ -52,7 +52,7 @@ When you start my Cloud, you will find a panel to connect yourself.
 
 ### ORDERING PAGE
 
-* This section allows you to re-order your files thanks to the tree on the right. You just need to drag and drop your file.
+* This section allows you to re-order your files thanks to the tree on the right. You just need to drag and drop your files.
 
 <img src="https://github.com/negrie-a/myCloud-client/blob/master/picture_readme/order_page.png" width="400">
 
