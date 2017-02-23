@@ -12,6 +12,7 @@ QT += network
 QT += core
 QT += websockets
 QT += svg
+QT += macextras
 
 LIBS+= -lcurl
 

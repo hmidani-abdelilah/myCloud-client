@@ -10,9 +10,10 @@ public:
 
 protected:
     bool notify(QObject *receiver, QEvent *event);
-
 public:
     void commitData(QSessionManager &manager);
+private slots:
+    void slotApplicationStateChanged(Qt::ApplicationState state);
 };
 
 #endif // MYCLOUDAPPLICATION_H

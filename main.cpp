@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     font.setFamily(Font::GlobalInfo::name);
     QApplication::setFont(font);
     a.setApplicationName(QString("MyCloud"));
+
     QPixmap logo = Image::fromSvgToPixmap(QSize(111, 111), ":/logo/cloudMacLogo");
 
     a.setWindowIcon(logo);

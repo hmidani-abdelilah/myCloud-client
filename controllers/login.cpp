@@ -16,6 +16,7 @@
 #include <QSvgRenderer>
 #include <QPainter>
 #include "lineEditCustom.h"
+#include <QMenu>
 
 Login::Login(QWidget *parent) :
     QWidget(parent),

@@ -44,6 +44,14 @@ namespace Server {
     };
 }
 
+namespace Application {
+    class GlobalInfo {
+        public:
+            GlobalInfo();
+            static Qt::ApplicationState appState;
+            static int notificationNumber;
+    };
+}
 namespace Font {
     class GlobalInfo
     {

@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->setCurrentIndex(0);
     ui->stackedWidget->setStyleSheet("background-color:#282D31");
     ui->toolBar->hide();
+
     connect(_loginView, &Login::connexionSuccess, this, &MainWindow::activeMainView);
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(stackerWidgetChanged(int)));
     ui->toolBar->setStyleSheet("background-color:#" + Color::GlobalInfo::white + "; spacing:0px;");
@@ -122,6 +123,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::menuParamsRequested(const QPoint & pos) {
     _menu.popup(mapToGlobal(pos));
+}
+
+void MainWindow::hideEvent(QHideEvent *) {
+    Application::GlobalInfo::appState = Qt::ApplicationSuspended;
+}
+
+void MainWindow::showEvent(QShowEvent *) {
+    Application::GlobalInfo::appState = Qt::ApplicationActive;
 }
 
 void MainWindow::actionDisconnection(bool) {

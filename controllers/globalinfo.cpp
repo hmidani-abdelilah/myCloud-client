@@ -18,6 +18,9 @@ BoxDataBarItem* Server::GlobalInfo::downloadBarItem = NULL;
 
 QString ColorTransfertBar::GlobalInfo::grey = "EDEDED";
 
+Qt::ApplicationState Application::GlobalInfo::appState = Qt::ApplicationActive;
+int Application::GlobalInfo::notificationNumber = 0;
+
 QByteArray Server::GlobalInfo::sid = "";
 
 QString Font::GlobalInfo::name = "Open Sans";

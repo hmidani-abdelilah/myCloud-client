@@ -10,6 +10,7 @@
 #include "userrequest.h"
 #include "qlabelcustom.h"
 #include "subscribepopup.h"
+#include <QHideEvent>
 
 namespace Ui {
 class MainWindow;
@@ -39,6 +40,10 @@ private:
 
 public slots:
     void activeMainView(QNetworkReply *reply);
+
+protected:
+    void hideEvent(QHideEvent *);
+    void showEvent(QShowEvent *);
 
 private slots:
     void stackerWidgetChanged(int index);

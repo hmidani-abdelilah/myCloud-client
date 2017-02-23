@@ -12,6 +12,8 @@
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QSystemTrayIcon>
+#include <QtMac>
 
 FileManager *FileManager::_instanceFileManager = 0;
 
@@ -584,6 +586,20 @@ void FileManager::statusFileChanged(qint64 id) {
     case InfoElement::Status::FINISH: {
         prms.addValueToBody("status", InfoElement::convertStatusToString(InfoElement::FINISH));
         _historicRequest->request(HistoricRequest::PUT, HistoricRequest::HistoricById, prms);
+
+        qDebug("%d", Application::GlobalInfo::appState);
+        if (Application::GlobalInfo::appState != Qt::ApplicationActive) {
+            Application::GlobalInfo::notificationNumber += 1;
+            QtMac::setBadgeLabelText(QString::number(Application::GlobalInfo::notificationNumber));
+
+            QSystemTrayIcon *t = new QSystemTrayIcon();
+
+            t->show();
+            if (file->type() == InfoElement::TransfertType::UPLOAD)
+                t->showMessage(file->name(), "Has been correctly upload", QSystemTrayIcon::NoIcon, 100);
+            else
+                t->showMessage(file->name(), "Has been correctly download", QSystemTrayIcon::NoIcon, 100);
+        }
 
         file->elapsed();
         file->close();
